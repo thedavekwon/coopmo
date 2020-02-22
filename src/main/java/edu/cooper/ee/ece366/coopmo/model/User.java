@@ -2,44 +2,82 @@ package edu.cooper.ee.ece366.coopmo.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
 
-    private final AtomicLong balance = new AtomicLong();
     @Id
-    public String id;
-    public String firstName;
-    public String lastName;
+    public Long id;
+    public String name;
     public String username;
     public String password;
     public String email;
     public String handle;
 
-    public User() {
-    }
+    private AtomicLong balance = new AtomicLong();
 
-    // TODO()
-    public User(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public List<Long> incomingFriendRequestList;
+    public List<Long> outgoingFriendRequestList;
+    public List<Long> friendList;
+    public List<Long> paymentList;
+    public List<Long> cashOutList;
+
+    // TODO (ID)
+    public User(String name, String username, String password, String email, String handle) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.handle = handle;
         balance.set(0);
+        incomingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
+        outgoingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
+        friendList = Collections.synchronizedList(new ArrayList<>());
+        paymentList = Collections.synchronizedList(new ArrayList<>());
+        cashOutList = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getHandle() {
+        return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 
     public long getBalance() {
@@ -50,9 +88,11 @@ public class User {
         balance.getAndSet(newBalance);
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-                "Customer[id=%s, firstName='%s', lastName='%s']", id, firstName, lastName);
+    public void incrementBalance(long amount) {
+        balance.getAndAdd(amount);
+    }
+
+    public void decrementBalance(long amount) {
+        balance.getAndAdd(-amount);
     }
 }

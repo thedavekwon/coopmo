@@ -11,6 +11,7 @@ public class CashOutController {
     public CashOut createCashOut(
             @RequestParam(value = "bankAccountId", defaultValue = "") Long bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount) {
-        return new CashOut(bankAccountId, amount);
+        CashOut newCashOut = new CashOut(bankAccountId, amount);
+        return newCashOut;
     }
 }

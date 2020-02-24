@@ -5,16 +5,14 @@ import org.springframework.data.annotation.Id;
 public class Payment {
 
     @Id
-    public String id;
-    public String fromUserId;
-    public String toUserId;
-    public long amount;
-    public int type; // public/friends/private
+    public Long id;
+    public Long fromUserId;
+    public Long toUserId;
+    public Long amount;
+    public Long type; // public/friends/private
 
-    public Payment() {
-    }
-
-    public Payment(String fromUserId, String toUserId, long amount, int type) {
+    public Payment(Long id, Long fromUserId, Long toUserId, Long amount, Long type) {
+        this.id = id;
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.amount = amount;

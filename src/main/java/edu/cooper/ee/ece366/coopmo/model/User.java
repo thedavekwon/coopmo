@@ -11,6 +11,7 @@ public class User {
 
     @Id
     public Long id;
+
     public String name;
     public String username;
     public String password;
@@ -26,7 +27,8 @@ public class User {
     public List<Long> cashOutList;
 
     // TODO (ID)
-    public User(String name, String username, String password, String email, String handle) {
+    public User(Long id, String name, String username, String password, String email, String handle) {
+        this.id =id;
         this.name = name;
         this.username = username;
         this.password = password;
@@ -40,13 +42,13 @@ public class User {
         cashOutList = Collections.synchronizedList(new ArrayList<>());
     }
 
+    public Long getId() { return id; }
+
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
     public String getUsername() {
         return username;

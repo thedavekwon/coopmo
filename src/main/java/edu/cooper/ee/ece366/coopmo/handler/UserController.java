@@ -1,19 +1,17 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.CoopmoApplication;
 import edu.cooper.ee.ece366.coopmo.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.userDB;
 
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private static ConcurrentHashMap<Long, User> userDB = new ConcurrentHashMap<>();
-
     // TODO(error handling if something is missing)
     // @PostMapping("/createUser")
     @GetMapping("/createUser")
@@ -32,5 +30,10 @@ public class UserController {
     @GetMapping("/getUserSize")
     public Integer getUserSize() {
         return userDB.size();
+    }
+
+    @GetMapping("/getUserWithId")
+    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") Long id) {
+        return userDB.get(id);
     }
 }

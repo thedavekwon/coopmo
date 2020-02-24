@@ -1,19 +1,16 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.Payment;
-import edu.cooper.ee.ece366.coopmo.model.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.ConcurrentHashMap;
+import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.paymentDB;
 
 @RestController
 @RequestMapping("/pay")
 public class PaymentController {
-    private static ConcurrentHashMap<Long, Payment> paymentDB = new ConcurrentHashMap<>();
-
     @GetMapping("/createPayment")
     public Payment createPayment(
             @RequestParam(value = "fromUserId", defaultValue = "") Long fromUserId,

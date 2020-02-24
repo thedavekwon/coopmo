@@ -97,4 +97,12 @@ public class User {
     public void decrementBalance(long amount) {
         balance.getAndAdd(-amount);
     }
+
+    public void addPayment(Long transactionId) {
+        paymentList.add(transactionId);
+    }
+
+    public void addFriend(Long friendId) {
+        friendList.add(friendId);
+    }
 }

@@ -37,7 +37,7 @@ public class UserController {
         return userDB.get(id);
     }
 
-    @GetMapping("/acceptIncomingRequest")
+    @GetMapping("/acceptIncomingFriendRequest")
     public void acceptIncomingRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "fri" +
             "endId", defaultValue = "")Long friendId)
     {
@@ -47,7 +47,7 @@ public class UserController {
         secUser.acceptedOutgoingFriendRequest(id);
     }
 
-    @GetMapping("/sendOutgoingRequest")
+    @GetMapping("/sendOutgoingFriendRequest")
     public void sendOutgoingFriendRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "friend" +
             "Id", defaultValue = "") Long friendId)
     {

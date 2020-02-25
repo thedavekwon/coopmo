@@ -18,7 +18,7 @@ public class PaymentController {
             @RequestParam(value = "amount", defaultValue = "") Long amount,
             @RequestParam(value = "type", defaultValue = "") Long type) {
         Payment newPayment = new Payment((long) paymentDB.size(), fromUserId, toUserId, amount, type);
-        paymentDB.put(newPayment.id, newPayment);
+        paymentDB.put(newPayment.getId(), newPayment);
         return newPayment;
     }
 }

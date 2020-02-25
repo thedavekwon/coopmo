@@ -2,19 +2,25 @@ package edu.cooper.ee.ece366.coopmo.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class BankAccount {
     @Id
-    public Long id;
-    public Long routingNumber;
-    private Long balance;
+    private Long id;
+    private Long routingNumber;
+    private AtomicLong balance;
 
-    //TODO: ID
-    public BankAccount(long routingNumber, long balance) {
+    public BankAccount(long id, long routingNumber, long balance) {
+        this.id = id;
         this.routingNumber = routingNumber;
-        this.balance = balance;
+        this.balance = new AtomicLong(balance);
     }
 
-    public long getRoutingNumber() {
+    public Long getId() {
+        return id;
+    }
+
+    public Long getRoutingNumber() {
         return routingNumber;
     }
 
@@ -22,11 +28,19 @@ public class BankAccount {
         this.routingNumber = routingNumber;
     }
 
-    public long getBalance() {
-        return balance;
+    public Long getBalance() {
+        return balance.get();
     }
 
-    public void setBalance(long balance) {
-        this.balance = balance;
+    public void setBalance(long newBalance) {
+        balance.getAndSet(newBalance);
+    }
+
+    public void incrementBalance(long amount) {
+        balance.getAndAdd(amount);
+    }
+
+    public void decrementBalance(long amount) {
+        balance.getAndAdd(-amount);
     }
 }

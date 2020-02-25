@@ -4,17 +4,21 @@ import org.springframework.data.annotation.Id;
 
 public class CashOut {
     @Id
-    public Long id;
-    public Long bankAccountId;
+    private Long id;
+    private Long bankAccountId;
     private Long amount;
 
-    //TODO: ID
-    public CashOut(long bankAccountId, long amount) {
+    public CashOut(long id, long bankAccountId, long amount) {
+        this.id = id;
         this.bankAccountId = bankAccountId;
         this.amount = amount;
     }
 
-    public long getBankAccountId() {
+    public Long getId() {
+        return id;
+    }
+
+    public Long getBankAccountId() {
         return bankAccountId;
     }
 
@@ -22,7 +26,7 @@ public class CashOut {
         this.bankAccountId = bankAccountId;
     }
 
-    public long getAmount() {
+    public Long getAmount() {
         return amount;
     }
 

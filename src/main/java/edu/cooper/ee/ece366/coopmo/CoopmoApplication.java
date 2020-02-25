@@ -1,5 +1,7 @@
 package edu.cooper.ee.ece366.coopmo;
 
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
+import edu.cooper.ee.ece366.coopmo.model.CashOut;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import org.springframework.boot.SpringApplication;
@@ -9,8 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 public class CoopmoApplication {
-    public static ConcurrentHashMap<Long, Payment> paymentDB = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<Long, User> userDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Long, Payment> paymentDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Long, User> userDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Long, BankAccount> bankAccountDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Long, CashOut> cashOutDB = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         SpringApplication.run(CoopmoApplication.class, args);

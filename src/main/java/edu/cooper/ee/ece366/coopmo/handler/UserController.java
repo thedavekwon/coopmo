@@ -36,4 +36,26 @@ public class UserController {
     public User getUserWithId(@RequestParam(value = "id", defaultValue = "") Long id) {
         return userDB.get(id);
     }
+
+    @GetMapping("/acceptIncomingRequest")
+    public void acceptIncomingRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "fri" +
+            "endId", defaultValue = "")Long friendId)
+    {
+        User priUser = userDB.get(id);
+        User secUser = userDB.get(friendId);
+        priUser.acceptIncomingFriendRequest(friendId);
+        secUser.acceptedOutgoingFriendRequest(id);
+    }
+
+    @GetMapping("/sendOutgoingRequest")
+    public void sendOutgoingFriendRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "friend" +
+            "Id", defaultValue = "") Long friendId)
+    {
+        User priUser = userDB.get(id);
+        User secUser = userDB.get(friendId);
+        priUser.sendOutgoingFriendRequest(friendId);
+        secUser.receivedIncomingFriendRequest(id);
+    }
+
+
 }

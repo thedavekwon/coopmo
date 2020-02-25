@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
@@ -20,9 +21,10 @@ public class User {
 
     private AtomicLong balance = new AtomicLong();
 
-    public List<Long> incomingFriendRequestList;
-    public List<Long> outgoingFriendRequestList;
-    public List<Long> friendList;
+    public ConcurrentHashMap<Long, Boolean> incomingFriendRequestMap;
+    public ConcurrentHashMap<Long, Boolean> outgoingFriendRequestMap;
+    public ConcurrentHashMap<Long, Boolean> friendMap;
+
     public List<Long> paymentList;
     public List<Long> cashOutList;
 
@@ -35,9 +37,12 @@ public class User {
         this.email = email;
         this.handle = handle;
         balance.set(0);
-        incomingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
-        outgoingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
-        friendList = Collections.synchronizedList(new ArrayList<>());
+
+
+        incomingFriendRequestMap = new ConcurrentHashMap<>();
+        outgoingFriendRequestMap = new ConcurrentHashMap<>();
+        friendMap = new ConcurrentHashMap<>();
+
         paymentList = Collections.synchronizedList(new ArrayList<>());
         cashOutList = Collections.synchronizedList(new ArrayList<>());
     }
@@ -102,7 +107,64 @@ public class User {
         paymentList.add(transactionId);
     }
 
-    public void addFriend(Long friendId) {
-        friendList.add(friendId);
+    private void addFriend(Long friendId) {
+        friendMap.put(friendId,true);
     }
+
+    public void removeFriend(Long friendId) {
+        friendMap.remove(friendId);
+    }
+
+    public void acceptIncomingFriendRequest(Long friendId){
+        if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            incomingFriendRequestMap.remove(friendId);
+            addFriend(friendId);
+        }
+        else{
+            // Friend not found. Should do something
+            return;
+        }
+    }
+
+    // Adds incoming friend request. Returns true if no friend request sent from this user. Returns false if friend
+    // request in outgoing friend request.
+    public boolean receivedIncomingFriendRequest(Long friendId){
+        // already sent a request so just add friend
+        if(outgoingFriendRequestMap.containsKey(friendId))
+        {
+            addFriend(friendId);
+            return false;
+        }
+        else
+        {
+            incomingFriendRequestMap.put(friendId, true);
+            return true;
+        }
+    }
+
+    public void acceptedOutgoingFriendRequest(Long friendId){
+        if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            incomingFriendRequestMap.remove(friendId);
+            addFriend(friendId);
+        }
+    }
+
+    // Sends friend request. Returns true if need to send (friend request from friend isn't in incoming friend request).
+    // Returns false if already in incoming friend request.
+    public boolean sendOutgoingFriendRequest(Long friendId){
+        if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            addFriend(friendId);
+            return false;
+        }
+        else
+        {
+            outgoingFriendRequestMap.put(friendId, true);
+            return true;
+        }
+    }
+
+
 }

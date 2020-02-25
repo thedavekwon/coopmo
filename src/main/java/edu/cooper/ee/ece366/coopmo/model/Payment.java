@@ -18,4 +18,8 @@ public class Payment {
         this.amount = amount;
         this.type = type;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

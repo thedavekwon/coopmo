@@ -9,26 +9,23 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
 
+    private final List<Long> incomingFriendRequestList;
+    private final List<Long> outgoingFriendRequestList;
+    private final List<Long> friendList;
+    private final List<Long> paymentList;
+    private final List<Long> cashOutList;
+    private final List<Long> bankAccountList;
     @Id
-    public Long id;
-
-    public String name;
-    public String username;
-    public String password;
-    public String email;
-    public String handle;
-
+    private Long id;
+    private String name;
+    private String username;
+    private String password;
+    private String email;
+    private String handle;
     private AtomicLong balance = new AtomicLong();
 
-    public List<Long> incomingFriendRequestList;
-    public List<Long> outgoingFriendRequestList;
-    public List<Long> friendList;
-    public List<Long> paymentList;
-    public List<Long> cashOutList;
-
-    // TODO (ID)
     public User(Long id, String name, String username, String password, String email, String handle) {
-        this.id =id;
+        this.id = id;
         this.name = name;
         this.username = username;
         this.password = password;
@@ -40,15 +37,20 @@ public class User {
         friendList = Collections.synchronizedList(new ArrayList<>());
         paymentList = Collections.synchronizedList(new ArrayList<>());
         cashOutList = Collections.synchronizedList(new ArrayList<>());
+        bankAccountList = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUsername() {
         return username;
@@ -82,7 +84,7 @@ public class User {
         this.handle = handle;
     }
 
-    public long getBalance() {
+    public Long getBalance() {
         return balance.get();
     }
 
@@ -98,11 +100,15 @@ public class User {
         balance.getAndAdd(-amount);
     }
 
-    public void addPayment(Long transactionId) {
+    public void addPayment(long transactionId) {
         paymentList.add(transactionId);
     }
 
-    public void addFriend(Long friendId) {
+    public void addFriend(long friendId) {
         friendList.add(friendId);
+    }
+
+    public boolean checkBankAccount(long bankId) {
+        return bankAccountList.contains(bankId);
     }
 }

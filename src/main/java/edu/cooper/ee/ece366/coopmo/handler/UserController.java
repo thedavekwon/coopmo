@@ -23,7 +23,7 @@ public class UserController {
             @RequestParam(value = "password", defaultValue = "") String password,
             @RequestParam(value = "email", defaultValue = "") String email,
             @RequestParam(value = "handle", defaultValue = "") String handle) {
-        User newUser = new User((long) userDB.size(), name, username, password, email, handle);
+        User newUser = new User(name, username, password, email, handle);
         userDB.put(newUser.getId(), newUser);
         return newUser;
     }
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/requestCashOut")
-    public boolean requestCashOut(long userId, long bankId, long amount) {
+    public boolean requestCashOut(String userId, String bankId, long amount) {
         User curUser = userDB.get(userId);
         BankAccount curBankAccount = bankAccountDB.get(bankId);
         if (curUser == null || curBankAccount == null) return false;

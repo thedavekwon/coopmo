@@ -5,18 +5,20 @@ import org.springframework.data.annotation.Id;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
 
-    private final List<Long> incomingFriendRequestList;
-    private final List<Long> outgoingFriendRequestList;
-    private final List<Long> friendList;
-    private final List<Long> paymentList;
-    private final List<Long> cashOutList;
-    private final List<Long> bankAccountList;
+    private final List<String> incomingFriendRequestList;
+    private final List<String> outgoingFriendRequestList;
+    private final List<String> friendList;
+    private final List<String> paymentList;
+    private final List<String> cashOutList;
+    private final List<String> bankAccountList;
+
     @Id
-    private Long id;
+    private String id;
     private String name;
     private String username;
     private String password;
@@ -24,8 +26,8 @@ public class User {
     private String handle;
     private AtomicLong balance = new AtomicLong();
 
-    public User(Long id, String name, String username, String password, String email, String handle) {
-        this.id = id;
+    public User(String name, String username, String password, String email, String handle) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.username = username;
         this.password = password;
@@ -40,7 +42,7 @@ public class User {
         bankAccountList = Collections.synchronizedList(new ArrayList<>());
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -100,15 +102,19 @@ public class User {
         balance.getAndAdd(-amount);
     }
 
-    public void addPayment(long transactionId) {
+    public void addPayment(String transactionId) {
         paymentList.add(transactionId);
     }
 
-    public void addFriend(long friendId) {
+    public void addFriend(String friendId) {
         friendList.add(friendId);
     }
 
-    public boolean checkBankAccount(long bankId) {
+    public void addCashOut(String cashOutId) {
+        cashOutList.add(cashOutId);
+    }
+
+    public boolean checkBankAccount(String bankId) {
         return bankAccountList.contains(bankId);
     }
 }

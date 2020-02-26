@@ -12,20 +12,20 @@ public class BankAccountController {
     public BankAccount createBankAccount(
             @RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber,
             @RequestParam(value = "balance", defaultValue = "") Long balance) {
-        BankAccount newBankAccount = new BankAccount(bankAccountDB.size(), routingNumber, balance);
+        BankAccount newBankAccount = new BankAccount(routingNumber, balance);
         bankAccountDB.put(newBankAccount.getId(), newBankAccount);
         return newBankAccount;
     }
 
     @GetMapping("getBalance")
     public long getBalance(
-            @RequestParam(value = "bankAccountId", defaultValue = "") Long bankAccountId) {
+            @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
         return bankAccountDB.get(bankAccountId).getBalance();
     }
 
     @PostMapping("setBalance")
     public void setBalance(
-            @RequestParam(value = "bankAccountId", defaultValue = "") Long bankAccountId,
+            @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "balance", defaultValue = "") Long balance) {
         synchronized (bankAccountDB) {
             BankAccount curBankAccount = bankAccountDB.get(bankAccountId);

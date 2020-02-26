@@ -2,19 +2,21 @@ package edu.cooper.ee.ece366.coopmo.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.UUID;
+
 public class CashOut {
     @Id
-    private Long id;
+    private String id;
     private Long bankAccountId;
     private Long amount;
 
-    public CashOut(long id, long bankAccountId, long amount) {
-        this.id = id;
+    public CashOut(long bankAccountId, long amount) {
+        this.id = UUID.randomUUID().toString();
         this.bankAccountId = bankAccountId;
         this.amount = amount;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

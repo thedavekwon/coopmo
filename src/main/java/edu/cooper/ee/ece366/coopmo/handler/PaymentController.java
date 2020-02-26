@@ -1,6 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.Payment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,11 +31,17 @@ public class PaymentController {
         if ((userDB.get(fromUserId) == (userDB.get(toUserId)))) {
             return ResponseEntity.badRequest().body("fromUserID and toUserID fields can not be the same");
         }
+
         if (amount <= 0) {
-            return ResponseEntity,badRequest().body("Amount can not be below 0 dollars");
+            return ResponseEntity.badRequest().body("Amount can not be below 0 dollars");
         }
+
+        if (userDB.get(fromUserId).getBalance() < amount) {
+            return ResponseEntity.badRequest().body("From User does not have enough funds");
+        }
+
         if (type < 0 || type > 3) {
-            return ResponseEntity,badRequest().body("Type of transaction invalid");
+            return ResponseEntity.badRequest().body("Type of transaction invalid");
         }
 
         Payment newPayment = new Payment(fromUserId, toUserId, amount, type);

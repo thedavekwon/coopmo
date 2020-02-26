@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class BankAccount {
     @Id
-    private String id;
+    private final String id;
     private Long routingNumber;
     private AtomicLong balance;
 

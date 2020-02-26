@@ -15,7 +15,7 @@ public class CashOutController {
     public CashOut createCashOut(
             @RequestParam(value = "bankAccountId", defaultValue = "") Long bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount) {
-        CashOut newCashOut = new CashOut(cashOutDB.size(), bankAccountId, amount);
+        CashOut newCashOut = new CashOut(bankAccountId, amount);
         cashOutDB.put(newCashOut.getId(), newCashOut);
         return newCashOut;
     }

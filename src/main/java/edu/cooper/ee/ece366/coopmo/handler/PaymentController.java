@@ -13,11 +13,11 @@ import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.paymentDB;
 public class PaymentController {
     @GetMapping("/createPayment")
     public Payment createPayment(
-            @RequestParam(value = "fromUserId", defaultValue = "") Long fromUserId,
-            @RequestParam(value = "toUserId", defaultValue = "") Long toUserId,
+            @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
+            @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
             @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") Long type) {
-        Payment newPayment = new Payment((long) paymentDB.size(), fromUserId, toUserId, amount, type);
+            @RequestParam(value = "type", defaultValue = "") Integer type) {
+        Payment newPayment = new Payment(fromUserId, toUserId, amount, type);
         paymentDB.put(newPayment.getId(), newPayment);
         return newPayment;
     }

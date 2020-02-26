@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 public class CoopmoApplication {
-    public static final ConcurrentHashMap<Long, Payment> paymentDB = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<Long, User> userDB = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<Long, BankAccount> bankAccountDB = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<Long, CashOut> cashOutDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, Payment> paymentDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, User> userDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, BankAccount> bankAccountDB = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, CashOut> cashOutDB = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         SpringApplication.run(CoopmoApplication.class, args);

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class CashOut {
     @Id
-    private String id;
+    private final String id;
     private Long bankAccountId;
     private Long amount;
 

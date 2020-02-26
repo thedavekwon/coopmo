@@ -7,7 +7,7 @@ import java.util.UUID;
 public class Payment {
 
     @Id
-    private String id;
+    private final String id;
     private String fromUserId;
     private String toUserId;
     private Long amount;

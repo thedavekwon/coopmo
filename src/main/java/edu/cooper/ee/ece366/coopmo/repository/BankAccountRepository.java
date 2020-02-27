@@ -29,7 +29,7 @@ public class BankAccountRepository implements CrudRepository<BankAccount, String
 
     @Override
     public boolean existsById(String s) {
-        return false;
+        return db.containsKey(s);
     }
 
     @Override

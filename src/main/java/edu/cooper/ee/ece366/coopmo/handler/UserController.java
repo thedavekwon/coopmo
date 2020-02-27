@@ -2,6 +2,8 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
+import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,13 @@ import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.userDB;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     // TODO(error handling if something is missing)
     // @PostMapping("/createUser")
     @GetMapping("/createUser")
@@ -24,18 +33,19 @@ public class UserController {
             @RequestParam(value = "email", defaultValue = "") String email,
             @RequestParam(value = "handle", defaultValue = "") String handle) {
         User newUser = new User(name, username, password, email, handle);
-        userDB.put(newUser.getId(), newUser);
+//        userDB.put(newUser.getId(), newUser);
+        this.userRepository.save(newUser);
         return newUser;
     }
 
     // Debug Purpose
     @GetMapping("/getUserSize")
-    public Integer getUserSize() {
-        return userDB.size();
+    public Long getUserSize() {
+        return this.userRepository.count();
     }
 
     @GetMapping("/getUserWithId")
-    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") Long id) {
+    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
         return userDB.get(id);
     }
 

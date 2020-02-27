@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
-
     private final List<String> incomingFriendRequestList;
     private final List<String> outgoingFriendRequestList;
     private final List<String> friendList;
@@ -18,7 +17,7 @@ public class User {
     private final List<String> bankAccountList;
 
     @Id
-    private final String id;
+    private String id;
     private String name;
     private String username;
     private String password;

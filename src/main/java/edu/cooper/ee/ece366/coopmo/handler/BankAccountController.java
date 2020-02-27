@@ -1,6 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
+import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.bankAccountDB;
@@ -8,6 +10,13 @@ import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.bankAccountDB;
 @RestController
 @RequestMapping("/bank")
 public class BankAccountController {
+    private final BankAccountRepository bankAccountRepository;
+
+    @Autowired
+    public BankAccountController(BankAccountRepository bankAccountRepository) {
+        this.bankAccountRepository = bankAccountRepository;
+    }
+
     @GetMapping("createBankAccount")
     public BankAccount createBankAccount(
             @RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber,

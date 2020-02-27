@@ -1,6 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.Payment;
+import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,6 +13,13 @@ import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.paymentDB;
 @RestController
 @RequestMapping("/pay")
 public class PaymentController {
+    private final PaymentRepository paymentRepository;
+
+    @Autowired
+    public PaymentController(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
+
     @GetMapping("/createPayment")
     public Payment createPayment(
             @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,

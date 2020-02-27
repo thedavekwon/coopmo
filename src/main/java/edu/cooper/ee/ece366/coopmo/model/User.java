@@ -21,12 +21,12 @@ public class User {
 
     private AtomicLong balance = new AtomicLong();
 
-    public ConcurrentHashMap<Long, Boolean> incomingFriendRequestMap;
-    public ConcurrentHashMap<Long, Boolean> outgoingFriendRequestMap;
-    public ConcurrentHashMap<Long, Boolean> friendMap;
+    public final ConcurrentHashMap<Long, Boolean> incomingFriendRequestMap;
+    public final ConcurrentHashMap<Long, Boolean> outgoingFriendRequestMap;
+    public final ConcurrentHashMap<Long, Boolean> friendMap;
 
-    public List<Long> paymentList;
-    public List<Long> cashOutList;
+    public final List<Long> paymentList;
+    public final List<Long> cashOutList;
 
     // TODO (ID)
     public User(Long id, String name, String username, String password, String email, String handle) {
@@ -133,7 +133,7 @@ public class User {
         // already sent a request so just add friend
         if(outgoingFriendRequestMap.containsKey(friendId))
         {
-            addFriend(friendId);
+            acceptedOutgoingFriendRequest(friendId);
             return false;
         }
         else
@@ -144,19 +144,23 @@ public class User {
     }
 
     public void acceptedOutgoingFriendRequest(Long friendId){
-        if(incomingFriendRequestMap.containsKey(friendId))
+        if(outgoingFriendRequestMap.containsKey(friendId))
         {
-            incomingFriendRequestMap.remove(friendId);
+            outgoingFriendRequestMap.remove(friendId);
             addFriend(friendId);
         }
     }
 
     // Sends friend request. Returns true if need to send (friend request from friend isn't in incoming friend request).
-    // Returns false if already in incoming friend request.
+    // Returns false don't need to actually send.
     public boolean sendOutgoingFriendRequest(Long friendId){
-        if(incomingFriendRequestMap.containsKey(friendId))
+        if(friendMap.containsKey(friendId))
         {
-            addFriend(friendId);
+            return false;
+        }
+        else if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            acceptIncomingFriendRequest(friendId);
             return false;
         }
         else

@@ -1,18 +1,30 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.User;
+import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.userDB;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     // TODO(error handling if something is missing)
+    // TODO(duplicate in username and email)
     // @PostMapping("/createUser")
     @GetMapping("/createUser")
     public User createUser(
@@ -21,40 +33,68 @@ public class UserController {
             @RequestParam(value = "password", defaultValue = "") String password,
             @RequestParam(value = "email", defaultValue = "") String email,
             @RequestParam(value = "handle", defaultValue = "") String handle) {
-        User newUser = new User((long) userDB.size(), name, username, password, email, handle);
-        userDB.put(newUser.id, newUser);
+
+        User newUser = new User(name, username, password, email, handle);
+//        userDB.put(newUser.getId(), newUser);
+        this.userRepository.save(newUser);
         return newUser;
     }
 
     // Debug Purpose
     @GetMapping("/getUserSize")
-    public Integer getUserSize() {
-        return userDB.size();
+    public Long getUserSize() {
+        return this.userRepository.count();
     }
 
     @GetMapping("/getUserWithId")
-    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") Long id) {
-        return userDB.get(id);
+    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
+        Optional<User> curUser = userRepository.findById(id);
+        return curUser.orElse(null);
+    }
+
+    @GetMapping("/requestCashOut")
+    public boolean requestCashOut(String userId, String bankId, long amount) {
+//        User curUser = userDB.get(userId);
+//        BankAccount curBankAccount = bankAccountDB.get(bankId);
+//        if (curUser == null || curBankAccount == null) return false;
+//
+//        boolean ret = false;
+//        synchronized (userDB) {
+//            if (curUser.checkBankAccount(bankId) && curUser.getBalance() > amount) {
+//                curUser.decrementBalance(amount);
+//                curBankAccount.incrementBalance(amount);
+//                ret = true;
+//            }
+//        }
+        return false;
     }
 
     @GetMapping("/acceptIncomingFriendRequest")
-    public void acceptIncomingRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "fri" +
-            "endId", defaultValue = "")Long friendId)
-    {
-        User priUser = userDB.get(id);
-        User secUser = userDB.get(friendId);
-        priUser.acceptIncomingFriendRequest(friendId);
-        secUser.acceptedOutgoingFriendRequest(id);
+    public ResponseEntity<String> acceptIncomingRequest(
+            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+        if( id== "" || friendId == ""){
+            return ResponseEntity.badRequest().body("No User ID and/or Friend ID found");
+        }
+        else
+        {
+
+            return ResponseEntity.status(HttpStatus.OK).body("Accepted Incoming Friend Request");
+        }
+
+//        User priUser = userRepository.findById(id);
+//        User secUser = userDB.get(friendId);
+//        priUser.acceptIncomingFriendRequest(friendId);
+//        secUser.acceptedOutgoingFriendRequest(id);
     }
 
     @GetMapping("/sendOutgoingFriendRequest")
-    public void sendOutgoingFriendRequest(@RequestParam(value = "id", defaultValue = "")Long id, @RequestParam(value = "friend" +
-            "Id", defaultValue = "") Long friendId)
-    {
-        User priUser = userDB.get(id);
-        User secUser = userDB.get(friendId);
-        priUser.sendOutgoingFriendRequest(friendId);
-        secUser.receivedIncomingFriendRequest(id);
+    public void sendOutgoingFriendRequest(@RequestParam(value = "id", defaultValue = "") String id, @RequestParam(value = "friend" +
+            "Id", defaultValue = "") String friendId) {
+//        User priUser = userDB.get(id);
+//        User secUser = userDB.get(friendId);
+//        priUser.sendOutgoingFriendRequest(friendId);
+//        secUser.receivedIncomingFriendRequest(id);
     }
 
 

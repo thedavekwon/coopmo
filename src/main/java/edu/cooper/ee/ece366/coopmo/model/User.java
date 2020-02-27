@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
-
     private final List<String> incomingFriendRequestList;
     private final List<String> outgoingFriendRequestList;
     private final List<String> friendList;

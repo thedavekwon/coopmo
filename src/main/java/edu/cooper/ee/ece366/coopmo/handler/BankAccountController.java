@@ -1,9 +1,11 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
+import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.bankAccountDB;
 
 @RestController
 @RequestMapping("/bank")
@@ -26,7 +28,7 @@ public class BankAccountController {
             return ResponseEntity.badRequest().body("Balance can not be below 0 dollars");
         }
         BankAccount newBankAccount = new BankAccount(routingNumber, balance);
-        bankAccountDB.put(newBankAccount.getId(), newBankAccount);
+        bankAccountRepository.save(newBankAccount);
 
         return ResponseEntity.status(HttpStatus.OK).body("Your new BankAccount has been created");
     }
@@ -34,26 +36,21 @@ public class BankAccountController {
     @GetMapping("getBalance")
     public ResponseEntity<String> getBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
-        if (!(bankAccountDB.containsKey(bankAccountId))) {
+        if (!(bankAccountRepository.existsById(bankAccountId))) {
             return ResponseEntity.badRequest().body("Bank Account Id not valid");
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + bankAccountDB.get(bankAccountId).getBalance());
+        BankAccount curBankAccount = bankAccountRepository.findById(bankAccountId).get();
+        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + curBankAccount.getBalance());
     }
 
     @PostMapping("incrementBalance")
     public ResponseEntity<String> incrementBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount) {
-        if(!(bankAccountDB.containsKey(bankAccountId))){
+        if (!(bankAccountRepository.existsById(bankAccountId)))
             return ResponseEntity.badRequest().body("Bank Account Id not valid");
-        }
-        BankAccount curBankAccount;
-        synchronized (bankAccountDB) {
-            curBankAccount = bankAccountDB.get(bankAccountId);
-            curBankAccount.incrementBalance(amount);
-        }
+        BankAccount curBankAccount = bankAccountRepository.findById(bankAccountId).get();
+        curBankAccount.incrementBalance(amount);
         return ResponseEntity.status(HttpStatus.OK).body("Your balance has been set to $" + curBankAccount.getBalance());
     }
-
 }

@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public class CashOut {
     @Id
-    private String id;
-    private Long bankAccountId;
+    private final String id;
+    private String bankAccountId;
     private Long amount;
 
-    public CashOut(long bankAccountId, long amount) {
+    public CashOut(String bankAccountId, long amount) {
         this.id = UUID.randomUUID().toString();
         this.bankAccountId = bankAccountId;
         this.amount = amount;
@@ -20,11 +20,11 @@ public class CashOut {
         return id;
     }
 
-    public Long getBankAccountId() {
+    public String getBankAccountId() {
         return bankAccountId;
     }
 
-    public void setBankAccountId(long bankAccountId) {
+    public void setBankAccountId(String bankAccountId) {
         this.bankAccountId = bankAccountId;
     }
 

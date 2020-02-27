@@ -5,9 +5,12 @@ import org.springframework.data.annotation.Id;
 import java.util.UUID;
 
 public class Payment {
+    public static final int PUBLIC = 0;
+    public static final int FRIEND = 1;
+    public static final int PRIVATE = 2;
 
     @Id
-    private String id;
+    private final String id;
     private String fromUserId;
     private String toUserId;
     private Long amount;

@@ -1,8 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
-import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static edu.cooper.ee.ece366.coopmo.CoopmoApplication.bankAccountDB;
@@ -18,28 +16,44 @@ public class BankAccountController {
     }
 
     @GetMapping("createBankAccount")
-    public BankAccount createBankAccount(
+    public ResponseEntity<String> createBankAccount(
             @RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber,
             @RequestParam(value = "balance", defaultValue = "") Long balance) {
+        if ((routingNumber / 1000000000) < 1) {
+            return ResponseEntity.badRequest().body("Routing number must be 9 digits");
+        }
+        if (balance <= 0) {
+            return ResponseEntity.badRequest().body("Balance can not be below 0 dollars");
+        }
         BankAccount newBankAccount = new BankAccount(routingNumber, balance);
         bankAccountDB.put(newBankAccount.getId(), newBankAccount);
-        return newBankAccount;
+
+        return ResponseEntity.status(HttpStatus.OK).body("Your new BankAccount has been created");
     }
 
     @GetMapping("getBalance")
-    public long getBalance(
+    public ResponseEntity<String> getBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
-        return bankAccountDB.get(bankAccountId).getBalance();
+        if (!(bankAccountDB.containsKey(bankAccountId))) {
+            return ResponseEntity.badRequest().body("Bank Account Id not valid");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + bankAccountDB.get(bankAccountId).getBalance());
     }
 
-    @PostMapping("setBalance")
-    public void setBalance(
+    @PostMapping("incrementBalance")
+    public ResponseEntity<String> incrementBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
-            @RequestParam(value = "balance", defaultValue = "") Long balance) {
-        synchronized (bankAccountDB) {
-            BankAccount curBankAccount = bankAccountDB.get(bankAccountId);
-            curBankAccount.setBalance(balance);
+            @RequestParam(value = "amount", defaultValue = "") Long amount) {
+        if(!(bankAccountDB.containsKey(bankAccountId))){
+            return ResponseEntity.badRequest().body("Bank Account Id not valid");
         }
+        BankAccount curBankAccount;
+        synchronized (bankAccountDB) {
+            curBankAccount = bankAccountDB.get(bankAccountId);
+            curBankAccount.incrementBalance(amount);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Your balance has been set to $" + curBankAccount.getBalance());
     }
 
 }

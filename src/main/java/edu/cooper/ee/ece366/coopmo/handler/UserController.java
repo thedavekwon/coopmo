@@ -24,6 +24,7 @@ public class UserController {
     }
 
     // TODO(error handling if something is missing)
+    // TODO(duplicate in username and email)
     // @PostMapping("/createUser")
     @GetMapping("/createUser")
     public User createUser(
@@ -32,6 +33,7 @@ public class UserController {
             @RequestParam(value = "password", defaultValue = "") String password,
             @RequestParam(value = "email", defaultValue = "") String email,
             @RequestParam(value = "handle", defaultValue = "") String handle) {
+
         User newUser = new User(name, username, password, email, handle);
 //        userDB.put(newUser.getId(), newUser);
         this.userRepository.save(newUser);

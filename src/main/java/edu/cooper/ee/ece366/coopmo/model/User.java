@@ -17,7 +17,7 @@ public class User {
     private final List<String> bankAccountList;
 
     @Id
-    private String id;
+    private final String id;
     private String name;
     private String username;
     private String password;

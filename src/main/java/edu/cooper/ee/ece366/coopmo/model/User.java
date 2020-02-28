@@ -121,15 +121,16 @@ public class User {
         friendMap.remove(friendId);
     }
 
-    public void acceptIncomingFriendRequest(String friendId){
+    public boolean acceptIncomingFriendRequest(String friendId){
         if(incomingFriendRequestMap.containsKey(friendId))
         {
             incomingFriendRequestMap.remove(friendId);
             addFriend(friendId);
+            return true;
         }
         else{
             // Friend not found. Should do something
-            return;
+            return false;
         }
     }
 

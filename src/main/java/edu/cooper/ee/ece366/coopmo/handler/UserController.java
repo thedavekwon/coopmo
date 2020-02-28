@@ -2,6 +2,7 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,12 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     // TODO(error handling if something is missing)
@@ -46,6 +49,7 @@ public class UserController {
         return this.userRepository.count();
     }
 
+
     @GetMapping("/getUserWithId")
     public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
         Optional<User> curUser = userRepository.findById(id);
@@ -69,32 +73,38 @@ public class UserController {
         return false;
     }
 
+    //service implemented
     @GetMapping("/acceptIncomingFriendRequest")
     public ResponseEntity<String> acceptIncomingRequest(
             @RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
-        if( id== "" || friendId == ""){
+        if(id.equals("") || friendId.equals("")){
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID found");
         }
         else
         {
-
-            return ResponseEntity.status(HttpStatus.OK).body("Accepted Incoming Friend Request");
+            if(userService.acceptIncomingRequest(id,friendId))
+                return ResponseEntity.status(HttpStatus.OK).body("Accepted Incoming Friend Request");
+            else
+                return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found in Incoming Requests");
         }
-
-//        User priUser = userRepository.findById(id);
-//        User secUser = userDB.get(friendId);
-//        priUser.acceptIncomingFriendRequest(friendId);
-//        secUser.acceptedOutgoingFriendRequest(id);
     }
 
+    //service implemented
     @GetMapping("/sendOutgoingFriendRequest")
-    public void sendOutgoingFriendRequest(@RequestParam(value = "id", defaultValue = "") String id, @RequestParam(value = "friend" +
-            "Id", defaultValue = "") String friendId) {
-//        User priUser = userDB.get(id);
-//        User secUser = userDB.get(friendId);
-//        priUser.sendOutgoingFriendRequest(friendId);
-//        secUser.receivedIncomingFriendRequest(id);
+    public ResponseEntity<String> sendOutgoingFriendRequest(
+            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+        if(id.equals("") || friendId.equals("")){
+            return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
+        }
+        else
+        {
+            if(userService.sendOutgoingFriendRequest(id, friendId))
+                return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
+            else
+                return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
+        }
     }
 
 

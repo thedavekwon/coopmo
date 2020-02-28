@@ -6,15 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
-    private final List<String> incomingFriendRequestList;
-    private final List<String> outgoingFriendRequestList;
-    private final List<String> friendList;
-    private final List<String> paymentList;
-    private final List<String> cashOutList;
-    private final List<String> bankAccountList;
 
     @Id
     private final String id;
@@ -25,6 +20,16 @@ public class User {
     private String handle;
     private AtomicLong balance = new AtomicLong();
 
+    public final ConcurrentHashMap<String, Boolean> incomingFriendRequestMap;
+    public final ConcurrentHashMap<String, Boolean> outgoingFriendRequestMap;
+    public final ConcurrentHashMap<String, Boolean> friendMap;
+
+    private final List<String> paymentList;
+    private final List<String> cashOutList;
+    private final List<String> bankAccountList;
+
+
+    // TODO (ID)
     public User(String name, String username, String password, String email, String handle) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
@@ -33,9 +38,12 @@ public class User {
         this.email = email;
         this.handle = handle;
         balance.set(0);
-        incomingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
-        outgoingFriendRequestList = Collections.synchronizedList(new ArrayList<>());
-        friendList = Collections.synchronizedList(new ArrayList<>());
+
+
+        incomingFriendRequestMap = new ConcurrentHashMap<>();
+        outgoingFriendRequestMap = new ConcurrentHashMap<>();
+        friendMap = new ConcurrentHashMap<>();
+
         paymentList = Collections.synchronizedList(new ArrayList<>());
         cashOutList = Collections.synchronizedList(new ArrayList<>());
         bankAccountList = Collections.synchronizedList(new ArrayList<>());
@@ -105,9 +113,71 @@ public class User {
         paymentList.add(transactionId);
     }
 
-    public void addFriend(String friendId) {
-        friendList.add(friendId);
+    private void addFriend(String friendId) {
+        friendMap.put(friendId,true);
     }
+
+    public void removeFriend(String friendId) {
+        friendMap.remove(friendId);
+    }
+
+    public boolean acceptIncomingFriendRequest(String friendId){
+        if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            incomingFriendRequestMap.remove(friendId);
+            addFriend(friendId);
+            return true;
+        }
+        else{
+            // Friend not found. Should do something
+            return false;
+        }
+    }
+
+    // Adds incoming friend request. Returns true if no friend request sent from this user. Returns false if friend
+    // request in outgoing friend request.
+    public boolean receivedIncomingFriendRequest(String friendId){
+        // already sent a request so just add friend
+        if(outgoingFriendRequestMap.containsKey(friendId))
+        {
+            acceptedOutgoingFriendRequest(friendId);
+            return false;
+        }
+        else
+        {
+            incomingFriendRequestMap.put(friendId, true);
+            return true;
+        }
+    }
+
+    public void acceptedOutgoingFriendRequest(String friendId){
+        if(outgoingFriendRequestMap.containsKey(friendId))
+        {
+            outgoingFriendRequestMap.remove(friendId);
+            addFriend(friendId);
+        }
+    }
+
+    // Sends friend request. Returns true if need to send (friend request from friend isn't in incoming friend request).
+    // Returns false don't need to actually send.
+    public boolean sendOutgoingFriendRequest(String friendId){
+        if(friendMap.containsKey(friendId))
+        {
+            return false;
+        }
+        else if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            acceptIncomingFriendRequest(friendId);
+            return false;
+        }
+        else
+        {
+            outgoingFriendRequestMap.put(friendId, true);
+            return true;
+        }
+    }
+
+
 
     public void addCashOut(String cashOutId) {
         cashOutList.add(cashOutId);

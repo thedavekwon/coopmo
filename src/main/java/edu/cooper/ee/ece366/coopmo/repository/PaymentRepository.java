@@ -29,7 +29,7 @@ public class PaymentRepository implements CrudRepository<Payment, String> {
 
     @Override
     public boolean existsById(String s) {
-        return false;
+        return db.containsKey(s);
     }
 
     @Override

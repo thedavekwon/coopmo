@@ -6,13 +6,9 @@ import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -34,10 +30,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // TODO(error handling if something is missing)
-    // TODO(duplicate in username and email)
-    // @PostMapping("/createUser")
-    @GetMapping("/createUser")
+    @PostMapping("/createUser")
     public ResponseEntity<String> createUser(
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "username", defaultValue = "") String username,
@@ -69,7 +62,7 @@ public class UserController {
         return curUser.orElse(null);
     }
 
-    @GetMapping("/requestCashOut")
+    @PostMapping("/requestCashOut")
     public ResponseEntity<String> requestCashOut(@RequestParam(value = "userId", defaultValue = "") String userId, @RequestParam(value = "bankId", defaultValue = "") String bankId, @RequestParam(value = "amount", defaultValue = "0") long amount) {
         if (amount < 0) {
             return ResponseEntity.badRequest().body("Cannot cash out a negative amount of money");
@@ -83,7 +76,7 @@ public class UserController {
     }
 
     //service implemented
-    @GetMapping("/acceptIncomingFriendRequest")
+    @PostMapping("/acceptIncomingFriendRequest")
     public ResponseEntity<String> acceptIncomingRequest(
             @RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -100,7 +93,7 @@ public class UserController {
     }
 
     //service implemented
-    @GetMapping("/sendOutgoingFriendRequest")
+    @PostMapping("/sendOutgoingFriendRequest")
     public ResponseEntity<String> sendOutgoingFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

@@ -10,7 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.Optional;
+
+
+
 
 @Service
 public class UserService {
@@ -21,45 +25,135 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-
-    public boolean acceptIncomingRequest(String id, String friendId) {
-        Optional<User> priUser = userRepository.findById(id);
-        Optional<User> secUser = userRepository.findById(friendId);
-
-        if(!priUser.isPresent() || !secUser.isPresent()) {
-            return false;
-        }
-        else{
-            //if compare to returns pos use that user first
-            //else use other
-            if(id.compareTo(friendId) > 0){
-                synchronized (priUser.get()){
-                    synchronized (secUser.get()){
-                        if(!priUser.get().acceptIncomingFriendRequest(friendId))
-                            return false;
-                        secUser.get().acceptedOutgoingFriendRequest(id);
-                    }
-                }
-            }
-            else{
-                synchronized (secUser.get()){
-                    synchronized (priUser.get()){
-                        if(!priUser.get().acceptIncomingFriendRequest(friendId))
-                            return false;
-                        secUser.get().acceptedOutgoingFriendRequest(id);
-                    }
-                }
-            }
+    private boolean editUsername(String id, String newUname){
+        Optional<User> user = userRepository.findById(id);
+        if (userRepository.changeUname(user.get().getUsername(), newUname, id))
+        {
+            user.get().setUsername(newUname);
             return true;
+        }
+        else
+            return false;
+    }
+
+    private boolean editEmail(String id, String newEmail){
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent())
+            return false;
+        else {
+            return userRepository.changeEmail(user.get().getEmail(), newEmail, id);
         }
     }
 
-    public boolean sendOutgoingFriendRequest(String id, String friendId) {
+    private boolean editHandle(String id, String newHandle){
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent())
+            return false;
+        else {
+            return userRepository.changeHandle(user.get().getHandle(), newHandle, id);
+        }
+    }
+
+    // -1 is no user with id exists
+    // -2 is Username exists already
+    // -3 Email already exists
+    // -4 Handle already exists
+    public ArrayList<Integer> editProfile(String id, String newName, String newUname, String newPassword,
+                               String newEmail, String newHandle){
+        ArrayList<Integer> errors = new ArrayList<>();
+        Optional<User> user = userRepository.findById(id);
+        if(!user.isPresent()) {
+            errors.add(-1);
+            return errors;
+        }
+        else{
+            user.get().setName(newName);
+            user.get().setPassword(newPassword);
+            if(editUsername(id, newUname))
+                errors.add(-2);
+            if(editEmail(id, newEmail))
+                errors.add(-3);
+            if(editHandle(id, newHandle))
+                errors.add(-4);
+            return errors;
+        }
+    }
+
+    // This is also used to decline Friend Requests
+    // -1 is user not found
+    // -2 if friend not found in incoming friend request
+    // 0 if success
+    public int cancelOutgoingFriendRequest(String id, String friendId){
         Optional<User> priUser = userRepository.findById(id);
         Optional<User> secUser = userRepository.findById(friendId);
 
         if(!priUser.isPresent() || !secUser.isPresent()) {
-            return false;
+            return -1;
+        }
+        else {
+            //if compare to returns pos use that user first
+            //else use other
+            if (id.compareTo(friendId) > 0) {
+                synchronized (priUser.get()) {
+                    synchronized (secUser.get()) {
+                        priUser.get().deleteOutgoingFriendRequest(friendId);
+                        secUser.get().deleteIncomingFriendRequest(id);
+                    }
+                }
+            }
+            else{
+                synchronized (secUser.get()) {
+                    synchronized (priUser.get()) {
+                        priUser.get().deleteOutgoingFriendRequest(friendId);
+                        secUser.get().deleteIncomingFriendRequest(id);
+                    }
+                }
+            }
+            return 0;
+        }
+    }
+
+    // -1 if user not found
+    public int acceptIncomingRequest(String id, String friendId) {
+        Optional<User> priUser = userRepository.findById(id);
+        Optional<User> secUser = userRepository.findById(friendId);
+
+        if(!priUser.isPresent() || !secUser.isPresent()) {
+            return -1;
+        }
+        else{
+            //if compare to returns pos use that user first
+            //else use other
+            if(id.compareTo(friendId) > 0){
+                synchronized (priUser.get()){
+                    synchronized (secUser.get()){
+                        if(!priUser.get().acceptIncomingFriendRequest(friendId))
+                            return -2;
+                        secUser.get().acceptedOutgoingFriendRequest(id);
+                    }
+                }
+            }
+            else{
+                synchronized (secUser.get()){
+                    synchronized (priUser.get()){
+                        if(!priUser.get().acceptIncomingFriendRequest(friendId))
+                            return -2;
+                        secUser.get().acceptedOutgoingFriendRequest(id);
+                    }
+                }
+            }
+            return 0;
+        }
+    }
+
+    // -1 if users not found
+    // -2 if already friends
+    public int sendOutgoingFriendRequest(String id, String friendId) {
+        Optional<User> priUser = userRepository.findById(id);
+        Optional<User> secUser = userRepository.findById(friendId);
+
+        if(!priUser.isPresent() || !secUser.isPresent()) {
+            return -1;
         }
         else{
             //if compare to returns pos use that user first
@@ -80,7 +174,7 @@ public class UserService {
                     }
                 }
             }
-            return true;
+            return 0;
         }
     }
 }

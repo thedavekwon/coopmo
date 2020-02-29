@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.repository;
 
-import edu.cooper.ee.ece366.coopmo.model.CashOut;
+import edu.cooper.ee.ece366.coopmo.model.Cash;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,22 +8,22 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class CashOutRepository implements CrudRepository<CashOut, String> {
-    private static final ConcurrentHashMap<String, CashOut> db = new ConcurrentHashMap<>();
+public class CashRepository implements CrudRepository<Cash, String> {
+    private static final ConcurrentHashMap<String, Cash> db = new ConcurrentHashMap<>();
 
     @Override
-    public <S extends CashOut> S save(S s) {
+    public <S extends Cash> S save(S s) {
         db.put(s.getId(), s);
         return s;
     }
 
     @Override
-    public <S extends CashOut> Iterable<S> saveAll(Iterable<S> iterable) {
+    public <S extends Cash> Iterable<S> saveAll(Iterable<S> iterable) {
         return null;
     }
 
     @Override
-    public Optional<CashOut> findById(String s) {
+    public Optional<Cash> findById(String s) {
         return Optional.ofNullable(db.get(s));
     }
 
@@ -33,12 +33,12 @@ public class CashOutRepository implements CrudRepository<CashOut, String> {
     }
 
     @Override
-    public Iterable<CashOut> findAll() {
+    public Iterable<Cash> findAll() {
         return null;
     }
 
     @Override
-    public Iterable<CashOut> findAllById(Iterable<String> iterable) {
+    public Iterable<Cash> findAllById(Iterable<String> iterable) {
         return null;
     }
 
@@ -53,12 +53,12 @@ public class CashOutRepository implements CrudRepository<CashOut, String> {
     }
 
     @Override
-    public void delete(CashOut cashOut) {
+    public void delete(Cash cash) {
 
     }
 
     @Override
-    public void deleteAll(Iterable<? extends CashOut> iterable) {
+    public void deleteAll(Iterable<? extends Cash> iterable) {
 
     }
 

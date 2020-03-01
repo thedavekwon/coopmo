@@ -5,9 +5,10 @@ import org.springframework.data.annotation.Id;
 import java.util.UUID;
 
 public class Payment {
-    public static final int PUBLIC = 0;
-    public static final int FRIEND = 1;
-    public static final int PRIVATE = 2;
+
+    enum paymentType {
+        PUBLIC, FRIEND, PRIVATE
+    }
 
     @Id
     private final String id;

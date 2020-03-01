@@ -32,7 +32,7 @@ public class BankAccountService {
             return -1;
         }
         BankAccount bankAccount = new BankAccount(routingNumber, balance);
-        curUser.get().addBankAccount(bankAccount.getId());
+        userRepository.getBankAccountList().get(userId).add(bankAccount.getId());
         bankAccountRepository.save(bankAccount);
         return 0;
     }

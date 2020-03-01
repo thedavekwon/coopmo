@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -49,6 +48,8 @@ public class UserController {
             return ResponseEntity.badRequest().body("Please enter a valid email address");
         }
 
+        User newUser = userService.createUser(name, username, password, email, handle);
+        if (newUser == null) return ResponseEntity.badRequest().body("Duplicate");
         return ResponseEntity.status(HttpStatus.OK).body("Valid user creation request");
     }
 
@@ -147,7 +148,7 @@ public class UserController {
         if (id.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
         } else {
-            int ret_val = userService.sendOutgoingFriendRequest(id, friendId);
+            int ret_val = userService.sendOutRequest(id, friendId);
             if (ret_val == 0)
                 return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
             else if (ret_val == -1)

@@ -1,7 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.google.gson.Gson;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -155,9 +152,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Valid cash out request");
     }
 
-
-
-    @GetMapping("/acceptIncomingFriendRequest")
+    @PostMapping("/acceptIncomingFriendRequest")
     public ResponseEntity<String> acceptIncomingRequest(
             @RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -173,7 +168,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/sendOutgoingFriendRequest")
+    @PostMapping("/sendOutgoingFriendRequest")
     public ResponseEntity<String> sendOutgoingFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String id,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

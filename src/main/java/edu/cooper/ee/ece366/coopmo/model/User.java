@@ -195,8 +195,6 @@ public class User {
         }
     }
 
-
-
     public void addCashOut(String cashOutId) {
         cashOutList.add(cashOutId);
     }

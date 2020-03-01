@@ -10,10 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class UserRepository implements CrudRepository<User, String> {
     private static final ConcurrentHashMap<String, User> db = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, String> unameMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, String> usernameMap = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, String> emailMap = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, String> handleMap = new ConcurrentHashMap<>();
-
 
 
     @Override
@@ -67,24 +66,27 @@ public class UserRepository implements CrudRepository<User, String> {
 
     }
 
-    public boolean insertUname(String uname, String id)
-    {
-        if(unameMap.containsKey(uname) && !unameMap.get(uname).equals(id))
+    public String getIdfromUsername(String username) {
+        if (usernameMap.containsKey(username)) return usernameMap.get(username);
+        return null;
+    }
+
+    public boolean insertUname(String username, String id) {
+        if (usernameMap.containsKey(username) && !usernameMap.get(username).equals(id))
             return false;
-        else{
-            unameMap.put(uname, id);
+        else {
+            usernameMap.put(username, id);
             return true;
         }
     }
 
-    public boolean changeUname(String uname, String newUname, String id)
-    {
-        synchronized (unameMap) {
-            if(uname.equals(newUname))
+    public boolean changeUname(String username, String newUname, String id) {
+        synchronized (usernameMap) {
+            if (username.equals(newUname))
                 return true;
-            else if (unameMap.containsKey(uname) && !unameMap.containsKey(newUname)) {
-                unameMap.remove(uname);
-                unameMap.put(newUname, id);
+            else if (usernameMap.containsKey(username) && !usernameMap.containsKey(newUname)) {
+                usernameMap.remove(username);
+                usernameMap.put(newUname, id);
                 return true;
             } else {
                 return false;
@@ -92,22 +94,22 @@ public class UserRepository implements CrudRepository<User, String> {
         }
     }
 
-    public boolean containsUname(String uname) { return unameMap.containsKey(uname); }
+    public boolean containsUname(String username) {
+        return usernameMap.containsKey(username);
+    }
 
-    public boolean insertEmail(String email, String id)
-    {
-        if(emailMap.containsKey(email) && !emailMap.get(email).equals(id))
+    public boolean insertEmail(String email, String id) {
+        if (emailMap.containsKey(email) && !emailMap.get(email).equals(id))
             return false;
-        else{
+        else {
             emailMap.put(email, id);
             return true;
         }
     }
 
-    public boolean changeEmail(String email, String newEmail, String id)
-    {
+    public boolean changeEmail(String email, String newEmail, String id) {
         synchronized (emailMap) {
-            if(email.equals(newEmail))
+            if (email.equals(newEmail))
                 return true;
             else if (emailMap.containsKey(email) && !emailMap.containsKey(newEmail)) {
                 emailMap.remove(email);
@@ -119,20 +121,20 @@ public class UserRepository implements CrudRepository<User, String> {
         }
     }
 
-    public boolean containsEmail(String email) { return emailMap.containsKey(email); }
+    public boolean containsEmail(String email) {
+        return emailMap.containsKey(email);
+    }
 
-    public boolean insertHandle(String handle, String id)
-    {
-        if(handleMap.containsKey(handle) && !handleMap.get(handle).equals(id))
+    public boolean insertHandle(String handle, String id) {
+        if (handleMap.containsKey(handle) && !handleMap.get(handle).equals(id))
             return false;
-        else{
+        else {
             handleMap.put(handle, id);
             return true;
         }
     }
 
-    public boolean changeHandle(String handle, String newHandle, String id)
-    {
+    public boolean changeHandle(String handle, String newHandle, String id) {
         synchronized (handleMap) {
             if (handle.equals(newHandle))
                 return true;
@@ -147,7 +149,9 @@ public class UserRepository implements CrudRepository<User, String> {
     }
 
 
-    public boolean containsHandle(String handle) { return handleMap.containsKey(handle); }
+    public boolean containsHandle(String handle) {
+        return handleMap.containsKey(handle);
+    }
 
 
     // https://stackoverflow.com/questions/47123556/get-and-remove-all-current-entries-from-a-concurrentmap

@@ -48,7 +48,7 @@ public class CashService {
                 }
                 Cash newCash = new Cash(userId, bankAccountId, amount);
 
-                curUser.get().addCashOut(newCash.getId());
+                userRepository.getCashList().get(userId).add(newCash.getId());
                 curUser.get().decrementBalance(amount);
                 curBankAccount.get().incrementBalance(amount);
                 cashRepository.save(newCash);
@@ -60,7 +60,7 @@ public class CashService {
                 }
                 Cash newCash = new Cash(userId, bankAccountId, amount);
 
-                curUser.get().addCashOut(newCash.getId());
+                userRepository.getCashList().get(userId).add(newCash.getId());
                 curUser.get().decrementBalance(amount);
                 curBankAccount.get().incrementBalance(amount);
                 cashRepository.save(newCash);

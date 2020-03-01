@@ -25,6 +25,33 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
+    public User createUser(String name, String username, String password, String email, String handle) {
+        User new_user = new User(name, username, password, email, handle);
+        if(!userRepository.insertEmail(email, new_user.getId()) || !userRepository.insertUname(username, new_user.getId()) || !userRepository.insertHandle(handle, new_user.getId()))
+            return null;
+        else
+            userRepository.save(new_user);
+        return new_user;
+    }
+
+    // empty if no errors
+    // -2 is Username exists already
+    // -3 Email already exists
+    // -4 Handle already exists
+    public ArrayList<Integer> check_if_taken(String uname, String email, String handle){
+        ArrayList<Integer> errors = new ArrayList<>();
+
+        if(userRepository.containsUname(uname))
+            errors.add(-2);
+        if(userRepository.containsEmail(email))
+            errors.add(-3);
+        if(userRepository.containsHandle(handle))
+            errors.add(-4);
+        return errors;
+
+    }
+
     private boolean editUsername(String id, String newUname){
         Optional<User> user = userRepository.findById(id);
         if (userRepository.changeUname(user.get().getUsername(), newUname, id))
@@ -54,6 +81,7 @@ public class UserService {
         }
     }
 
+    // empty if no errors
     // -1 is no user with id exists
     // -2 is Username exists already
     // -3 Email already exists
@@ -69,11 +97,11 @@ public class UserService {
         else{
             user.get().setName(newName);
             user.get().setPassword(newPassword);
-            if(editUsername(id, newUname))
+            if(!editUsername(id, newUname))
                 errors.add(-2);
-            if(editEmail(id, newEmail))
+            if(!editEmail(id, newEmail))
                 errors.add(-3);
-            if(editHandle(id, newHandle))
+            if(!editHandle(id, newHandle))
                 errors.add(-4);
             return errors;
         }

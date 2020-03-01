@@ -28,6 +28,7 @@ public class UserController {
     }
 
     private boolean validateEmail(String email) {
+        // email regex taken from https://howtodoinjava.com/regex/java-regex-validate-email-address/
         String EMAIL_REGEX = "^(.+)@(.+)$";
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
     }

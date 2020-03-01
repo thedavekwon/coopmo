@@ -183,29 +183,29 @@ public class User {
     // Sends friend request. Returns true if sent or accepted. Returns false if already friends
 
     public boolean sendOutgoingFriendRequest(String friendId){
-        if(friendMap.containsKey(friendId))
-        {
+        if (friendMap.containsKey(friendId)) {
             return false;
-        }
-        else if(incomingFriendRequestMap.containsKey(friendId))
-        {
+        } else if (incomingFriendRequestMap.containsKey(friendId)) {
             acceptIncomingFriendRequest(friendId);
             return true;
         }
         else
         {
+
             outgoingFriendRequestMap.put(friendId, true);
             return true;
         }
     }
 
-
-
     public void addCashOut(String cashOutId) {
         cashOutList.add(cashOutId);
     }
 
-    public boolean checkBankAccount(String bankId) {
-        return bankAccountList.contains(bankId);
+    public boolean checkBankAccount(String bankAccountId) {
+        return bankAccountList.contains(bankAccountId);
+    }
+
+    public void addBankAccount(String bankAccountId) {
+        bankAccountList.add(id);
     }
 }

@@ -11,22 +11,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
 
+    public final ConcurrentHashMap<String, Boolean> incomingFriendRequestMap;
+    public final ConcurrentHashMap<String, Boolean> outgoingFriendRequestMap;
+    public final ConcurrentHashMap<String, Boolean> friendMap;
     @Id
     private final String id;
+    private final List<String> paymentList;
+    private final List<String> cashOutList;
+    private final List<String> bankAccountList;
     private String name;
     private String username;
     private String password;
     private String email;
     private String handle;
     private AtomicLong balance = new AtomicLong();
-
-    public final ConcurrentHashMap<String, Boolean> incomingFriendRequestMap;
-    public final ConcurrentHashMap<String, Boolean> outgoingFriendRequestMap;
-    public final ConcurrentHashMap<String, Boolean> friendMap;
-
-    private final List<String> paymentList;
-    private final List<String> cashOutList;
-    private final List<String> bankAccountList;
 
 
     // TODO (ID)
@@ -114,67 +112,58 @@ public class User {
     }
 
     private void addFriend(String friendId) {
-        friendMap.put(friendId,true);
+        friendMap.put(friendId, true);
     }
 
     public void removeFriend(String friendId) {
         friendMap.remove(friendId);
     }
 
-    public boolean deleteIncomingFriendRequest(String friendId){
-        if(incomingFriendRequestMap.containsKey(friendId))
-        {
+    public boolean deleteIncomingFriendRequest(String friendId) {
+        if (incomingFriendRequestMap.containsKey(friendId)) {
             incomingFriendRequestMap.remove(friendId);
             return true;
-        }
-        else
+        } else
             return false;
     }
 
-    public boolean deleteOutgoingFriendRequest(String friendId){
-        if(outgoingFriendRequestMap.containsKey(friendId)) {
+    public boolean deleteOutgoingFriendRequest(String friendId) {
+        if (outgoingFriendRequestMap.containsKey(friendId)) {
             outgoingFriendRequestMap.remove(friendId);
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
 
-    public boolean acceptIncomingFriendRequest(String friendId){
-        if(incomingFriendRequestMap.containsKey(friendId))
-        {
+    public boolean acceptIncomingFriendRequest(String friendId) {
+        if (incomingFriendRequestMap.containsKey(friendId)) {
             incomingFriendRequestMap.remove(friendId);
             addFriend(friendId);
             return true;
-        }
-        else{
+        } else {
             // Friend not found. Should do something
             return false;
         }
     }
 
     // Adds incoming friend request. Returns true if accepted or put into incoming Friend Request Map
-    public boolean receivedIncomingFriendRequest(String friendId){
+    public boolean receivedIncomingFriendRequest(String friendId) {
         // already sent a request so just add friend
-        if(friendMap.containsKey(friendId))
+        if (friendMap.containsKey(friendId))
             return false;
-        else if(outgoingFriendRequestMap.containsKey(friendId))
-        {
+        else if (outgoingFriendRequestMap.containsKey(friendId)) {
             acceptedOutgoingFriendRequest(friendId);
             return true;
-        }
-        else
-        {
+        } else {
             incomingFriendRequestMap.put(friendId, true);
             return true;
         }
     }
 
-    public void acceptedOutgoingFriendRequest(String friendId){
-        if(outgoingFriendRequestMap.containsKey(friendId))
-        {
+    public void acceptedOutgoingFriendRequest(String friendId) {
+        if (outgoingFriendRequestMap.containsKey(friendId)) {
             outgoingFriendRequestMap.remove(friendId);
             addFriend(friendId);
         }
@@ -182,15 +171,13 @@ public class User {
 
     // Sends friend request. Returns true if sent or accepted. Returns false if already friends
 
-    public boolean sendOutgoingFriendRequest(String friendId){
+    public boolean sendOutgoingFriendRequest(String friendId) {
         if (friendMap.containsKey(friendId)) {
             return false;
         } else if (incomingFriendRequestMap.containsKey(friendId)) {
             acceptIncomingFriendRequest(friendId);
             return true;
-        }
-        else
-        {
+        } else {
 
             outgoingFriendRequestMap.put(friendId, true);
             return true;

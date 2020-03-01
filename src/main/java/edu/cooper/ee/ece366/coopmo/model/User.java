@@ -121,6 +121,27 @@ public class User {
         friendMap.remove(friendId);
     }
 
+    public boolean deleteIncomingFriendRequest(String friendId){
+        if(incomingFriendRequestMap.containsKey(friendId))
+        {
+            incomingFriendRequestMap.remove(friendId);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public boolean deleteOutgoingFriendRequest(String friendId){
+        if(outgoingFriendRequestMap.containsKey(friendId)) {
+            outgoingFriendRequestMap.remove(friendId);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+
     public boolean acceptIncomingFriendRequest(String friendId){
         if(incomingFriendRequestMap.containsKey(friendId))
         {
@@ -134,14 +155,15 @@ public class User {
         }
     }
 
-    // Adds incoming friend request. Returns true if no friend request sent from this user. Returns false if friend
-    // request in outgoing friend request.
+    // Adds incoming friend request. Returns true if accepted or put into incoming Friend Request Map
     public boolean receivedIncomingFriendRequest(String friendId){
         // already sent a request so just add friend
-        if(outgoingFriendRequestMap.containsKey(friendId))
+        if(friendMap.containsKey(friendId))
+            return false;
+        else if(outgoingFriendRequestMap.containsKey(friendId))
         {
             acceptedOutgoingFriendRequest(friendId);
-            return false;
+            return true;
         }
         else
         {
@@ -158,15 +180,18 @@ public class User {
         }
     }
 
-    // Sends friend request. Returns true if need to send (friend request from friend isn't in incoming friend request).
-    // Returns false don't need to actually send.
+    // Sends friend request. Returns true if sent or accepted. Returns false if already friends
+
     public boolean sendOutgoingFriendRequest(String friendId){
         if (friendMap.containsKey(friendId)) {
             return false;
         } else if (incomingFriendRequestMap.containsKey(friendId)) {
             acceptIncomingFriendRequest(friendId);
-            return false;
-        } else {
+            return true;
+        }
+        else
+        {
+
             outgoingFriendRequestMap.put(friendId, true);
             return true;
         }

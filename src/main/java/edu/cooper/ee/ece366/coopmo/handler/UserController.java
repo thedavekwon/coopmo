@@ -3,6 +3,8 @@ package edu.cooper.ee.ece366.coopmo.handler;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
+import net.minidev.json.JSONObject;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -33,24 +36,58 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<String> createUser(
+    @ResponseBody
+    public ResponseEntity<?> createUser(
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "username", defaultValue = "") String username,
             @RequestParam(value = "password", defaultValue = "") String password,
             @RequestParam(value = "email", defaultValue = "") String email,
             @RequestParam(value = "handle", defaultValue = "") String handle) {
+        JSONObject respBody = new JSONObject();
 
         if (name.equals("") || username.equals("") || password.equals("") || email.equals("") || handle.equals("")) {
-            return ResponseEntity.badRequest().body("One or more of submitted name, username, password, email, or handle is empty");
+            respBody.put("message", "One or more of submitted name, username, password, email, or handle is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
         if (!validateEmail(email)) {
-            return ResponseEntity.badRequest().body("Please enter a valid email address");
+            respBody.put("message", "Please enter a valid email address");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
-        User newUser = userService.createUser(name, username, password, email, handle);
-        if (newUser == null) return ResponseEntity.badRequest().body("Duplicate");
-        return ResponseEntity.status(HttpStatus.OK).body("Valid user creation request");
+        ArrayList<Integer> errors = userService.check_if_taken(username, email,handle);
+        if(errors.isEmpty()) {
+            User new_user = userService.createUser(name,username,password, email, handle);
+            if (new_user == null) {
+                respBody.put("user", new_user);
+                respBody.put("message", "Error Creating User");
+                return new ResponseEntity<>(respBody, HttpStatus.SERVICE_UNAVAILABLE);
+            }
+            else{
+                respBody.put("user", new_user);
+                respBody.put("message", "Successfully created user");
+                return new ResponseEntity<>(respBody, HttpStatus.OK);
+            }
+
+        }
+        else{
+            ArrayList<String> error_msg = new ArrayList<>();
+            for (Integer error : errors) {
+                switch (error) {
+                    case -1:
+                        error_msg.add("Username Taken");
+                        break;
+                    case -2:
+                        error_msg.add("Email Taken");
+                        break;
+                    default:
+                        error_msg.add("Handle taken");
+                        break;
+                }
+            }
+            respBody.put("error messages", error_msg);
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/getUserId")

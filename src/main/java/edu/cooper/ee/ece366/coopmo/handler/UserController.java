@@ -70,15 +70,17 @@ public class UserController {
             ArrayList<String> error_msg = new ArrayList<>();
             for (Integer error : errors) {
                 switch (error) {
-                    case -1:
+                    case -2:
                         error_msg.add("Username Taken");
                         break;
-                    case -2:
+                    case -3:
                         error_msg.add("Email Taken");
                         break;
-                    default:
+                    case -4:
                         error_msg.add("Handle taken");
                         break;
+                    default:
+                        error_msg.add("Unknown erorr");
                 }
             }
             respBody.put("error messages", error_msg);

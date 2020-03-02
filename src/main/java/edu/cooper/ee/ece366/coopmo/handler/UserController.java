@@ -4,7 +4,6 @@ import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
 import net.minidev.json.JSONObject;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -55,22 +53,20 @@ public class UserController {
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
-        ArrayList<Integer> errors = userService.check_if_taken(username, email,handle);
-        if(errors.isEmpty()) {
-            User new_user = userService.createUser(name,username,password, email, handle);
+        ArrayList<Integer> errors = userService.check_if_taken(username, email, handle);
+        if (errors.isEmpty()) {
+            User new_user = userService.createUser(name, username, password, email, handle);
             if (new_user == null) {
                 respBody.put("user", new_user);
                 respBody.put("message", "Error Creating User");
                 return new ResponseEntity<>(respBody, HttpStatus.SERVICE_UNAVAILABLE);
-            }
-            else{
+            } else {
                 respBody.put("user", new_user);
                 respBody.put("message", "Successfully created user");
                 return new ResponseEntity<>(respBody, HttpStatus.OK);
             }
 
-        }
-        else{
+        } else {
             ArrayList<String> error_msg = new ArrayList<>();
             for (Integer error : errors) {
                 switch (error) {

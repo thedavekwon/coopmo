@@ -38,14 +38,14 @@ public class UserService {
         return newUser;
     }
 
-    public ArrayList<Integer> check_if_taken(String username, String email, String handle){
+    public ArrayList<Integer> check_if_taken(String username, String email, String handle) {
         ArrayList<Integer> errors = new ArrayList<>();
 
-        if(userRepository.containsUsername(username))
+        if (userRepository.containsUsername(username))
             errors.add(-2);
-        if(userRepository.containsEmail(email))
+        if (userRepository.containsEmail(email))
             errors.add(-3);
-        if(userRepository.containsHandle(handle))
+        if (userRepository.containsHandle(handle))
             errors.add(-4);
         return errors;
 

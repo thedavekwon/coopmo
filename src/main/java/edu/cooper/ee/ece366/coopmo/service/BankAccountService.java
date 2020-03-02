@@ -23,7 +23,7 @@ public class BankAccountService {
     // return error code
     // -1 : Invalid userId
     // -2 : Invalid routing Number
-    public int createBankAccount(String userId, Long routingNumber, Long balance) {
+    public int createBankAccount(String userId, long routingNumber, long balance) {
         Optional<User> curUser = userRepository.findById(userId);
         if (!curUser.isPresent()) {
             return -1;
@@ -32,7 +32,7 @@ public class BankAccountService {
             return -1;
         }
         BankAccount bankAccount = new BankAccount(routingNumber, balance);
-        userRepository.getBankAccountList().get(userId).add(bankAccount.getId());
+        userRepository.getBankAccountListMap().get(userId).add(bankAccount.getId());
         bankAccountRepository.save(bankAccount);
         return 0;
     }
@@ -41,13 +41,10 @@ public class BankAccountService {
     // -1 : Invalid bankAccountId
     public long getBalance(String bankAccountId) {
         Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
-        if (!curBankAccount.isPresent()) {
-            return -1L;
-        }
-        return curBankAccount.get().getBalance();
+        return curBankAccount.map(BankAccount::getBalance).orElse(-1L);
     }
 
-    private boolean checkValidRoutingNumberWithBankApi(Long routingNumber) {
+    private boolean checkValidRoutingNumberWithBankApi(long routingNumber) {
         return true;
     }
 }

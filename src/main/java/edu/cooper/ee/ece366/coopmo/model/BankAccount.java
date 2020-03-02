@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BankAccount {
     @Id
     private final String id;
-    private Long routingNumber;
+    private final long routingNumber;
     private AtomicLong balance;
 
     public BankAccount(long routingNumber, long balance) {
@@ -21,15 +21,11 @@ public class BankAccount {
         return id;
     }
 
-    public Long getRoutingNumber() {
+    public long getRoutingNumber() {
         return routingNumber;
     }
 
-    public void setRoutingNumber(long routingNumber) {
-        this.routingNumber = routingNumber;
-    }
-
-    public Long getBalance() {
+    public long getBalance() {
         return balance.get();
     }
 

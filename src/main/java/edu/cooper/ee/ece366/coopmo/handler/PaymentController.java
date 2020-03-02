@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 @RestController
 @RequestMapping("/pay")
 public class PaymentController extends BaseController {
@@ -25,7 +23,7 @@ public class PaymentController extends BaseController {
             @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
             @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
             @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") Integer type) {
+            @RequestParam(value = "type", defaultValue = "") String type) {
         JSONObject respBody = new JSONObject();
         ResponseEntity<?> response = checkEmpty(fromUserId, "fromUserId", respBody);
         if (response != null) return response;
@@ -33,12 +31,15 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkPositive(amount, "amount", respBody);
         if (response != null) return response;
-        if (type < 0 || type > 3) {
+        Payment.PaymentType paymentType;
+        try {
+            paymentType = Payment.PaymentType.valueOf(type);
+        } catch (IllegalArgumentException e) {
             respBody.put("message", "Invalid Payment Type");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
-        int ret = paymentService.createPayment(fromUserId, toUserId, amount, type);
+        int ret = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
         switch (ret) {
             case -1:
                 respBody.put("message", "Invalid fromUserId");
@@ -56,10 +57,26 @@ public class PaymentController extends BaseController {
 
     @GetMapping("/getLatestPublicPayment")
     @ResponseBody
-    public ResponseEntity<?> getLatestPublicPayment() {
+    public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") long n) {
         JSONObject respBody = new JSONObject();
-        ArrayList<Payment> latestPublicPayment = paymentService.getLatestPublicPayment(10);
-        respBody.put("friendList", latestPublicPayment);
+        ResponseEntity<?> response = checkPositive(n, "n", respBody);
+        if (response != null) return response;
+        respBody.put("friendList", paymentService.getLatestPublicPayment(n));
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
+    @GetMapping("/getLatestPrivatePayment")
+    @ResponseBody
+    public ResponseEntity<?> getLatestPrivatePayment(
+            @RequestParam(value = "userId", defaultValue = "") String userId,
+            @RequestParam(value = "n", defaultValue = "") long n
+    ) {
+        JSONObject respBody = new JSONObject();
+        ResponseEntity<?> response = checkPositive(n, "n", respBody);
+        if (response != null) return response;
+        response = checkEmpty(userId, "userId", respBody);
+        if (response != null) return response;
+        respBody.put("friendList", paymentService.getLatestPrivatePayment(userId, n));
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 }

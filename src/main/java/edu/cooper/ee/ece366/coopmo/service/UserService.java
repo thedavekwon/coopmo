@@ -30,9 +30,9 @@ public class UserService {
         userRepository.getIncomingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getOutgoingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getFriendMap().put(newUser.getId(), new ConcurrentHashMap<>());
-        userRepository.getPaymentList().put(newUser.getId(), new ArrayList<>());
-        userRepository.getCashList().put(newUser.getId(), new ArrayList<>());
-        userRepository.getBankAccountList().put(newUser.getId(), new ArrayList<>());
+        userRepository.getPaymentListMap().put(newUser.getId(), new ArrayList<>());
+        userRepository.getCashListMap().put(newUser.getId(), new ArrayList<>());
+        userRepository.getBankAccountListMap().put(newUser.getId(), new ArrayList<>());
 
         userRepository.save(newUser);
         return newUser;
@@ -77,20 +77,20 @@ public class UserService {
     // -2 is Username exists already
     // -3 Email already exists
     // -4 Handle already exists
-    public ArrayList<Integer> editProfile(String id, String newName, String newUsername, String newPassword,
+    public ArrayList<Integer> editProfile(String userId, String newName, String newUsername, String newPassword,
                                           String newEmail, String newHandle) {
         ArrayList<Integer> errors = new ArrayList<>();
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) {
             errors.add(-1);
         } else {
             user.get().setName(newName);
             user.get().setPassword(newPassword);
-            if (editUsername(id, newUsername))
+            if (editUsername(userId, newUsername))
                 errors.add(-2);
-            if (editEmail(id, newEmail))
+            if (editEmail(userId, newEmail))
                 errors.add(-3);
-            if (editHandle(id, newHandle))
+            if (editHandle(userId, newHandle))
                 errors.add(-4);
         }
         return errors;
@@ -123,13 +123,10 @@ public class UserService {
         if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
-            //if compare to returns pos use that user first
-            //else use other
             synchronized (userRepository.getFriendMap()) {
                 synchronized (userRepository.getOutgoingFriendRequestMap()) {
                     synchronized (userRepository.getIncomingFriendRequestMap()) {
-                        if (!acceptIncomingFriendRequest(userId, friendId))
-                            return -2;
+                        if (!acceptIncomingFriendRequest(userId, friendId)) return -2;
                         acceptedOutgoingFriendRequest(friendId, userId);
                     }
                 }
@@ -144,8 +141,6 @@ public class UserService {
         if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
-            //if compare to returns pos use that user first
-            //else use other
             synchronized (userRepository.getFriendMap()) {
                 synchronized (userRepository.getOutgoingFriendRequestMap()) {
                     synchronized (userRepository.getIncomingFriendRequestMap()) {
@@ -172,7 +167,7 @@ public class UserService {
     }
 
     public void addPayment(String userId, String paymentId) {
-        userRepository.getPaymentList().get(userId).add(paymentId);
+        userRepository.getPaymentListMap().get(userId).add(paymentId);
     }
 
     private void addFriend(String userId, String friendId) {
@@ -233,15 +228,15 @@ public class UserService {
     }
 
     public void addCash(String userId, String cashId) {
-        userRepository.getCashList().get(userId).add(cashId);
+        userRepository.getCashListMap().get(userId).add(cashId);
     }
 
     public boolean checkBankAccount(String userId, String bankAccountId) {
-        return userRepository.getBankAccountList().get(userId).contains(bankAccountId);
+        return userRepository.getBankAccountListMap().get(userId).contains(bankAccountId);
     }
 
     public void addBankAccount(String userId, String bankAccountId) {
-        userRepository.getBankAccountList().get(userId).add(bankAccountId);
+        userRepository.getBankAccountListMap().get(userId).add(bankAccountId);
     }
 
     public ConcurrentHashMap<String, Boolean> getUserFriendList(String userId) {

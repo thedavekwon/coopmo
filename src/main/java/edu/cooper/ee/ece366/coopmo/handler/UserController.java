@@ -228,16 +228,13 @@ public class UserController {
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JSONObject respBody = new JSONObject();
         if (userId.equals("") || friendId.equals("")) {
-            //return ResponseEntity.badRequest().body("No User ID and/or Friend ID found");
             respBody.put("message", "No User ID and/or Friend ID found");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         } else {
             if (userService.acceptIncomingRequest(userId, friendId) == 0) {
-                //return ResponseEntity.status(HttpStatus.OK).body("Accepted Incoming Friend Request");
                 respBody.put("message", "Accepted Incoming Friend Reques");
                 return new ResponseEntity<>(respBody, HttpStatus.OK);
             } else {
-                //return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found in Incoming Requests");
                 respBody.put("message", "No User with provided ID and/or Friend ID found in Incoming Requests");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             }
@@ -250,21 +247,17 @@ public class UserController {
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JSONObject respBody = new JSONObject();
         if (userId.equals("") || friendId.equals("")) {
-            //return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
             respBody.put("message", "No User ID and/or Friend ID provided");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0) {
-                //return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
                 respBody.put("message", "Sent Outgoing Friend Request");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else if (ret_val == -1) {
-                //return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
                 respBody.put("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else {
-                //return ResponseEntity.badRequest().body("Already Friends");
                 respBody.put("message", "Already Friends");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             }
@@ -277,7 +270,6 @@ public class UserController {
             @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) {
         JSONObject respBody = new JSONObject();
         if (username.equals("") || friendUsername.equals("")) {
-            //return ResponseEntity.badRequest().body("No Username and/or Friend Username provided");
             respBody.put("message", "No Username and/or Friend Username provided");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         } else {
@@ -286,11 +278,9 @@ public class UserController {
                 respBody.put("message", "Sent Outgoing Friend Request");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else if (ret_val == -1) {
-                //return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
                 respBody.put("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else {
-                //return ResponseEntity.badRequest().body("Already Friends");
                 respBody.put("message", "Already Friends");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             }
@@ -303,21 +293,17 @@ public class UserController {
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JSONObject respBody = new JSONObject();
         if (userId.equals("") || friendId.equals("")) {
-            //return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
             respBody.put("message", "No User ID and/or Friend ID provided");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(userId, friendId);
             if (ret_val == 0) {
-                //return ResponseEntity.status(HttpStatus.OK).body("Cancelled Outgoing Friend Request");
                 respBody.put("message", "Cancelled Outgoing Friend Request");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else if (ret_val == -1) {
-                //return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
                 respBody.put("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else {
-                //return ResponseEntity.badRequest().body("User not found in outgoing friends requests");
                 respBody.put("message", "User not found in outgoing friends requests");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             }
@@ -330,21 +316,17 @@ public class UserController {
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JSONObject respBody = new JSONObject();
         if (userId.equals("") || friendId.equals("")) {
-            //return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
             respBody.put("message", "No User ID and/or Friend ID provided");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(friendId, userId);
             if (ret_val == 0) {
-                //return ResponseEntity.status(HttpStatus.OK).body("Declined Incoming Friend Request");
                 respBody.put("message", "Declined Incoming Friend Request");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else if (ret_val == -1) {
-                //return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
                 respBody.put("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             } else {
-                //return ResponseEntity.badRequest().body("User not found in incoming friend requests");
                 respBody.put("message", "User not found in incoming friend requests");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             }

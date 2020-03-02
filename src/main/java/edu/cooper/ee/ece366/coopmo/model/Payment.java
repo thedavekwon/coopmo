@@ -2,27 +2,30 @@ package edu.cooper.ee.ece366.coopmo.model;
 
 import org.springframework.data.annotation.Id;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Payment {
-
-    enum paymentType {
-        PUBLIC, FRIEND, PRIVATE
-    }
+    private final String fromUserId;
 
     @Id
     private final String id;
-    private String fromUserId;
-    private String toUserId;
-    private Long amount;
-    private Integer type; // public/friends/private
+    private final String toUserId;
+    private final long amount;
+    private final PaymentType type; // public/friends/private
+    private final Timestamp timestamp;
 
-    public Payment(String fromUserId, String toUserId, Long amount, Integer type) {
+    public Payment(String fromUserId, String toUserId, long amount, PaymentType type) {
         this.id = UUID.randomUUID().toString();
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.amount = amount;
         this.type = type;
+        this.timestamp = new Timestamp(System.currentTimeMillis());
+    }
+
+    public long getAmount() {
+        return amount;
     }
 
     public String getId() {
@@ -33,31 +36,19 @@ public class Payment {
         return fromUserId;
     }
 
-    public void setFromUserId(String fromUserId) {
-        this.fromUserId = fromUserId;
-    }
-
     public String getToUserId() {
         return toUserId;
     }
 
-    public void setToUserId(String toUserId) {
-        this.toUserId = toUserId;
-    }
-
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
-    }
-
-    public Integer getType() {
+    public PaymentType getType() {
         return type;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public enum PaymentType {
+        PUBLIC, FRIEND, PRIVATE
     }
 }

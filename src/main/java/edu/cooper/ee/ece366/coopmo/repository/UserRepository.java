@@ -13,9 +13,9 @@ public class UserRepository implements CrudRepository<User, String> {
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Boolean>> incomingFriendRequestMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Boolean>> outgoingFriendRequestMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ConcurrentHashMap<String, Boolean>> friendMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, ArrayList<String>> paymentList = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, ArrayList<String>> cashList = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, ArrayList<String>> bankAccountList = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ArrayList<String>> paymentListMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ArrayList<String>> cashListMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ArrayList<String>> bankAccountListMap = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<String, User> db = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> usernameMap = new ConcurrentHashMap<>();
@@ -83,8 +83,7 @@ public class UserRepository implements CrudRepository<User, String> {
         return null;
     }
 
-    public boolean insertUsername
-            (String username, String id) {
+    public boolean insertUsername(String username, String id) {
         if (usernameMap.containsKey(username) && !usernameMap.get(username).equals(id))
             return false;
         else {
@@ -93,9 +92,7 @@ public class UserRepository implements CrudRepository<User, String> {
         }
     }
 
-    public boolean changeUsername
-            (String username, String newUsername
-                    , String id) {
+    public boolean changeUsername(String username, String newUsername, String id) {
         synchronized (usernameMap) {
             if (username.equals(newUsername
             ))
@@ -112,8 +109,7 @@ public class UserRepository implements CrudRepository<User, String> {
         }
     }
 
-    public boolean containsUsername
-            (String username) {
+    public boolean containsUsername(String username) {
         return usernameMap.containsKey(username);
     }
 
@@ -183,15 +179,15 @@ public class UserRepository implements CrudRepository<User, String> {
         return friendMap;
     }
 
-    public ConcurrentHashMap<String, ArrayList<String>> getPaymentList() {
-        return paymentList;
+    public ConcurrentHashMap<String, ArrayList<String>> getPaymentListMap() {
+        return paymentListMap;
     }
 
-    public ConcurrentHashMap<String, ArrayList<String>> getCashList() {
-        return cashList;
+    public ConcurrentHashMap<String, ArrayList<String>> getCashListMap() {
+        return cashListMap;
     }
 
-    public ConcurrentHashMap<String, ArrayList<String>> getBankAccountList() {
-        return bankAccountList;
+    public ConcurrentHashMap<String, ArrayList<String>> getBankAccountListMap() {
+        return bankAccountListMap;
     }
 }

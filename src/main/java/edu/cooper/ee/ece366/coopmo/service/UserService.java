@@ -21,9 +21,10 @@ public class UserService {
 
     public User createUser(String name, String username, String password, String email, String handle) {
         User newUser = new User(name, username, password, email, handle);
-        if (userRepository.containsUsername(username) || userRepository.containsUsername(username) || userRepository.containsUsername(username)) {
+        if (userRepository.containsUsername(username) || userRepository.containsHandle(handle) || userRepository.containsEmail(email)) {
             return null;
         }
+
         userRepository.insertUsername(username, newUser.getId());
         userRepository.insertHandle(username, newUser.getId());
         userRepository.insertEmail(username, newUser.getId());

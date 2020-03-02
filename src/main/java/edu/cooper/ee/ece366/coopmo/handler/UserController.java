@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
@@ -86,19 +87,72 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUserId")
-    public ResponseEntity<String> getUserId(
+    @GetMapping("/getUserWithUsername")
+    @ResponseBody
+    public ResponseEntity<?> getUserWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
             @RequestParam(value = "password", defaultValue = "") String password) {
-
+        JSONObject respBody = new JSONObject();
         if (username.equals("") || password.equals("")) {
-            return ResponseEntity.badRequest().body("One or more of submitted name, username, password, email, or handle is empty");
+            respBody.put("message", "One or more of submitted name, username, password, email, or handle is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
-        String userId = userService.getUserId(username, password);
-        if (userId == null) return ResponseEntity.badRequest().body("Wrong username or password");
-        return ResponseEntity.status(HttpStatus.OK).body(userId);
+        User curUser = userService.getUserWithUsername(username, password);
+        if (curUser == null) {
+            respBody.put("message", "Wrong username or password");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
+        respBody.put("user", curUser);
+        respBody.put("message", "Successfully created user");
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
+
+    @GetMapping("/getUserFriendList")
+    @ResponseBody
+    public ResponseEntity<?> getUserFriendList(
+            @RequestParam(value = "userId", defaultValue = "") String userId) {
+        JSONObject respBody = new JSONObject();
+        if (userId.equals("")) {
+            respBody.put("message", "userId is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
+
+        ConcurrentHashMap<String, Boolean> userFriendList = userService.getUserFriendList(userId);
+        respBody.put("friendList", new ArrayList<>(userFriendList.keySet()));
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserIncomingFriendRequest")
+    @ResponseBody
+    public ResponseEntity<?> getUserIncomingFriendRequest(
+            @RequestParam(value = "userId", defaultValue = "") String userId) {
+        JSONObject respBody = new JSONObject();
+        if (userId.equals("")) {
+            respBody.put("message", "userId is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
+
+        ConcurrentHashMap<String, Boolean> userIncomingFriendRequest = userService.getUserIncomingFriendRequest(userId);
+        respBody.put("userIncomingFriendRequest", new ArrayList<>(userIncomingFriendRequest.keySet()));
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserOutgoingFriendRequest")
+    @ResponseBody
+    public ResponseEntity<?> getUserOutgoingFriendRequest(
+            @RequestParam(value = "userId", defaultValue = "") String userId) {
+        JSONObject respBody = new JSONObject();
+        if (userId.equals("")) {
+            respBody.put("message", "userId is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
+
+        ConcurrentHashMap<String, Boolean> userOutgoingFriendRequest = userService.getUserOutgoingFriendRequest(userId);
+        respBody.put("userOutgoingFriendRequest", new ArrayList<>(userOutgoingFriendRequest.keySet()));
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
 
     // Debug Purpose
     @GetMapping("/getUserSize")
@@ -106,22 +160,29 @@ public class UserController {
         return this.userRepository.count();
     }
 
+    // Debug Purpose
+    @GetMapping("/getUserWithId")
+    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
+        Optional<User> curUser = userRepository.findById(id);
+        return curUser.orElse(null);
+    }
+
     @GetMapping("/editProfile")
-    public ResponseEntity<String> editProfile(
-            @RequestParam(value = "id", defaultValue = "") String id,
+    public ResponseEntity<?> editProfile(
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "newName", defaultValue = "") String newName,
             @RequestParam(value = "newUsername", defaultValue = "") String newUsername,
             @RequestParam(value = "newPassword", defaultValue = "") String newPassword,
             @RequestParam(value = "newEmail", defaultValue = "") String newEmail,
             @RequestParam(value = "newHandle", defaultValue = "") String newHandle
     ) {
-        if (id.equals("")) {
+        if (userId.equals("")) {
             return ResponseEntity.badRequest().body("No id provided");
         } else if (newName.equals("") || newUsername.equals("") || newPassword.equals("") || newEmail.equals("") || newHandle.equals("")) {
             //This should actually be handled on the client side
             return ResponseEntity.badRequest().body("Please fill out all of the fields");
         } else {
-            ArrayList<Integer> errors = userService.editProfile(id, newName, newUsername, newPassword, newEmail, newHandle);
+            ArrayList<Integer> errors = userService.editProfile(userId, newName, newUsername, newPassword, newEmail, newHandle);
             if (errors.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body("Profile updated");
             } else {
@@ -135,13 +196,6 @@ public class UserController {
                 return ResponseEntity.badRequest().body(error_msg.toString());
             }
         }
-    }
-
-    // Debug Purpose
-    @GetMapping("/getUserWithId")
-    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
-        Optional<User> curUser = userRepository.findById(id);
-        return curUser.orElse(null);
     }
 
     @PostMapping("/requestCashOut")
@@ -158,30 +212,28 @@ public class UserController {
     }
 
 
-    @GetMapping("/acceptIncomingFriendRequest")
+    @GetMapping("/acceptIncomingRequest")
     public ResponseEntity<String> acceptIncomingRequest(
-            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
-        if (id.equals("") || friendId.equals("")) {
+        if (userId.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID found");
         } else {
-            if (userService.acceptIncomingRequest(id, friendId) == 0)
+            if (userService.acceptIncomingRequest(userId, friendId) == 0)
                 return ResponseEntity.status(HttpStatus.OK).body("Accepted Incoming Friend Request");
             else
                 return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found in Incoming Requests");
         }
     }
 
-
-    //service implemented
     @PostMapping("/sendOutgoingFriendRequest")
     public ResponseEntity<String> sendOutgoingFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
-        if (id.equals("") || friendId.equals("")) {
+        if (userId.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
         } else {
-            int ret_val = userService.sendOutRequest(id, friendId);
+            int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0)
                 return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
             else if (ret_val == -1)
@@ -193,12 +245,12 @@ public class UserController {
 
     @GetMapping("/cancelFriendRequest")
     public ResponseEntity<String> cancelOutgoingFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
-        if (id.equals("") || friendId.equals("")) {
+        if (userId.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
         } else {
-            int ret_val = userService.cancelOutgoingFriendRequest(id, friendId);
+            int ret_val = userService.cancelOutgoingFriendRequest(userId, friendId);
             if (ret_val == 0) {
                 return ResponseEntity.status(HttpStatus.OK).body("Cancelled Outgoing Friend Request");
             } else if (ret_val == -1)
@@ -210,12 +262,12 @@ public class UserController {
 
     @GetMapping("/declineFriendRequest")
     public ResponseEntity<String> declineFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String id,
+            @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
-        if (id.equals("") || friendId.equals("")) {
+        if (userId.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
         } else {
-            int ret_val = userService.cancelOutgoingFriendRequest(friendId, id);
+            int ret_val = userService.cancelOutgoingFriendRequest(friendId, userId);
             if (ret_val == 0) {
                 return ResponseEntity.status(HttpStatus.OK).body("Declined Incoming Friend Request");
             } else if (ret_val == -1)

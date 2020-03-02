@@ -1,13 +1,14 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.service.PaymentService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/pay")
@@ -46,5 +47,14 @@ public class PaymentController extends BaseController {
                 return ResponseEntity.badRequest().body("Invalid amount");
         }
         return ResponseEntity.status(HttpStatus.OK).body("Payment has been created");
+    }
+
+    @GetMapping("/getLatestPublicPayment")
+    @ResponseBody
+    public ResponseEntity<?> getLatestPublicPayment() {
+        JSONObject respBody = new JSONObject();
+        ArrayList<Payment> latestPublicPayment = paymentService.getLatestPublicPayment(10);
+        respBody.put("friendList", latestPublicPayment);
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.Optional;
 
@@ -22,26 +23,19 @@ public class PaymentService {
         this.userRepository = userRepository;
     }
 
-
     // return error code
     // -1: Invalid fromUserId
     // -2: Invalid toUserId
     // -3: Invalid amount
-    public Integer createPayment(String fromUserId, String toUserId, Long amount, Integer type) {
+    public int createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type) {
         Optional<User> fromUser = userRepository.findById(fromUserId);
         Optional<User> toUser = userRepository.findById(toUserId);
-        if (!fromUser.isPresent()) {
-            return -1;
-        }
 
-        if (!toUser.isPresent()) {
-            return -2;
-        }
+        if (!fromUser.isPresent()) return -1;
+        if (!toUser.isPresent()) return -2;
 
         synchronized (userRepository) {
-            if (fromUser.get().getBalance() < amount) {
-                return -3;
-            }
+            if (fromUser.get().getBalance() < amount) return -3;
             Payment newPayment = new Payment(fromUserId, toUserId, amount, type);
             fromUser.get().decrementBalance(amount);
             toUser.get().incrementBalance(amount);
@@ -52,18 +46,32 @@ public class PaymentService {
     }
 
 
-    public ArrayList<Payment> getLatestPublicPayment(int n) {
-        ArrayList<Payment> paymentList = new ArrayList<>();
+    public ArrayList<Payment> getLatestPublicPayment(long n) {
+        ArrayList<Payment> payments = new ArrayList<>();
         synchronized (paymentRepository.getPaymentMap()) {
             final NavigableSet<String> paymentDescendingOrder = paymentRepository.getPaymentMap().descendingKeySet();
             for (String s : paymentDescendingOrder) {
                 Optional<Payment> curPayment = paymentRepository.findById(s);
                 if (!curPayment.isPresent()) continue;
-                // Public
-                if (curPayment.get().getType() == 0) paymentList.add(curPayment.get());
-                if (paymentList.size() > n) break;
+                if (curPayment.get().getType() == Payment.PaymentType.PUBLIC) payments.add(curPayment.get());
+                if (payments.size() > n) break;
             }
         }
-        return paymentList;
+        return payments;
+    }
+
+    public ArrayList<Payment> getLatestPrivatePayment(String userId, long n) {
+        List<String> paymentList;
+        synchronized (userRepository.getPaymentListMap()) {
+            int curSize = userRepository.getPaymentListMap().get(userId).size();
+            if (curSize < n) paymentList = userRepository.getPaymentListMap().get(userId);
+            else paymentList = userRepository.getPaymentListMap().get(userId).subList((int) (curSize - n), curSize);
+        }
+        ArrayList<Payment> payments = new ArrayList<>();
+        paymentList.forEach(paymentId -> {
+            Optional<Payment> payment = paymentRepository.findById(paymentId);
+            payment.ifPresent(payments::add);
+        });
+        return payments;
     }
 }

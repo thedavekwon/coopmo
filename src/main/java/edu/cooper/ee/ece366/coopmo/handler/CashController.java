@@ -18,12 +18,13 @@ public class CashController extends BaseController {
         this.cashService = cashService;
     }
 
-    @GetMapping("createCashOut")
+    @GetMapping("createCash")
     @ResponseBody
-    public ResponseEntity<?> createCashOut(
+    public ResponseEntity<?> createCash(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
-            @RequestParam(value = "amount", defaultValue = "") Long amount) {
+            @RequestParam(value = "amount", defaultValue = "") Long amount,
+            @RequestParam(value = "type", defaultValue = "") String type) {
         JSONObject respBody = new JSONObject();
 
         ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
@@ -33,38 +34,16 @@ public class CashController extends BaseController {
         response = checkPositive(amount, "amount", respBody);
         if (response != null) return response;
 
-        int ret = cashService.createCashTranscation(userId, bankAccountId, amount, Cash.Out);
+        Cash.CashType cashType;
+        try {
+            cashType = Cash.CashType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            respBody.put("message", "Invalid Cash Type");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
 
-        ResponseEntity<?> x = getStringResponseEntity(ret, respBody);
-        if (x != null) return x;
+        int ret = cashService.createCash(userId, bankAccountId, amount, cashType);
 
-        respBody.put("message", "CashOut request succeed");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
-    }
-
-    @PostMapping("createCashIn")
-    public ResponseEntity<?> createCashIn(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
-            @RequestParam(value = "amount", defaultValue = "") Long amount) {
-        JSONObject respBody = new JSONObject();
-        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-        response = checkEmpty(bankAccountId, "bankAccountId", respBody);
-        if (response != null) return response;
-        response = checkPositive(amount, "amount", respBody);
-        if (response != null) return response;
-
-        int ret = cashService.createCashTranscation(userId, bankAccountId, amount, Cash.In);
-
-        ResponseEntity<?> x = getStringResponseEntity(ret, respBody);
-        if (x != null) return x;
-
-        respBody.put("message", "CashIn request succeed");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
-    }
-
-    private ResponseEntity<?> getStringResponseEntity(int ret, JSONObject respBody) {
         switch (ret) {
             case -1:
                 respBody.put("message", "Invalid userId");
@@ -76,6 +55,8 @@ public class CashController extends BaseController {
                 respBody.put("message", "Invalid amount");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-        return null;
+
+        respBody.put("message", "CashOut request succeed");
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 }

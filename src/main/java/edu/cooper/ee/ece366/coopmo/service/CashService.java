@@ -31,7 +31,7 @@ public class CashService {
     // -1 : Invalid userId
     // -2 : Invalid bankAccountId
     // -3 : Invalid amount
-    public Integer createCashTranscation(String userId, String bankAccountId, Long amount, Boolean type) {
+    public int createCash(String userId, String bankAccountId, long amount, Cash.CashType type) {
         Optional<User> curUser = userRepository.findById(userId);
         Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
 
@@ -41,26 +41,17 @@ public class CashService {
         if (!curBankAccount.isPresent()) {
             return -2;
         }
-        if (type == Cash.Out) {
-            synchronized (userRepository) {
-                if (curUser.get().getBalance() < amount) {
-                    return -3;
-                }
-                Cash newCash = new Cash(userId, bankAccountId, amount);
-
-                userRepository.getCashList().get(userId).add(newCash.getId());
+        Cash newCash = new Cash(userId, bankAccountId, amount, type);
+        synchronized (userRepository) {
+            if (type == Cash.CashType.OUT) {
+                if (curUser.get().getBalance() < amount) return -3;
+                userRepository.getCashListMap().get(userId).add(newCash.getId());
                 curUser.get().decrementBalance(amount);
                 curBankAccount.get().incrementBalance(amount);
                 cashRepository.save(newCash);
-            }
-        } else if (type == Cash.In) {
-            synchronized (bankAccountRepository) {
-                if (curBankAccount.get().getBalance() < amount) {
-                    return -3;
-                }
-                Cash newCash = new Cash(userId, bankAccountId, amount);
-
-                userRepository.getCashList().get(userId).add(newCash.getId());
+            } else if (type == Cash.CashType.IN) {
+                if (curBankAccount.get().getBalance() < amount) return -3;
+                userRepository.getCashListMap().get(userId).add(newCash.getId());
                 curUser.get().decrementBalance(amount);
                 curBankAccount.get().incrementBalance(amount);
                 cashRepository.save(newCash);

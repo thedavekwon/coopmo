@@ -101,24 +101,14 @@ public class UserService {
     // -2 if friend not found in incoming friend request
     // 0 if success
     public int cancelOutgoingFriendRequest(String userId, String friendId) {
-        Optional<User> priUser = userRepository.findById(userId);
-        Optional<User> secUser = userRepository.findById(friendId);
-
-        if (!priUser.isPresent() || !secUser.isPresent()) {
+        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
             //if compare to returns pos use that user first
             //else use other
-            if (userId.compareTo(friendId) > 0) {
-                synchronized (priUser.get()) {
-                    synchronized (secUser.get()) {
-                        deleteOutgoingFriendRequest(userId, friendId);
-                        deleteIncomingFriendRequest(friendId, userId);
-                    }
-                }
-            } else {
-                synchronized (secUser.get()) {
-                    synchronized (priUser.get()) {
+            synchronized (userRepository.getFriendMap()) {
+                synchronized (userRepository.getOutgoingFriendRequestMap()) {
+                    synchronized (userRepository.getIncomingFriendRequestMap()) {
                         deleteOutgoingFriendRequest(userId, friendId);
                         deleteIncomingFriendRequest(friendId, userId);
                     }
@@ -130,25 +120,14 @@ public class UserService {
 
     // -1 if user not found
     public int acceptIncomingRequest(String userId, String friendId) {
-        Optional<User> priUser = userRepository.findById(userId);
-        Optional<User> secUser = userRepository.findById(friendId);
-
-        if (!priUser.isPresent() || !secUser.isPresent()) {
+        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
             //if compare to returns pos use that user first
             //else use other
-            if (userId.compareTo(friendId) > 0) {
-                synchronized (priUser.get()) {
-                    synchronized (secUser.get()) {
-                        if (!acceptIncomingFriendRequest(userId, friendId))
-                            return -2;
-                        acceptedOutgoingFriendRequest(friendId, userId);
-                    }
-                }
-            } else {
-                synchronized (secUser.get()) {
-                    synchronized (priUser.get()) {
+            synchronized (userRepository.getFriendMap()) {
+                synchronized (userRepository.getOutgoingFriendRequestMap()) {
+                    synchronized (userRepository.getIncomingFriendRequestMap()) {
                         if (!acceptIncomingFriendRequest(userId, friendId))
                             return -2;
                         acceptedOutgoingFriendRequest(friendId, userId);
@@ -162,24 +141,14 @@ public class UserService {
     // -1 if users not found
     // -2 if already friends
     public int sendOutRequest(String userId, String friendId) {
-        Optional<User> priUser = userRepository.findById(userId);
-        Optional<User> secUser = userRepository.findById(friendId);
-
-        if (!priUser.isPresent() || !secUser.isPresent()) {
+        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
             //if compare to returns pos use that user first
             //else use other
-            if (userId.compareTo(friendId) > 0) {
-                synchronized (priUser.get()) {
-                    synchronized (secUser.get()) {
-                        sendOutgoingFriendRequest(userId, friendId);
-                        receivedIncomingFriendRequest(friendId, userId);
-                    }
-                }
-            } else {
-                synchronized (secUser.get()) {
-                    synchronized (priUser.get()) {
+            synchronized (userRepository.getFriendMap()) {
+                synchronized (userRepository.getOutgoingFriendRequestMap()) {
+                    synchronized (userRepository.getIncomingFriendRequestMap()) {
                         sendOutgoingFriendRequest(userId, friendId);
                         receivedIncomingFriendRequest(friendId, userId);
                     }
@@ -189,46 +158,43 @@ public class UserService {
         }
     }
 
-    public String getUserId(String username, String password) {
+    public User getUserWithUsername(String username, String password) {
         String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) return userId;
+        if (userId == null) return null;
 
         Optional<User> curUser = userRepository.findById(userId);
         if (!curUser.isPresent()) return null;
-
         if (curUser.get().getPassword().equals(password)) {
-            return userId;
+            return curUser.get();
         } else {
             return null;
         }
     }
 
     public void addPayment(String userId, String paymentId) {
-        userRepository.getPaymentList().getOrDefault(userId, new ArrayList<>()).add(paymentId);
+        userRepository.getPaymentList().get(userId).add(paymentId);
     }
 
     private void addFriend(String userId, String friendId) {
-        userRepository.getFriendMap().getOrDefault(userId, new ConcurrentHashMap<>()).put(friendId, true);
+        userRepository.getFriendMap().get(userId).put(friendId, true);
     }
 
-    public void removeFriend(String userId, String friendId) {
-        userRepository.getFriendMap().getOrDefault(userId, new ConcurrentHashMap<>()).remove(friendId);
+    public boolean removeFriend(String userId, String friendId) {
+        return userRepository.getFriendMap().get(userId).remove(friendId) != null;
     }
 
     public boolean deleteIncomingFriendRequest(String userId, String friendId) {
-        return userRepository.getIncomingFriendRequestMap().getOrDefault(userId, new ConcurrentHashMap<>()).remove(friendId) != null;
+        return userRepository.getIncomingFriendRequestMap().get(userId).remove(friendId) != null;
     }
 
     public boolean deleteOutgoingFriendRequest(String userId, String friendId) {
-        return userRepository.getOutgoingFriendRequestMap().getOrDefault(userId, new ConcurrentHashMap<>()).remove(friendId) != null;
+        return userRepository.getOutgoingFriendRequestMap().get(userId).remove(friendId) != null;
     }
 
     public boolean acceptIncomingFriendRequest(String userId, String friendId) {
         if (deleteIncomingFriendRequest(userId, friendId)) {
-            if (userRepository.getIncomingFriendRequestMap().getOrDefault(userId, new ConcurrentHashMap<>()).remove(friendId) != null) {
-                userRepository.getFriendMap().getOrDefault(userId, new ConcurrentHashMap<>()).put(friendId, true);
-                return true;
-            }
+            userRepository.getFriendMap().get(userId).put(friendId, true);
+            return true;
         }
         return false;
     }
@@ -242,7 +208,7 @@ public class UserService {
             acceptedOutgoingFriendRequest(userId, friendId);
             return true;
         } else {
-            userRepository.getIncomingFriendRequestMap().get(friendId).put(friendId, true);
+            userRepository.getIncomingFriendRequestMap().get(userId).put(friendId, true);
             return true;
         }
     }
@@ -266,7 +232,7 @@ public class UserService {
         }
     }
 
-    public void addCashOut(String userId, String cashId) {
+    public void addCash(String userId, String cashId) {
         userRepository.getCashList().get(userId).add(cashId);
     }
 
@@ -276,5 +242,26 @@ public class UserService {
 
     public void addBankAccount(String userId, String bankAccountId) {
         userRepository.getBankAccountList().get(userId).add(bankAccountId);
+    }
+
+    public ConcurrentHashMap<String, Boolean> getUserFriendList(String userId) {
+        return userRepository.getFriendMap().get(userId);
+    }
+
+    public ConcurrentHashMap<String, Boolean> getUserIncomingFriendRequest(String userId) {
+        return userRepository.getIncomingFriendRequestMap().get(userId);
+    }
+
+    public ConcurrentHashMap<String, Boolean> getUserOutgoingFriendRequest(String userId) {
+        return userRepository.getOutgoingFriendRequestMap().get(userId);
+    }
+
+    public int sendOutRequestWithUsername(String username, String friendUsername) {
+        String userId = userRepository.getIdfromUsername(username);
+        String friendId = userRepository.getIdfromUsername(friendUsername);
+        if (userId == null || friendId == null) {
+            return -1;
+        }
+        return sendOutRequest(userId, friendId);
     }
 }

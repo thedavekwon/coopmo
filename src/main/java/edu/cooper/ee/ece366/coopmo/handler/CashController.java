@@ -2,6 +2,7 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.service.CashService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,52 +19,62 @@ public class CashController extends BaseController {
     }
 
     @GetMapping("createCashOut")
-    public ResponseEntity<String> createCashOut(
+    @ResponseBody
+    public ResponseEntity<?> createCashOut(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount) {
+        JSONObject respBody = new JSONObject();
 
-        ResponseEntity<String> response = checkEmpty(userId, "userId");
+        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        response = checkEmpty(bankAccountId, "bankAccountId");
+        response = checkEmpty(bankAccountId, "bankAccountId", respBody);
         if (response != null) return response;
-        response = checkPositive(amount, "amount");
+        response = checkPositive(amount, "amount", respBody);
         if (response != null) return response;
 
         int ret = cashService.createCashTranscation(userId, bankAccountId, amount, Cash.Out);
 
-        ResponseEntity<String> x = getStringResponseEntity(ret);
+        ResponseEntity<?> x = getStringResponseEntity(ret, respBody);
         if (x != null) return x;
 
-        return ResponseEntity.status(HttpStatus.OK).body("Your new CashOut request has been created");
+        respBody.put("message", "CashOut request succeed");
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
     @PostMapping("createCashIn")
-    public ResponseEntity<String> createCashIn(
+    public ResponseEntity<?> createCashIn(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount) {
-
-        if (amount <= 0) {
-            return ResponseEntity.badRequest().body("Amount can not be below 0 dollars");
-        }
+        JSONObject respBody = new JSONObject();
+        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
+        if (response != null) return response;
+        response = checkEmpty(bankAccountId, "bankAccountId", respBody);
+        if (response != null) return response;
+        response = checkPositive(amount, "amount", respBody);
+        if (response != null) return response;
 
         int ret = cashService.createCashTranscation(userId, bankAccountId, amount, Cash.In);
 
-        ResponseEntity<String> x = getStringResponseEntity(ret);
+        ResponseEntity<?> x = getStringResponseEntity(ret, respBody);
         if (x != null) return x;
 
-        return ResponseEntity.status(HttpStatus.OK).body("Your new CashIn request has been created");
+        respBody.put("message", "CashIn request succeed");
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
-    private ResponseEntity<String> getStringResponseEntity(int ret) {
+    private ResponseEntity<?> getStringResponseEntity(int ret, JSONObject respBody) {
         switch (ret) {
             case -1:
-                return ResponseEntity.badRequest().body("Invalid userId");
+                respBody.put("message", "Invalid userId");
+                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -2:
-                return ResponseEntity.badRequest().body("Invalid bankAccountId");
+                respBody.put("message", "Invalid bankAccountId");
+                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -3:
-                return ResponseEntity.badRequest().body("Invalid amount");
+                respBody.put("message", "Invalid amount");
+                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
         return null;
     }

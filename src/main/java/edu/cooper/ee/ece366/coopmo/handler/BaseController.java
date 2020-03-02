@@ -1,15 +1,23 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import net.minidev.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class BaseController {
-    protected ResponseEntity<String> checkEmpty(String input, String field) {
-        if (input.equals("")) return ResponseEntity.badRequest().body("Empty " + field);
+    protected ResponseEntity<?> checkEmpty(String input, String field, JSONObject respBody) {
+        if (input.equals("")) {
+            respBody.put("message", "Empty " + field);
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
         return null;
     }
 
-    protected ResponseEntity<String> checkPositive(Long input, String field) {
-        if (input <= 0) return ResponseEntity.badRequest().body("Empty " + field);
+    protected ResponseEntity<?> checkPositive(Long input, String field, JSONObject respBody) {
+        if (input <= 0) {
+            respBody.put("message", "Empty " + field);
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
         return null;
     }
 }

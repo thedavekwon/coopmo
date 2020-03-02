@@ -7,6 +7,8 @@ import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.NavigableSet;
 import java.util.Optional;
 
 @Service
@@ -50,4 +52,18 @@ public class PaymentService {
     }
 
 
+    public ArrayList<Payment> getLatestPublicPayment(int n) {
+        ArrayList<Payment> paymentList = new ArrayList<>();
+        synchronized (paymentRepository.getPaymentMap()) {
+            final NavigableSet<String> paymentDescendingOrder = paymentRepository.getPaymentMap().descendingKeySet();
+            for (String s : paymentDescendingOrder) {
+                Optional<Payment> curPayment = paymentRepository.findById(s);
+                if (!curPayment.isPresent()) continue;
+                // Public
+                if (curPayment.get().getType() == 0) paymentList.add(curPayment.get());
+                if (paymentList.size() > n) break;
+            }
+        }
+        return paymentList;
+    }
 }

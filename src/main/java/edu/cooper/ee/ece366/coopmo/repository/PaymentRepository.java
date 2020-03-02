@@ -5,11 +5,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 @Repository
 public class PaymentRepository implements CrudRepository<Payment, String> {
-    private static final ConcurrentHashMap<String, Payment> db = new ConcurrentHashMap<>();
+    private static final ConcurrentSkipListMap<String, Payment> db = new ConcurrentSkipListMap<>();
+
+    public ConcurrentSkipListMap<String, Payment> getPaymentMap() {
+        return db;
+    }
 
     @Override
     public <S extends Payment> S save(S s) {

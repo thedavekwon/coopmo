@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,38 +18,47 @@ public class BankAccountController extends BaseController {
     }
 
     @PostMapping("createBankAccount")
-    public ResponseEntity<String> createBankAccount(
+    public ResponseEntity<?> createBankAccount(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber,
             @RequestParam(value = "balance", defaultValue = "") Long balance) {
         if (checkValidRoutingNumberByDigit(routingNumber))
             return ResponseEntity.badRequest().body("Routing number must be 9 digits");
 
-        ResponseEntity<String> response = checkEmpty(userId, "userId");
+        JSONObject respBody = new JSONObject();
+        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        response = checkPositive(balance, "balance");
+        response = checkPositive(balance, "balance", respBody);
         if (response != null) return response;
+
         int ret = bankAccountService.createBankAccount(userId, routingNumber, balance);
         switch (ret) {
             case -1:
-                return ResponseEntity.badRequest().body("Invalid userId");
+                respBody.put("message", "Invalid userId");
+                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -2:
-                return ResponseEntity.badRequest().body("Invalid routingNumber");
+                respBody.put("message", "Invalid routingNumber");
+                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Your new BankAccount has been created");
+        respBody.put("message", "Bankaccount request succeed");
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
     @GetMapping("getBalance")
-    public ResponseEntity<String> getBalance(
+    public ResponseEntity<?> getBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
-        ResponseEntity<String> response = checkEmpty(bankAccountId, "userId");
+        JSONObject respBody = new JSONObject();
+        ResponseEntity<?> response = checkEmpty(bankAccountId, "userId", respBody);
         if (response != null) return null;
 
         long ret = bankAccountService.getBalance(bankAccountId);
         if (ret == -1) {
-            return ResponseEntity.badRequest().body("Invalid bankAccountId");
+            respBody.put("message", "Invalid bankAccountId");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + ret);
+        respBody.put("message", "Bankaccount getBalance request succeed");
+        respBody.put("balance", ret);
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {

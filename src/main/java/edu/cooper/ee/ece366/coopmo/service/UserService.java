@@ -38,6 +38,19 @@ public class UserService {
         return newUser;
     }
 
+    public ArrayList<Integer> check_if_taken(String username, String email, String handle) {
+        ArrayList<Integer> errors = new ArrayList<>();
+
+        if (userRepository.containsUsername(username))
+            errors.add(-2);
+        if (userRepository.containsEmail(email))
+            errors.add(-3);
+        if (userRepository.containsHandle(handle))
+            errors.add(-4);
+        return errors;
+
+    }
+
     private boolean editUsername(String id, String newUsername) {
         Optional<User> user = userRepository.findById(id);
         if (!user.isPresent()) return false;
@@ -59,6 +72,7 @@ public class UserService {
         return user.filter(value -> userRepository.changeHandle(value.getHandle(), newHandle, id)).isPresent();
     }
 
+    // empty if no errors
     // -1 is no user with id exists
     // -2 is Username exists already
     // -3 Email already exists

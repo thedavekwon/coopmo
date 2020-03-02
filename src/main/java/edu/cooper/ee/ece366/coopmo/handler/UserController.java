@@ -138,14 +138,15 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> getUserBankAccountList(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JSONObject respBody = new JSONObject();
+        JsonObject respBody = new JsonObject();
+        JsonObject bankAccountJson = new JsonObject();
         if (userId.equals("")) {
-            respBody.put("message", "userId is empty");
+            respBody.addProperty("message", "userId is empty");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-
-        ArrayList<String> userBankAccountList = userService.getUserBankAccountList(userId);
-        respBody.put("bankAccountList", userBankAccountList);
+        respBody.addProperty("message", "get Bank Account List succeed");
+        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(userService.getUserBankAccountList(userId)));
+        respBody.add("messagePayload", bankAccountJson);
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
@@ -237,7 +238,11 @@ public class UserController {
     }
 
     @PostMapping("/requestCashOut")
-    public ResponseEntity<?> requestCashOut(@RequestParam(value = "userId", defaultValue = "") String userId, @RequestParam(value = "bankId", defaultValue = "") String bankId, @RequestParam(value = "amount", defaultValue = "0") long amount) {
+    public ResponseEntity<?> requestCashOut(
+            @RequestParam(value = "userId", defaultValue = "") String userId,
+            @RequestParam(value = "bankId", defaultValue = "") String bankId,
+            @RequestParam(value = "amount", defaultValue = "0") long amount
+    ) {
         JsonObject respBody = new JsonObject();
         if (amount < 0) {
             respBody.addProperty("message", "Cannot cash out a negative amount of money");

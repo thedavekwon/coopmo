@@ -58,9 +58,9 @@ public class CashController extends BaseController {
 
         respBody.addProperty("message", "CashOut request succeed");
         if (cashType == Cash.CashType.OUT) {
-            respBody.put("message", "CashOut request succeed");
+            respBody.addProperty("message", "CashOut request succeed");
         } else {
-            respBody.put("message", "CashIn request succeed");
+            respBody.addProperty("message", "CashIn request succeed");
         }
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }

@@ -66,7 +66,6 @@ public class PaymentController extends BaseController {
         friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest public payments");
-        respBody.put("data", paymentService.getLatestPublicPayment(n));
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
@@ -78,13 +77,13 @@ public class PaymentController extends BaseController {
     ) {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive(n, "n", respBody);
-        JSONObject respBody = new JSONObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        respBody.put("data", paymentService.getLatestPrivatePayment(userId, n));
+        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
+        respBody.add("messagePayload", friend_json);
+        respBody.addProperty("message", "Successfully got latest private payments");
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
@@ -94,15 +93,15 @@ public class PaymentController extends BaseController {
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
     ) {
-        JSONObject respBody = new JSONObject();
+        JsonObject respBody = new JsonObject();
+        JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        respBody.put("data", paymentService.getLatestFriendPayment(userId, n));
         friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
         respBody.add("messagePayload", friend_json);
-        respBody.addProperty("message", "Successfully got latest private payments");
+        respBody.addProperty("message", "Successfully got latest friend payments");
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 }

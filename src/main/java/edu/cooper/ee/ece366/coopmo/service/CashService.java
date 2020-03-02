@@ -35,27 +35,22 @@ public class CashService {
         Optional<User> curUser = userRepository.findById(userId);
         Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
 
-        if (!curUser.isPresent()) {
-            return -1;
-        }
-        if (!curBankAccount.isPresent()) {
-            return -2;
-        }
+        if (!curUser.isPresent()) return -1;
+        if (!curBankAccount.isPresent()) return -2;
+
         Cash newCash = new Cash(userId, bankAccountId, amount, type);
         synchronized (userRepository) {
             if (type == Cash.CashType.OUT) {
                 if (curUser.get().getBalance() < amount) return -3;
-                userRepository.getCashListMap().get(userId).add(newCash.getId());
                 curUser.get().decrementBalance(amount);
                 curBankAccount.get().incrementBalance(amount);
-                cashRepository.save(newCash);
             } else if (type == Cash.CashType.IN) {
                 if (curBankAccount.get().getBalance() < amount) return -3;
-                userRepository.getCashListMap().get(userId).add(newCash.getId());
-                curUser.get().decrementBalance(amount);
-                curBankAccount.get().incrementBalance(amount);
-                cashRepository.save(newCash);
+                curUser.get().incrementBalance(amount);
+                curBankAccount.get().decrementBalance(amount);
             }
+            userRepository.getCashListMap().get(userId).add(newCash.getId());
+            cashRepository.save(newCash);
         }
         return 0;
     }

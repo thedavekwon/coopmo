@@ -123,6 +123,21 @@ public class UserController {
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
+    @GetMapping("/getUserBankAccountList")
+    @ResponseBody
+    public ResponseEntity<?> getUserBankAccountList(
+            @RequestParam(value = "userId", defaultValue = "") String userId) {
+        JSONObject respBody = new JSONObject();
+        if (userId.equals("")) {
+            respBody.put("message", "userId is empty");
+            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+        }
+
+        ArrayList<String> userBankAccountList = userService.getUserBankAccountList(userId);
+        respBody.put("bankAccountList", userBankAccountList);
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
     @GetMapping("/getUserIncomingFriendRequest")
     @ResponseBody
     public ResponseEntity<?> getUserIncomingFriendRequest(
@@ -157,13 +172,13 @@ public class UserController {
     // Debug Purpose
     @GetMapping("/getUserSize")
     public Long getUserSize() {
-        return this.userRepository.count();
+        return userRepository.count();
     }
 
     // Debug Purpose
     @GetMapping("/getUserWithId")
-    public User getUserWithId(@RequestParam(value = "id", defaultValue = "") String id) {
-        Optional<User> curUser = userRepository.findById(id);
+    public User getUserWithId(@RequestParam(value = "userId", defaultValue = "") String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
         return curUser.orElse(null);
     }
 

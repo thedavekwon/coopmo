@@ -61,7 +61,7 @@ public class PaymentController extends BaseController {
         JSONObject respBody = new JSONObject();
         ResponseEntity<?> response = checkPositive(n, "n", respBody);
         if (response != null) return response;
-        respBody.put("friendList", paymentService.getLatestPublicPayment(n));
+        respBody.put("data", paymentService.getLatestPublicPayment(n));
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
@@ -69,14 +69,29 @@ public class PaymentController extends BaseController {
     @ResponseBody
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "n", defaultValue = "") long n
+            @RequestParam(value = "n", defaultValue = "") int n
     ) {
         JSONObject respBody = new JSONObject();
-        ResponseEntity<?> response = checkPositive(n, "n", respBody);
+        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        respBody.put("friendList", paymentService.getLatestPrivatePayment(userId, n));
+        respBody.put("data", paymentService.getLatestPrivatePayment(userId, n));
+        return new ResponseEntity<>(respBody, HttpStatus.OK);
+    }
+
+    @GetMapping("/getLatestFriendPayment")
+    @ResponseBody
+    public ResponseEntity<?> getLatestFriendPayment(
+            @RequestParam(value = "userId", defaultValue = "") String userId,
+            @RequestParam(value = "n", defaultValue = "") int n
+    ) {
+        JSONObject respBody = new JSONObject();
+        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
+        if (response != null) return response;
+        response = checkEmpty(userId, "userId", respBody);
+        if (response != null) return response;
+        respBody.put("data", paymentService.getLatestFriendPayment(userId, n));
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 }

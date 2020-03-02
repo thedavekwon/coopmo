@@ -5,9 +5,8 @@ import org.springframework.data.annotation.Id;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public class Payment {
+public class Payment implements Comparable<Payment> {
     private final String fromUserId;
-
     @Id
     private final String id;
     private final String toUserId;
@@ -46,6 +45,11 @@ public class Payment {
 
     public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public int compareTo(Payment o) {
+        return getTimestamp().compareTo(o.getTimestamp());
     }
 
     public enum PaymentType {

@@ -259,4 +259,8 @@ public class UserService {
         }
         return sendOutRequest(userId, friendId);
     }
+
+    public ArrayList<String> getUserBankAccountList(String userId) {
+        return userRepository.getBankAccountListMap().get(userId);
+    }
 }

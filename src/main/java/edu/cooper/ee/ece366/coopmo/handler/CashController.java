@@ -1,8 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.service.CashService;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class CashController extends BaseController {
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount,
             @RequestParam(value = "type", defaultValue = "") String type) {
-        JSONObject respBody = new JSONObject();
+        JsonObject respBody = new JsonObject();
 
         ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
@@ -38,7 +38,7 @@ public class CashController extends BaseController {
         try {
             cashType = Cash.CashType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            respBody.put("message", "Invalid Cash Type");
+            respBody.addProperty("message", "Invalid Cash Type");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
 
@@ -46,15 +46,17 @@ public class CashController extends BaseController {
 
         switch (ret) {
             case -1:
-                respBody.put("message", "Invalid userId");
+                respBody.addProperty("message", "Invalid userId");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -2:
-                respBody.put("message", "Invalid bankAccountId");
+                respBody.addProperty("message", "Invalid bankAccountId");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -3:
-                respBody.put("message", "Invalid amount");
+                respBody.addProperty("message", "Invalid amount");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
+
+        respBody.addProperty("message", "CashOut request succeed");
         if (cashType == Cash.CashType.OUT) {
             respBody.put("message", "CashOut request succeed");
         } else {

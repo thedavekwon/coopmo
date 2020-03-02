@@ -56,12 +56,11 @@ public class UserController {
         ArrayList<Integer> errors = userService.check_if_taken(username, email, handle);
         if (errors.isEmpty()) {
             User new_user = userService.createUser(name, username, password, email, handle);
+            respBody.put("user", new_user);
             if (new_user == null) {
-                respBody.put("user", new_user);
                 respBody.put("message", "Error Creating User");
                 return new ResponseEntity<>(respBody, HttpStatus.SERVICE_UNAVAILABLE);
             } else {
-                respBody.put("user", new_user);
                 respBody.put("message", "Successfully created user");
                 return new ResponseEntity<>(respBody, HttpStatus.OK);
             }

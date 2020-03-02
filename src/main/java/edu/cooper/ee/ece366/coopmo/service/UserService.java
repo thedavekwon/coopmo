@@ -232,7 +232,7 @@ public class UserService {
         }
     }
 
-    public void addCashOut(String userId, String cashId) {
+    public void addCash(String userId, String cashId) {
         userRepository.getCashList().get(userId).add(cashId);
     }
 
@@ -254,5 +254,14 @@ public class UserService {
 
     public ConcurrentHashMap<String, Boolean> getUserOutgoingFriendRequest(String userId) {
         return userRepository.getOutgoingFriendRequestMap().get(userId);
+    }
+
+    public int sendOutRequestWithUsername(String username, String friendUsername) {
+        String userId = userRepository.getIdfromUsername(username);
+        String friendId = userRepository.getIdfromUsername(friendUsername);
+        if (userId == null || friendId == null) {
+            return -1;
+        }
+        return sendOutRequest(userId, friendId);
     }
 }

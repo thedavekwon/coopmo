@@ -226,14 +226,31 @@ public class UserController {
         }
     }
 
-    @PostMapping("/sendOutgoingFriendRequest")
-    public ResponseEntity<String> sendOutgoingFriendRequest(
+    @PostMapping("/sendOutRequest")
+    public ResponseEntity<String> sendOutRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         if (userId.equals("") || friendId.equals("")) {
             return ResponseEntity.badRequest().body("No User ID and/or Friend ID provided");
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
+            if (ret_val == 0)
+                return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
+            else if (ret_val == -1)
+                return ResponseEntity.badRequest().body("No User with provided ID and/or Friend ID found");
+            else
+                return ResponseEntity.badRequest().body("Already Friends");
+        }
+    }
+
+    @PostMapping("/sendOutRequestWithUsername")
+    public ResponseEntity<String> sendOutRequestWithUsername(
+            @RequestParam(value = "username", defaultValue = "") String username,
+            @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) {
+        if (username.equals("") || friendUsername.equals("")) {
+            return ResponseEntity.badRequest().body("No Username and/or Friend Username provided");
+        } else {
+            int ret_val = userService.sendOutRequestWithUsername(username, friendUsername);
             if (ret_val == 0)
                 return ResponseEntity.status(HttpStatus.OK).body("Sent Outgoing Friend Request");
             else if (ret_val == -1)

@@ -1,7 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class BankAccountController extends BaseController {
         if (checkValidRoutingNumberByDigit(routingNumber))
             return ResponseEntity.badRequest().body("Routing number must be 9 digits");
 
-        JSONObject respBody = new JSONObject();
+        JsonObject respBody = new JsonObject();
         ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
         response = checkPositive(balance, "balance", respBody);
@@ -34,30 +34,30 @@ public class BankAccountController extends BaseController {
         int ret = bankAccountService.createBankAccount(userId, routingNumber, balance);
         switch (ret) {
             case -1:
-                respBody.put("message", "Invalid userId");
+                respBody.addProperty("message", "Invalid userId");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
             case -2:
-                respBody.put("message", "Invalid routingNumber");
+                respBody.addProperty("message", "Invalid routingNumber");
                 return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-        respBody.put("message", "Bankaccount request succeed");
+        respBody.addProperty("message", "Bankaccount request succeed");
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 
     @GetMapping("getBalance")
     public ResponseEntity<?> getBalance(
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
-        JSONObject respBody = new JSONObject();
+        JsonObject respBody = new JsonObject();
         ResponseEntity<?> response = checkEmpty(bankAccountId, "userId", respBody);
         if (response != null) return null;
 
         long ret = bankAccountService.getBalance(bankAccountId);
         if (ret == -1) {
-            respBody.put("message", "Invalid bankAccountId");
+            respBody.addProperty("message", "Invalid bankAccountId");
             return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
         }
-        respBody.put("message", "Bankaccount getBalance request succeed");
-        respBody.put("balance", ret);
+        respBody.addProperty("message", "Bankaccount getBalance request succeed");
+        respBody.addProperty("balance", ret);
         return new ResponseEntity<>(respBody, HttpStatus.OK);
     }
 

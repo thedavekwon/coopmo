@@ -194,4 +194,8 @@ public class UserRepository implements CrudRepository<User, String> {
     public ConcurrentHashMap<String, ArrayList<String>> getBankAccountList() {
         return bankAccountList;
     }
+
+    public ArrayList<String> getBankAccountListByUserId(String userId) {
+        return bankAccountList.get(userId);
+    }
 }

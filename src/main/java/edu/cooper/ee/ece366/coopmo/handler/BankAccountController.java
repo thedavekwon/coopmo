@@ -45,10 +45,12 @@ public class BankAccountController extends BaseController {
         if (response != null) return null;
 
         long ret = bankAccountService.getBalance(bankAccountId);
+        long num_dollars = ret / 100;
+        int num_cents = (int) ret % 100;
         if (ret == -1) {
             return ResponseEntity.badRequest().body("Invalid bankAccountId");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + ret);
+        return ResponseEntity.status(HttpStatus.OK).body("Your balance is $" + num_dollars + "." + num_cents);
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {

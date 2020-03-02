@@ -223,4 +223,33 @@ public class UserController {
                 return ResponseEntity.badRequest().body("User not found in incoming friend requests");
         }
     }
+
+    @GetMapping("/getBankIds")
+    public ResponseEntity<String> getBankId(
+            @RequestParam(value = "username", defaultValue = "") String username,
+            @RequestParam(value = "password", defaultValue = "") String password) {
+
+        if (username.equals("") || password.equals("")) {
+            return ResponseEntity.badRequest().body("Username or password is empty");
+        }
+
+        String userId = userService.getUserId(username, password);
+        if (userId == null){
+            return ResponseEntity.badRequest().body("Wrong username or password");
+        }
+
+        ArrayList<String> bankAccountIds = userRepository.getBankAccountListByUserId(userId);
+        StringBuilder sb = new StringBuilder();
+        for (String s: bankAccountIds) {
+            sb.append(s);
+            sb.append(", ");
+        }
+        String resp = sb.toString();
+
+        if (bankAccountIds.size() == 0){
+            return ResponseEntity.badRequest().body("Wrong username or password");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
 }
+

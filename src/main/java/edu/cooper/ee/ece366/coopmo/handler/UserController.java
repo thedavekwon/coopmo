@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
@@ -35,7 +35,7 @@ public class UserController {
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
     }
 
-    @PostMapping("/createUser")
+    @PostMapping(path = "/createUser")
     @ResponseBody
     public ResponseEntity<?> createUser(
             @RequestParam(value = "name", defaultValue = "") String name,
@@ -91,7 +91,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUserWithUsername")
+    @GetMapping(path = "/getUserWithUsername")
     @ResponseBody
     public ResponseEntity<?> getUserWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
@@ -116,7 +116,7 @@ public class UserController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getUserFriendList")
+    @GetMapping(path = "/getUserFriendList")
     @ResponseBody
     public ResponseEntity<?> getUserFriendList(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
@@ -134,7 +134,7 @@ public class UserController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getUserBankAccountList")
+    @GetMapping(path = "/getUserBankAccountList")
     @ResponseBody
     public ResponseEntity<?> getUserBankAccountList(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
@@ -150,7 +150,7 @@ public class UserController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getUserIncomingFriendRequest")
+    @GetMapping(path = "/getUserIncomingFriendRequest")
     @ResponseBody
     public ResponseEntity<?> getUserIncomingFriendRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
@@ -163,12 +163,12 @@ public class UserController {
 
         ConcurrentHashMap<String, Boolean> userIncomingFriendRequest = userService.getUserIncomingFriendRequest(userId);
         incomingFriendRequestJson.add("userIncomingFriendRequestList", new Gson().toJsonTree(new ArrayList<>(userIncomingFriendRequest.keySet())));
-        respBody.add("messagePayload",incomingFriendRequestJson);
+        respBody.add("messagePayload", incomingFriendRequestJson);
         respBody.addProperty("message", "Successfully returned user's incoming friend request list");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getUserOutgoingFriendRequest")
+    @GetMapping(path = "/getUserOutgoingFriendRequest")
     @ResponseBody
     public ResponseEntity<?> getUserOutgoingFriendRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
@@ -188,19 +188,19 @@ public class UserController {
 
 
     // Debug Purpose
-    @GetMapping("/getUserSize")
+    @GetMapping(path = "/getUserSize")
     public Long getUserSize() {
         return userRepository.count();
     }
 
     // Debug Purpose
-    @GetMapping("/getUserWithId")
+    @GetMapping(path = "/getUserWithId")
     public User getUserWithId(@RequestParam(value = "userId", defaultValue = "") String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.orElse(null);
     }
 
-    @GetMapping("/editProfile")
+    @GetMapping(path = "/editProfile")
     public ResponseEntity<?> editProfile(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "newName", defaultValue = "") String newName,
@@ -237,7 +237,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/requestCashOut")
+    @PostMapping(path = "/requestCashOut")
     public ResponseEntity<?> requestCashOut(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "bankId", defaultValue = "") String bankId,
@@ -258,7 +258,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/acceptIncomingRequest")
+    @GetMapping(path = "/acceptIncomingRequest")
     public ResponseEntity<?> acceptIncomingRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -277,7 +277,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/sendOutRequest")
+    @PostMapping(path = "/sendOutRequest")
     public ResponseEntity<?> sendOutRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -301,7 +301,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/sendOutRequestWithUsername")
+    @PostMapping(path = "/sendOutRequestWithUsername")
     public ResponseEntity<?> sendOutRequestWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
             @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) {
@@ -324,7 +324,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/cancelFriendRequest")
+    @GetMapping(path = "/cancelFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -347,7 +347,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/declineFriendRequest")
+    @GetMapping(path = "/declineFriendRequest")
     public ResponseEntity<?> declineFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

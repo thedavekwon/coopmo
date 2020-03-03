@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/bank")
+@RequestMapping(path = "/bank", produces = "application/json")
 public class BankAccountController extends BaseController {
     private final BankAccountService bankAccountService;
 

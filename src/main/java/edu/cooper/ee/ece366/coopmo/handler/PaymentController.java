@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pay")
+@RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;
 
@@ -19,7 +19,7 @@ public class PaymentController extends BaseController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("/createPayment")
+    @PostMapping(path = "/createPayment")
     public ResponseEntity<?> createPayment(
             @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
             @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
@@ -56,7 +56,7 @@ public class PaymentController extends BaseController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestPublicPayment")
+    @GetMapping(path = "/getLatestPublicPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") long n) {
         JsonObject respBody = new JsonObject();
@@ -69,7 +69,7 @@ public class PaymentController extends BaseController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestPrivatePayment")
+    @GetMapping(path = "/getLatestPrivatePayment")
     @ResponseBody
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
@@ -87,7 +87,7 @@ public class PaymentController extends BaseController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestFriendPayment")
+    @GetMapping(path = "/getLatestFriendPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestFriendPayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,

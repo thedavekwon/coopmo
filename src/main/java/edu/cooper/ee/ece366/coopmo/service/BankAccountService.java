@@ -20,21 +20,18 @@ public class BankAccountService {
         this.userRepository = userRepository;
     }
 
-    // return error code
-    // -1 : Invalid userId
-    // -2 : Invalid routing Number
-    public int createBankAccount(String userId, long routingNumber, long balance) {
+    public BankAccount createBankAccount(String userId, long routingNumber, long balance) {
         Optional<User> curUser = userRepository.findById(userId);
-        if (!curUser.isPresent()) {
-            return -1;
+        if (curUser.isEmpty()) {
+            return null;
         }
         if (!checkValidRoutingNumberWithBankApi(routingNumber)) {
-            return -1;
+            return null;
         }
         BankAccount bankAccount = new BankAccount(routingNumber, balance);
         userRepository.getBankAccountListMap().get(userId).add(bankAccount.getId());
         bankAccountRepository.save(bankAccount);
-        return 0;
+        return bankAccount;
     }
 
     // return error code

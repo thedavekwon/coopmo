@@ -63,7 +63,7 @@ public class PaymentController extends BaseController {
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive(n, "n", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
+        friend_json.add("LatestPublicPayment", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest public payments");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
@@ -81,7 +81,7 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
+        friend_json.add("LatestPrivatePayment", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest private payments");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
@@ -99,7 +99,7 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
+        friend_json.add("LatestFriendPayment", new Gson().toJsonTree(paymentService.getLatestFriendPayment(userId, n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest friend payments");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);

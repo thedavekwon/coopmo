@@ -200,6 +200,24 @@ public class UserController {
         return curUser.orElse(null);
     }
 
+    @GetMapping(path = "/getUserBalance")
+    @ResponseBody
+    public ResponseEntity<?> getUserBalance(@RequestParam(value = "userId", defaultValue = "") String userId) {
+        JsonObject respBody = new JsonObject();
+        if (userId.equals("")) {
+            respBody.addProperty("message", "userId is empty");
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        }
+        Long balance = userService.getUserBalance(userId);
+        if (balance == null) {
+            respBody.addProperty("message", "userId is empty");
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        }
+        respBody.addProperty("messagePayload", balance);
+        respBody.addProperty("message", "Successfully returned user's balance");
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+    }
+
     @GetMapping(path = "/editProfile")
     public ResponseEntity<?> editProfile(
             @RequestParam(value = "userId", defaultValue = "") String userId,
@@ -258,7 +276,7 @@ public class UserController {
     }
 
 
-    @GetMapping(path = "/acceptIncomingRequest")
+    @PostMapping(path = "/acceptIncomingRequest")
     public ResponseEntity<?> acceptIncomingRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

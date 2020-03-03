@@ -18,7 +18,7 @@ public class CashController extends BaseController {
         this.cashService = cashService;
     }
 
-    @GetMapping("createCash")
+    @PostMapping("createCash")
     @ResponseBody
     public ResponseEntity<?> createCash(
             @RequestParam(value = "userId", defaultValue = "") String userId,

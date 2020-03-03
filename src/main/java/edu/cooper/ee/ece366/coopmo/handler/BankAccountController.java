@@ -1,6 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,7 @@ public class BankAccountController extends BaseController {
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "routingNumber", defaultValue = "") long routingNumber,
             @RequestParam(value = "balance", defaultValue = "") long balance) {
-        if (checkValidRoutingNumberByDigit(routingNumber))
+        if (!checkValidRoutingNumberByDigit(routingNumber))
             return ResponseEntity.badRequest().body("Routing number must be 9 digits");
 
         JsonObject respBody = new JsonObject();
@@ -31,15 +33,14 @@ public class BankAccountController extends BaseController {
         response = checkPositive(balance, "balance", respBody);
         if (response != null) return response;
 
-        int ret = bankAccountService.createBankAccount(userId, routingNumber, balance);
-        switch (ret) {
-            case -1:
-                respBody.addProperty("message", "Invalid userId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -2:
-                respBody.addProperty("message", "Invalid routingNumber");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        BankAccount newBankAccount = bankAccountService.createBankAccount(userId, routingNumber, balance);
+        if (newBankAccount == null) {
+            respBody.addProperty("message", "Invalid userId or routingNumber");
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
+        JsonObject bankJson = new JsonObject();
+        bankJson.add("bankAccount", new Gson().toJsonTree(newBankAccount));
+        respBody.add("messagePayload", bankJson);
         respBody.addProperty("message", "Bankaccount request succeed");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
@@ -62,6 +63,6 @@ public class BankAccountController extends BaseController {
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
-        return (routingNumber / 100000000) < 1 || (routingNumber / 10000000) > 1;
+        return (routingNumber / 1000000000) < 1;
     }
 }

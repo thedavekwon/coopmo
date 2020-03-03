@@ -112,7 +112,7 @@ public class UserController {
 
         userJson.add("user", new Gson().toJsonTree(curUser));
         respBody.add("messagePayload", userJson);
-        respBody.addProperty("message", "Successfully created user");
+        respBody.addProperty("message", "Successfully returned user data");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 

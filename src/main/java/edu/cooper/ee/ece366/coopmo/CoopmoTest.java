@@ -65,7 +65,7 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
-        ret = createPayment(user1, user2, "3000", "PRIVATE");
+        ret = createPayment(user1, user2, "3000", "PUBLIC");
         if (!ret) return;
 
         user1Balance = getUserBalance(user1);
@@ -87,7 +87,7 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
-        ret = createPayment(user1, user2, "3000", "PRIVATE");
+        ret = createPayment(user1, user2, "3000", "FRIEND");
         if (!ret) return;
 
         user1Balance = getUserBalance(user1);
@@ -97,6 +97,13 @@ public class CoopmoTest {
         user2Balance = getUserBalance(user2);
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
+
+        System.out.println(user1);
+        if(!editProfile(user1, "name3", "username3", "password3", "user1@gmail.com", "handle3"))
+            return;
+
+        showUser("username3", "password3");
+
     }
 
     public static String createUser(String name, String username, String password, String email, String handle) throws IOException, InterruptedException {
@@ -326,5 +333,75 @@ public class CoopmoTest {
             return messagePayload.getAsLong();
         }
         return null;
+    }
+
+    public static boolean editProfile(String userId, String newName, String newUsername,
+                                      String newPassword, String newEmail, String newHandle) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("user/editProfile")
+                .addParameter("userId", userId)
+                .addParameter("newName", newName)
+                .addParameter("newUsername", newUsername)
+                .addParameter("newPassword", newPassword)
+                .addParameter("newEmail", newEmail)
+                .addParameter("newHandle", newHandle)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        JsonObject jsonObject = jsonTree.getAsJsonObject();
+        System.out.println(jsonObject.get("message").getAsString());
+        return response.statusCode() == 200;
+    }
+
+    public static boolean showUser(String username, String password) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("user/editProfile")
+                .addParameter("username", username)
+                .addParameter("password", password)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        if (jsonTree.isJsonObject() ) {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            JsonElement messagePayloadBuffer = jsonObject.get("messagePayload");
+            JsonObject messagePayload = messagePayloadBuffer.getAsJsonObject();
+            System.out.println(jsonObject.get("message").getAsString());
+            if(response.statusCode() == 200) {
+                System.out.println("User ID: " + messagePayload.get("id").getAsString());
+                System.out.println("Username: " + messagePayload.get("username"));
+                System.out.println("Password: " + messagePayload.get("password"));
+                System.out.println("Email: " + messagePayload.get("email"));
+                System.out.println("Handle: " + messagePayload.get("handle"));
+                System.out.println("Balance: " + messagePayload.get("balance"));
+            }
+        }
+        return response.statusCode()== 200;
+    }
+    public static boolean deleteFriend(String userId, String friendId) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("user/deleteFriend")
+                .addParameter("userId", userId)
+                .addParameter("friendId", friendId)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        JsonObject jsonObject = jsonTree.getAsJsonObject();
+        System.out.println(jsonObject.get("message").getAsString());
+        return response.statusCode() == 200;
     }
 }

@@ -218,7 +218,7 @@ public class UserController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/editProfile")
+    @PostMapping(path = "/editProfile")
     public ResponseEntity<?> editProfile(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "newName", defaultValue = "") String newName,
@@ -383,6 +383,33 @@ public class UserController {
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
                 respBody.addProperty("message", "User not found in incoming friend requests");
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            }
+        }
+    }
+
+    @PostMapping(path = "/deleteFriend")
+    public ResponseEntity<?> deleteFriend(
+            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+        JsonObject respBody = new JsonObject();
+        if (userId.equals("") || friendId.equals("")) {
+            respBody.addProperty("message", "No User ID and/or Friend ID provided");
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        }
+        else{
+            int ret_val = userService.deleteFriend(userId, friendId);
+            if(ret_val == 0){
+                respBody.addProperty("message", "Deleted Friend");
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+            }
+            else if(ret_val == -1){
+                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            }
+            else
+            {
+                respBody.addProperty("message", "The two user id's provided are not friends");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }

@@ -268,4 +268,14 @@ public class UserService {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getBalance).orElse(null);
     }
+
+    // -1 is if either user not found
+    // -2 if not friends
+    public int deleteFriend(String userId, String friendId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> friendUser = userRepository.findById(friendId);
+        if (user.isEmpty() || friendUser.isEmpty()) return -1;
+        else
+            return userRepository.deleteFriends(userId, friendId);
+    }
 }

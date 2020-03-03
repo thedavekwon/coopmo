@@ -190,4 +190,25 @@ public class UserRepository implements CrudRepository<User, String> {
     public ConcurrentHashMap<String, ArrayList<String>> getBankAccountListMap() {
         return bankAccountListMap;
     }
+
+    public boolean areFriends(String userId, String friendId){
+        synchronized (friendMap){
+            return (friendMap.containsKey(userId) && friendMap.get(userId).containsKey(friendId)) &&
+                    (friendMap.containsKey(friendId) && friendMap.get(friendId).containsKey(userId));
+        }
+    }
+
+    // -2 if not friends
+    public int deleteFriends(String userId, String friendId){
+        if( areFriends(userId, friendId)){
+            synchronized (friendMap){
+                friendMap.get(userId).remove(friendId);
+                friendMap.get(friendId).remove(userId);
+                return 0;
+            }
+        }
+        else
+            return -2;
+    }
+
 }

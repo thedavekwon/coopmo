@@ -8,7 +8,7 @@ public class BaseController {
     protected ResponseEntity<?> checkEmpty(String input, String field, JsonObject respBody) {
         if (input.equals("")) {
             respBody.addProperty("message", "Empty " + field);
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         return null;
     }
@@ -16,7 +16,7 @@ public class BaseController {
     protected ResponseEntity<?> checkPositive(Long input, String field, JsonObject respBody) {
         if (input <= 0) {
             respBody.addProperty("message", "Empty " + field);
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         return null;
     }

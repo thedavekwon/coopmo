@@ -46,12 +46,12 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (name.equals("") || username.equals("") || password.equals("") || email.equals("") || handle.equals("")) {
             respBody.addProperty("message", "One or more of submitted name, username, password, email, or handle is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         if (!validateEmail(email)) {
             respBody.addProperty("message", "Please enter a valid email address");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         ArrayList<Integer> errors = userService.check_if_taken(username, email, handle);
@@ -59,7 +59,7 @@ public class UserController {
             User newUser = userService.createUser(name, username, password, email, handle);
             if (newUser == null) {
                 respBody.addProperty("message", "Error Creating User");
-                return new ResponseEntity<>(respBody, HttpStatus.SERVICE_UNAVAILABLE);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.SERVICE_UNAVAILABLE);
             } else {
                 JsonObject userJson = new JsonObject();
                 userJson.add("user", new Gson().toJsonTree(newUser));
@@ -87,7 +87,7 @@ public class UserController {
             }
             respBody.add("errorMessages", new Gson().toJsonTree(error_msg));
             respBody.addProperty("message", "Error Creating User");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -101,19 +101,19 @@ public class UserController {
 
         if (username.equals("") || password.equals("")) {
             respBody.addProperty("message", "One or more of submitted name, username, password, email, or handle is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         User curUser = userService.getUserWithUsername(username, password);
         if (curUser == null) {
             respBody.addProperty("message", "Wrong username or password");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         userJson.add("user", new Gson().toJsonTree(curUser));
         respBody.add("messagePayload", userJson);
         respBody.addProperty("message", "Successfully created user");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/getUserFriendList")
@@ -124,14 +124,14 @@ public class UserController {
         JsonObject friendJson = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         ConcurrentHashMap<String, Boolean> userFriendList = userService.getUserFriendList(userId);
         friendJson.add("friendList", new Gson().toJsonTree(new ArrayList<>(userFriendList.keySet())));
         respBody.add("messagePayload", friendJson);
         respBody.addProperty("message", "successfully returned user's friend list");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/getUserBankAccountList")
@@ -142,12 +142,12 @@ public class UserController {
         JsonObject bankAccountJson = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         respBody.addProperty("message", "get Bank Account List succeed");
         bankAccountJson.add("bankAccountList", new Gson().toJsonTree(userService.getUserBankAccountList(userId)));
         respBody.add("messagePayload", bankAccountJson);
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/getUserIncomingFriendRequest")
@@ -158,14 +158,14 @@ public class UserController {
         JsonObject incomingFriendRequestJson = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         ConcurrentHashMap<String, Boolean> userIncomingFriendRequest = userService.getUserIncomingFriendRequest(userId);
         incomingFriendRequestJson.add("userIncomingFriendRequestList", new Gson().toJsonTree(new ArrayList<>(userIncomingFriendRequest.keySet())));
         respBody.add("messagePayload",incomingFriendRequestJson);
         respBody.addProperty("message", "Successfully returned user's incoming friend request list");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/getUserOutgoingFriendRequest")
@@ -176,14 +176,14 @@ public class UserController {
         JsonObject outgoingFriendRequestJson = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         ConcurrentHashMap<String, Boolean> userOutgoingFriendRequest = userService.getUserOutgoingFriendRequest(userId);
         outgoingFriendRequestJson.add("userOutgoingFriendRequest", new Gson().toJsonTree(new ArrayList<>(userOutgoingFriendRequest.keySet())));
         respBody.add("messagePayload", outgoingFriendRequestJson);
         respBody.addProperty("message", "Successfully returned user's outgoing friend request list");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
 
@@ -212,16 +212,16 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "No id provided");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else if (newName.equals("") || newUsername.equals("") || newPassword.equals("") || newEmail.equals("") || newHandle.equals("")) {
             //This should actually be handled on the client side
             respBody.addProperty("message", "All fields were not filled out properly");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             ArrayList<Integer> errors = userService.editProfile(userId, newName, newUsername, newPassword, newEmail, newHandle);
             if (errors.isEmpty()) {
                 respBody.addProperty("message", "Profile Updated");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else {
                 Iterator<Integer> error = errors.iterator();
                 ArrayList<String> errorMsg = new ArrayList<>();
@@ -232,7 +232,7 @@ public class UserController {
                 }
                 respBody.add("errorMessages", new Gson().toJsonTree(errorMsg));
                 respBody.addProperty("message", "Error editing profile");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -246,15 +246,15 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (amount < 0) {
             respBody.addProperty("message", "Cannot cash out a negative amount of money");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         if (userId.equals("") || bankId.equals("")) {
             respBody.addProperty("message", "User ID or bank ID not valid");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         respBody.addProperty("message", "Valid cash out request");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
 
@@ -265,14 +265,14 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID found");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             if (userService.acceptIncomingRequest(userId, friendId) == 0) {
                 respBody.addProperty("message", "Accepted Incoming Friend Request");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found in Incoming Requests");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -285,18 +285,18 @@ public class UserController {
 
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0) {
                 respBody.addProperty("message", "Sent Outgoing Friend Request");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else if (ret_val == -1) {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
                 respBody.addProperty("message", "Already Friends");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -308,18 +308,18 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (username.equals("") || friendUsername.equals("")) {
             respBody.addProperty("message", "No Username and/or Friend Username provided");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.sendOutRequestWithUsername(username, friendUsername);
             if (ret_val == 0) {
                 respBody.addProperty("message", "Sent Outgoing Friend Request");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else if (ret_val == -1) {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
                 respBody.addProperty("message", "Already Friends");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -331,18 +331,18 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(userId, friendId);
             if (ret_val == 0) {
                 respBody.addProperty("message", "Cancelled Outgoing Friend Request");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else if (ret_val == -1) {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
                 respBody.addProperty("message", "User not found in outgoing friends requests");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -354,18 +354,18 @@ public class UserController {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(friendId, userId);
             if (ret_val == 0) {
                 respBody.addProperty("message", "Declined Incoming Friend Request");
-                return new ResponseEntity<>(respBody, HttpStatus.OK);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else if (ret_val == -1) {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
                 respBody.addProperty("message", "User not found in incoming friend requests");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }

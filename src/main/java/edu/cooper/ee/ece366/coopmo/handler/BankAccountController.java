@@ -35,13 +35,13 @@ public class BankAccountController extends BaseController {
         switch (ret) {
             case -1:
                 respBody.addProperty("message", "Invalid userId");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             case -2:
                 respBody.addProperty("message", "Invalid routingNumber");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         respBody.addProperty("message", "Bankaccount request succeed");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     @GetMapping("getBalance")
@@ -54,11 +54,11 @@ public class BankAccountController extends BaseController {
         long ret = bankAccountService.getBalance(bankAccountId);
         if (ret == -1) {
             respBody.addProperty("message", "Invalid bankAccountId");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         respBody.addProperty("message", "Bankaccount getBalance request succeed");
         respBody.addProperty("balance", ret);
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {

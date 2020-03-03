@@ -74,7 +74,7 @@ public class PaymentService {
     }
 
     public ArrayList<Payment> getLatestFriendPayment(String userId, int n) {
-        List<Payment> paymentList = new ArrayList<>();
+        TreeSet<Payment> paymentList = new TreeSet<>();
         for (String friendId : Collections.list(userRepository.getFriendMap().get(userId).keys())) {
             int curSize = userRepository.getPaymentListMap().get(friendId).size();
             int cnt = 0;
@@ -89,7 +89,6 @@ public class PaymentService {
                 }
             }
         }
-        Collections.sort(paymentList);
-        return new ArrayList<>(paymentList.subList(paymentList.size() - n, paymentList.size()));
+        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - n, paymentList.size()));
     }
 }

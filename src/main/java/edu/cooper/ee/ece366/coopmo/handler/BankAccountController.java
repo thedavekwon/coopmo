@@ -62,6 +62,6 @@ public class BankAccountController extends BaseController {
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
-        return (routingNumber / 100000000) < 1;
+        return (routingNumber / 100000000) < 1 || (routingNumber / 10000000) > 1;
     }
 }

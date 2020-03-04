@@ -134,11 +134,13 @@ public class UserService {
     }
 
     // -1 if users not found
-    // -2 if already friends
+    // -2 if friend request already sent
     public int sendOutRequest(String userId, String friendId) {
         if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
+            ConcurrentHashMap<String, Boolean> userOutgoingFriendRequests = getUserOutgoingFriendRequest(userId);
+            if (userOutgoingFriendRequests.containsKey(friendId)) return -2;
             synchronized (userRepository.getFriendMap()) {
                 synchronized (userRepository.getOutgoingFriendRequestMap()) {
                     synchronized (userRepository.getIncomingFriendRequestMap()) {

@@ -241,13 +241,10 @@ public class UserController {
                 respBody.addProperty("message", "Profile Updated");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else {
-                Iterator<Integer> error = errors.iterator();
                 ArrayList<String> errorMsg = new ArrayList<>();
                 String[] posErrors = {"No userId found.", "Username already exists.", "Email already used by other user.",
                         "Handle already exists."};
-                while (error.hasNext()) {
-                    errorMsg.add(posErrors[error.next()]);
-                }
+                errors.forEach(e -> {errorMsg.add(posErrors[-e-1]);});
                 respBody.add("errorMessages", new Gson().toJsonTree(errorMsg));
                 respBody.addProperty("message", "Error editing profile");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);

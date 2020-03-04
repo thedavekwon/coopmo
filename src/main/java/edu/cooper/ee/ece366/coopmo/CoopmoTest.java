@@ -241,11 +241,18 @@ public class CoopmoTest {
 
         System.out.println("\nTest for editing profile:\n----------------------------");
         System.out.println("Trying to change Minh profile to match user1's");
-        if(!editProfile(minh, "name1", "username1", "password1",
+        if(editProfile(minh, "name1", "username1", "password1",
                 "email1@gmail.com", "handle1")) return;
 
         System.out.println("Showing Minh user through username and password");
-        if(!getUserWithUsername("minhthai", "password")) return;
+        if(!getUserWithUsername("minhthai", "password1")) return;
+
+        System.out.println("\nChanging Profile to new things");
+        if(!editProfile(minh, "newname", "newuname", "newpassword",
+                "newemail@gmail.com", "newhandle")) return;
+        System.out.println("Showing Minh user through username and password");
+        if(!getUserWithUsername("newuname", "newpassword")) return;
+
     }
 
     public static String createUser(String name, String username, String password, String email, String handle) throws IOException, InterruptedException {
@@ -517,16 +524,18 @@ public class CoopmoTest {
         JsonElement jsonTree = jsonParser.parse(response.body());
         if (jsonTree.isJsonObject() ) {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayloadBuffer = jsonObject.get("messagePayload");
             System.out.println(jsonObject.get("message").getAsString());
-            if(response.statusCode() == 200) {
-                JsonObject messagePayload = messagePayloadBuffer.getAsJsonObject();
-                System.out.println("User ID: " + messagePayload.get("id").getAsString());
-                System.out.println("Username: " + messagePayload.get("username"));
-                System.out.println("Password: " + messagePayload.get("password"));
-                System.out.println("Email: " + messagePayload.get("email"));
-                System.out.println("Handle: " + messagePayload.get("handle"));
-                System.out.println("Balance: " + messagePayload.get("balance"));
+            if (response.statusCode() == 200) {
+                JsonElement messagePayloadBuffer = jsonObject.get("messagePayload");
+                if (messagePayloadBuffer.isJsonObject()) {
+                    JsonObject user = messagePayloadBuffer.getAsJsonObject().get("user").getAsJsonObject();
+                    System.out.println("User ID: " + user.get("id").getAsString());
+                    System.out.println("Username: " + user.get("username").getAsString());
+                    System.out.println("Password: " + user.get("password").getAsString());
+                    System.out.println("Email: " + user.get("email").getAsString());
+                    System.out.println("Handle: " + user.get("handle").getAsString());
+                    System.out.println("Balance: " + user.get("balance").getAsString());
+                }
             }
         }
         return response.statusCode()== 200;

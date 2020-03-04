@@ -15,7 +15,7 @@ import java.net.http.HttpResponse;
 public class CoopmoTest {
     private static HttpClient client = HttpClient.newHttpClient();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void run() throws IOException, InterruptedException {
         // Test: Creating two users
         String user1 = createUser("name1", "username1", "password1", "email1@gmail.com", "handle1");
         if (user1 == null)
@@ -48,7 +48,7 @@ public class CoopmoTest {
         String clone3 = createUser("clone3", "clone3", "password", "clone3@gmail.com", "superoriginal");
         if (clone3 == null)
             System.out.println("Creating a new User failed");
-        System.out.println("Clone3 ID: " + clone + "\n");
+        System.out.println("Clone3 ID: " + clone3 + "\n");
 
         // Test: sending Friend Request
         boolean ret = sendOutRequest(user1, user2);
@@ -92,7 +92,11 @@ public class CoopmoTest {
         System.out.println("Dan IncomingFriendRequests: " + danIncomingFriendRequest + "\n");
 
         ret = cancelFriendRequest(minh, dan);
+        if (!ret) {
+            System.out.println("Failed to cancel Friend Request");
+        }
 
+        minhOutgoingFriendRequest = getUserOutgoingFriendRequest(minh);
         if (minhOutgoingFriendRequest == null)
             System.out.println("Failed to get User's Outgoing Friend Requests");
         System.out.println("Minh OutgoingFriendRequests: " + minhOutgoingFriendRequest + "\n");

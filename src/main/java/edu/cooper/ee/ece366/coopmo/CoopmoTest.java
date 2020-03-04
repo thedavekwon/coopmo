@@ -17,6 +17,7 @@ public class CoopmoTest {
 
     public static void run() throws IOException, InterruptedException {
         // Test: Creating two users
+        System.out.println("Initial Test Create Two Users:\n----------------------------");
         String user1 = createUser("name1", "username1", "password1", "email1@gmail.com", "handle1");
         if (user1 == null)
             System.out.println("Creating a new User failed");
@@ -28,30 +29,36 @@ public class CoopmoTest {
         System.out.println("User2 ID: " + user2 + "\n");
 
         // Test: Creating duplicate users
+        System.out.println("Test for No duplicate users:\n----------------------------");
+        System.out.println("Original User");
         String original = createUser("Original", "original", "password", "original@gmail.com", "superoriginal");
         if (original == null)
             System.out.println("Creating a new User failed");
         System.out.println("Original ID: " + original + "\n");
 
         //Test username
+        System.out.println("Same username");
         String clone = createUser("clone", "original", "password", "clone@gmail.com", "imaclone");
         if (clone == null)
             System.out.println("Creating a new User failed");
         System.out.println("Clone ID: " + clone + "\n");
 
         // Test email
+        System.out.println("Same email");
         String clone2 = createUser("clone2", "clone2", "password", "original@gmail.com", "imaclone2");
         if (clone2 == null)
             System.out.println("Creating a new User failed");
         System.out.println("Clone2 ID: " + clone2 + "\n");
 
         // Test handle
+        System.out.println("Same handle");
         String clone3 = createUser("clone3", "clone3", "password", "clone3@gmail.com", "superoriginal");
         if (clone3 == null)
             System.out.println("Creating a new User failed");
         System.out.println("Clone3 ID: " + clone3 + "\n");
 
         // Test: sending Friend Request
+        System.out.println("Test for Sending Friend Request:\n----------------------------");
         boolean ret = sendOutRequest(user1, user2);
         if (!ret)
             System.out.println("Sending Friend Request failed\n");
@@ -68,6 +75,7 @@ public class CoopmoTest {
         System.out.println("User2 IncomingFriendRequests: " + user2IncomingFriendRequest + "\n");
 
         // Test: deleting Friend Request
+        System.out.println("Test for cancelling friend request:\n----------------------------");
         String minh = createUser("Minh-Thai", "minhthai", "password", "minhtyufa@gmail.com", "Edge-Lord");
         if (original == null)
             System.out.println("Creating a new User failed");
@@ -80,7 +88,7 @@ public class CoopmoTest {
 
         ret = sendOutRequest(minh, dan);
         if (!ret)
-            System.out.println("Canceling Friend Request failed\n");
+            System.out.println("Sending Friend Request failed\n");
 
         String minhOutgoingFriendRequest = getUserOutgoingFriendRequest(minh);
         if (minhOutgoingFriendRequest == null)
@@ -109,6 +117,8 @@ public class CoopmoTest {
         System.out.println("Dan IncomingFriendRequests: " + danIncomingFriendRequest + "\n");
 
         // Test: accepting Friend Request
+        System.out.println("Test for Accepting Request users:\n----------------------------");
+        System.out.println("User 2 accepting user 1's friend request");
         ret = acceptIncomingRequest(user2, user1);
         if (!ret) return;
 
@@ -122,6 +132,7 @@ public class CoopmoTest {
         System.out.println("User2 FriendList: " + user2FriendList);
 
         // Test: creating two BankAccounts
+        System.out.println("Test for creating two BankAccounts:\n----------------------------");
         String user1BankAccount = createBankAccount(user1, "999999999", "9000");
         if (user1BankAccount == null) return;
         System.out.println("User1 BankAccount ID: " + user1BankAccount);
@@ -131,6 +142,7 @@ public class CoopmoTest {
         System.out.println("User2 BankAccount ID: " + user2BankAccount);
 
         // Adding cash to first BankAccount
+        System.out.println("Test for adding cash to first bank account:\n----------------------------");
         ret = createCash(user1, user1BankAccount, "9000", "IN");
         if (!ret) return;
 
@@ -144,6 +156,8 @@ public class CoopmoTest {
         System.out.println("User2 Balance: " + user2Balance);
 
         // Test: creating public Payment between two users
+        System.out.println("Test for sending a payment:\n----------------------------");
+        System.out.println("Sending 3000 from user 1 to user 2");
         ret = createPayment(user1, user2, "3000", "PUBLIC");
         if (!ret) return;
 
@@ -156,6 +170,8 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        // Test for displaying public payments
+        System.out.println("Test for displaying pubic payments:\n----------------------------");
         String user1PublicPaymentList = getLatestPublicPayment("10");
         if (user1PublicPaymentList == null) return;
         System.out.println("User1 PublicPaymentList: " + user1PublicPaymentList);
@@ -165,6 +181,8 @@ public class CoopmoTest {
         System.out.println("User2 PublicPaymentList: " + user2PublicPaymentList);
 
         // Test: creating private Payment between two users
+        System.out.println("Test for creating Private payment between users:\n----------------------------");
+        System.out.println("Sending a private payment of 3000 from user 1 to user 2");
         ret = createPayment(user1, user2, "3000", "PRIVATE");
         if (!ret) return;
 
@@ -177,6 +195,7 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        System.out.println("Test for displaying private payments:\n----------------------------");
         String user1PrivatePaymentList = getLatestPrivatePayment(user1, "10");
         if (user1PrivatePaymentList == null) return;
         System.out.println("User1 PrivatePaymentList: " + user1PrivatePaymentList);
@@ -185,6 +204,8 @@ public class CoopmoTest {
         if (user2PrivatePaymentList == null) return;
         System.out.println("User2 PrivatePaymentList: " + user2PrivatePaymentList);
         // Test: creating friend Payment between two users
+        System.out.println("Test for creating a Friend payment of 3000 between two users:\n----------------------------");
+        System.out.println("Sending a friend payment of 3000 from user 1 to user 2");
         ret = createPayment(user1, user2, "3000", "FRIEND");
         if (!ret) return;
 
@@ -197,6 +218,7 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        System.out.println("Test for displaying friend payments:\n----------------------------");
         String user1FriendPaymentList = getLatestFriendPayment(user1, "10");
         if (user1FriendPaymentList == null) return;
         System.out.println("User1 FriendPaymentList: " + user1FriendPaymentList);
@@ -205,6 +227,25 @@ public class CoopmoTest {
         if (user2FriendPaymentList == null) return;
         System.out.println("User2 FriendPaymentList: " + user2FriendPaymentList);
 
+        System.out.println("\nTest for deleting friend:\n----------------------------");
+        System.out.println("User1 deleting User2 as a friend");
+        if(!deleteFriend(user1,user2)) return;
+
+        user1FriendList = getUserFriendList(user1);
+        if (user1FriendList == null) return;
+        System.out.println("User1 FriendList: " + user1FriendList);
+
+        user2FriendList = getUserFriendList(user2);
+        if (user2FriendList == null) return;
+        System.out.println("User2 FriendList: " + user2FriendList);
+
+        System.out.println("\nTest for editing profile:\n----------------------------");
+        System.out.println("Trying to change Minh profile to match user1's");
+        if(!editProfile(minh, "name1", "username1", "password1",
+                "email1@gmail.com", "handle1")) return;
+
+        System.out.println("Showing Minh user through username and password");
+        if(!getUserWithUsername("minhthai", "password")) return;
     }
 
     public static String createUser(String name, String username, String password, String email, String handle) throws IOException, InterruptedException {
@@ -461,12 +502,12 @@ public class CoopmoTest {
         return response.statusCode() == 200;
     }
 
-    public static boolean showUser(String username, String password) throws IOException, InterruptedException {
+    public static boolean getUserWithUsername(String username, String password) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
-                .withPath("user/editProfile")
+                .withPath("user/getUserWithUsername")
                 .addParameter("username", username)
                 .addParameter("password", password)
                 .toUri();
@@ -477,9 +518,9 @@ public class CoopmoTest {
         if (jsonTree.isJsonObject() ) {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
             JsonElement messagePayloadBuffer = jsonObject.get("messagePayload");
-            JsonObject messagePayload = messagePayloadBuffer.getAsJsonObject();
             System.out.println(jsonObject.get("message").getAsString());
             if(response.statusCode() == 200) {
+                JsonObject messagePayload = messagePayloadBuffer.getAsJsonObject();
                 System.out.println("User ID: " + messagePayload.get("id").getAsString());
                 System.out.println("Username: " + messagePayload.get("username"));
                 System.out.println("Password: " + messagePayload.get("password"));
@@ -490,6 +531,7 @@ public class CoopmoTest {
         }
         return response.statusCode()== 200;
     }
+
     public static boolean deleteFriend(String userId, String friendId) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
@@ -513,7 +555,7 @@ public class CoopmoTest {
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
-                .withPath("user/cancelFriendRequest")
+                .withPath("user/cancelOutgoingFriendRequest")
                 .addParameter("userId", userId)
                 .addParameter("friendId", friendId)
                 .toUri();

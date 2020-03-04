@@ -344,7 +344,7 @@ public class UserController {
 
     @PostMapping(path = "/cancelOutgoingFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
@@ -367,7 +367,7 @@ public class UserController {
 
     @PostMapping(path = "/declineFriendRequest")
     public ResponseEntity<?> declineFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
@@ -390,7 +390,7 @@ public class UserController {
 
     @PostMapping(path = "/deleteFriend")
     public ResponseEntity<?> deleteFriend(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {

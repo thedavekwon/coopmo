@@ -53,8 +53,7 @@ public class UserService {
     private boolean editUsername(String id, String newUsername) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) return false;
-        if (userRepository.changeUsername(user.get().getUsername(), newUsername
-                , id)) {
+        if (userRepository.changeUsername(user.get().getUsername(), newUsername, id)) {
             user.get().setUsername(newUsername);
             return true;
         } else
@@ -85,11 +84,11 @@ public class UserService {
         } else {
             user.get().setName(newName);
             user.get().setPassword(newPassword);
-            if (editUsername(userId, newUsername))
+            if (!editUsername(userId, newUsername))
                 errors.add(-2);
-            if (editEmail(userId, newEmail))
+            if (!editEmail(userId, newEmail))
                 errors.add(-3);
-            if (editHandle(userId, newHandle))
+            if (!editHandle(userId, newHandle))
                 errors.add(-4);
         }
         return errors;

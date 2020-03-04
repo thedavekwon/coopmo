@@ -302,15 +302,22 @@ public class UserController {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         } else {
-            int ret_val = userService.sendOutRequest(userId, friendId);
-            if (ret_val == 0) {
-                respBody.addProperty("message", "Sent Outgoing Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
-            } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            } else {
-                respBody.addProperty("message", "Already Friends");
+            ConcurrentHashMap<String, Boolean> userOutgoingFriendRequests = userService.getUserOutgoingFriendRequest(userId);
+            if (!userOutgoingFriendRequests.containsKey(friendId)) {
+                int ret_val = userService.sendOutRequest(userId, friendId);
+                if (ret_val == 0) {
+                    respBody.addProperty("message", "Sent Outgoing Friend Request");
+                    return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                } else if (ret_val == -1) {
+                    respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
+                    return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                } else {
+                    respBody.addProperty("message", "Already Friends");
+                    return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                }
+            }
+            else {
+                respBody.addProperty("message", "Target user already has active friend request");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }

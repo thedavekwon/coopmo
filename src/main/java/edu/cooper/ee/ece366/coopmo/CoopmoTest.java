@@ -221,7 +221,8 @@ public class CoopmoTest {
             return;
         }
 
-        if (!getAllFriendLists(user1, user2, user3, user4, user5)) return;
+        System.out.println("Test for Friend Requests:\n----------------------------");
+        if (getAllFriendLists(user1, user2, user3, user4, user5)) return;
 
         // Test: creating two BankAccounts
         System.out.println("Test for creating two BankAccounts:\n----------------------------");
@@ -278,7 +279,12 @@ public class CoopmoTest {
         System.out.println("Sending a friend payment of 3000 from user 2 to user 4");
         ret = createPayment(user2, user4, "3000", "FRIEND");
         if (!ret) return;
-
+        System.out.println("Expected friendPaymentList");
+        System.out.println("user1: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user2: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user3: [PUBLIC user1->user2, FRIEND user1->user2]");
+        System.out.println("user4: [FRIEND user2->user4]");
+        System.out.println("user5: [FRIEND user2->user4]");
         // Check to see if friend Payment has updated relevant fields
         if (getAllUserBalance(user1, user2, user3, user4, user5)) return;
 
@@ -288,23 +294,23 @@ public class CoopmoTest {
 
     private static boolean getAllFriendLists(String user1, String user2, String user3, String user4, String user5) throws IOException, InterruptedException {
         String user1FriendList = getUserFriendList(user1);
-        if (user1FriendList == null) return false;
+        if (user1FriendList == null) return true;
         System.out.println("User1 FriendList: " + user1FriendList);
 
         String user2FriendList = getUserFriendList(user2);
-        if (user2FriendList == null) return false;
+        if (user2FriendList == null) return true;
         System.out.println("User2 FriendList: " + user2FriendList);
 
         String user3FriendList = getUserFriendList(user3);
-        if (user3FriendList == null) return false;
+        if (user3FriendList == null) return true;
         System.out.println("User3 FriendList: " + user3FriendList);
 
         String user4FriendList = getUserFriendList(user4);
-        if (user4FriendList == null) return false;
+        if (user4FriendList == null) return true;
         System.out.println("User4 FriendList: " + user4FriendList);
 
         String user5FriendList = getUserFriendList(user5);
-        if (user5FriendList == null) return false;
+        if (user5FriendList == null) return true;
         System.out.println("User5 FriendList: " + user5FriendList);
         return false;
     }

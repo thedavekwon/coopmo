@@ -60,13 +60,11 @@ public class CoopmoTest {
         // Test: sending Friend Request
         System.out.println("Test for Sending Friend Request:\n----------------------------");
         boolean ret = sendOutRequest(user1, user2);
-        if (!ret)
-            System.out.println("Sending Friend Request failed\n");
+        if (!ret) System.out.println("Sending Friend Request failed\n");
 
         // Check to see if sent Friend Request has been globally updated in relevant fields
         String user1OutgoingFriendRequest = getUserOutgoingFriendRequest(user1);
-        if (user1OutgoingFriendRequest == null)
-            System.out.println("Failed to get User's Outgoing Friend Requests");
+        if (user1OutgoingFriendRequest == null) System.out.println("Failed to get User's Outgoing Friend Requests");
         System.out.println("User1 OutgoingFriendRequests: " + user1OutgoingFriendRequest + "\n");
 
         String user2IncomingFriendRequest = getUserIncomingFriendRequest(user2);
@@ -245,13 +243,29 @@ public class CoopmoTest {
                 "email1@gmail.com", "handle1")) return;
 
         System.out.println("Showing Minh user through username and password");
-        if(!getUserWithUsername("minhthai", "password1")) return;
+        if (!getUserWithUsername("minhthai", "password1")) return;
 
         System.out.println("\nChanging Profile to new things");
-        if(!editProfile(minh, "newname", "newuname", "newpassword",
+        if (!editProfile(minh, "newname", "newuname", "newpassword",
                 "newemail@gmail.com", "newhandle")) return;
         System.out.println("Showing Minh user through username and password");
-        if(!getUserWithUsername("newuname", "newpassword")) return;
+        if (!getUserWithUsername("newuname", "newpassword")) return;
+
+        System.out.println("\nTest for different type of payment:\n----------------------------");
+        System.out.println("Test for Sending Friend Request:\n----------------------------");
+        ret = sendOutRequest(user1, user2);
+        if (!ret) {
+            System.out.println("Sending Friend Request failed\n");
+            return;
+        }
+
+        System.out.println("User 2 accepting user 1's friend request");
+        ret = acceptIncomingRequest(user2, user1);
+        if (!ret) {
+            System.out.println("Sending Friend Request failed\n");
+            return;
+        }
+
 
     }
 

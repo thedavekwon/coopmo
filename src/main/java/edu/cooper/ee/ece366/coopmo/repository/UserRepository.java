@@ -94,14 +94,11 @@ public class UserRepository implements CrudRepository<User, String> {
 
     public boolean changeUsername(String username, String newUsername, String id) {
         synchronized (usernameMap) {
-            if (username.equals(newUsername
-            ))
+            if (username.equals(newUsername))
                 return true;
-            else if (usernameMap.containsKey(username) && !usernameMap.containsKey(newUsername
-            )) {
+            else if (usernameMap.containsKey(username) && !usernameMap.containsKey(newUsername)) {
                 usernameMap.remove(username);
-                usernameMap.put(newUsername
-                        , id);
+                usernameMap.put(newUsername, id);
                 return true;
             } else {
                 return false;

@@ -21,19 +21,18 @@ public class UserService {
 
     public User createUser(String name, String username, String password, String email, String handle) {
         User newUser = new User(name, username, password, email, handle);
-        if (userRepository.containsUsername(username) || userRepository.containsUsername(username) || userRepository.containsUsername(username)) {
+        if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
             return null;
         }
         userRepository.insertUsername(username, newUser.getId());
-        userRepository.insertHandle(username, newUser.getId());
-        userRepository.insertEmail(username, newUser.getId());
+        userRepository.insertHandle(handle, newUser.getId());
+        userRepository.insertEmail(email, newUser.getId());
         userRepository.getIncomingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getOutgoingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getFriendMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getPaymentListMap().put(newUser.getId(), new ArrayList<>());
         userRepository.getCashListMap().put(newUser.getId(), new ArrayList<>());
         userRepository.getBankAccountListMap().put(newUser.getId(), new ArrayList<>());
-
         userRepository.save(newUser);
         return newUser;
     }
@@ -54,8 +53,7 @@ public class UserService {
     private boolean editUsername(String id, String newUsername) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) return false;
-        if (userRepository.changeUsername(user.get().getUsername(), newUsername
-                , id)) {
+        if (userRepository.changeUsername(user.get().getUsername(), newUsername, id)) {
             user.get().setUsername(newUsername);
             return true;
         } else
@@ -86,11 +84,11 @@ public class UserService {
         } else {
             user.get().setName(newName);
             user.get().setPassword(newPassword);
-            if (editUsername(userId, newUsername))
+            if (!editUsername(userId, newUsername))
                 errors.add(-2);
-            if (editEmail(userId, newEmail))
+            if (!editEmail(userId, newEmail))
                 errors.add(-3);
-            if (editHandle(userId, newHandle))
+            if (!editHandle(userId, newHandle))
                 errors.add(-4);
         }
         return errors;
@@ -136,11 +134,13 @@ public class UserService {
     }
 
     // -1 if users not found
-    // -2 if already friends
+    // -2 if friend request already sent
     public int sendOutRequest(String userId, String friendId) {
         if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
             return -1;
         } else {
+            ConcurrentHashMap<String, Boolean> userOutgoingFriendRequests = getUserOutgoingFriendRequest(userId);
+            if (userOutgoingFriendRequests.containsKey(friendId)) return -2;
             synchronized (userRepository.getFriendMap()) {
                 synchronized (userRepository.getOutgoingFriendRequestMap()) {
                     synchronized (userRepository.getIncomingFriendRequestMap()) {

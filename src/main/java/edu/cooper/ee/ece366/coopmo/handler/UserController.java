@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -241,13 +240,10 @@ public class UserController {
                 respBody.addProperty("message", "Profile Updated");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
             } else {
-                Iterator<Integer> error = errors.iterator();
                 ArrayList<String> errorMsg = new ArrayList<>();
                 String[] posErrors = {"No userId found.", "Username already exists.", "Email already used by other user.",
                         "Handle already exists."};
-                while (error.hasNext()) {
-                    errorMsg.add(posErrors[error.next()]);
-                }
+                errors.forEach(e -> errorMsg.add(posErrors[-e - 1]));
                 respBody.add("errorMessages", new Gson().toJsonTree(errorMsg));
                 respBody.addProperty("message", "Error editing profile");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
@@ -313,11 +309,12 @@ public class UserController {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             } else {
-                respBody.addProperty("message", "Already Friends");
+                respBody.addProperty("message", "Duplicate Friend Request");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
+
 
     @PostMapping(path = "/sendOutRequestWithUsername")
     public ResponseEntity<?> sendOutRequestWithUsername(
@@ -342,9 +339,9 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/cancelOutgoingFriendRequest")
+    @PostMapping(path = "/cancelOutgoingFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
@@ -365,9 +362,9 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/declineFriendRequest")
+    @PostMapping(path = "/declineFriendRequest")
     public ResponseEntity<?> declineFriendRequest(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
@@ -390,25 +387,21 @@ public class UserController {
 
     @PostMapping(path = "/deleteFriend")
     public ResponseEntity<?> deleteFriend(
-            @RequestParam(value = "id", defaultValue = "") String userId,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        else{
+        } else {
             int ret_val = userService.deleteFriend(userId, friendId);
-            if(ret_val == 0){
+            if (ret_val == 0) {
                 respBody.addProperty("message", "Deleted Friend");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
-            }
-            else if(ret_val == -1){
+            } else if (ret_val == -1) {
                 respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            }
-            else
-            {
+            } else {
                 respBody.addProperty("message", "The two user id's provided are not friends");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }

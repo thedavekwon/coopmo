@@ -378,6 +378,87 @@ public class CoopmoTest {
         if (user4Balance == null) return true;
         System.out.println("User4 Balance: " + user4Balance);
 
+        System.out.println("User 2 accepting user 1's friend request");
+        ret = acceptIncomingRequest(user2, user1);
+        if (!ret) {
+            System.out.println("Sending Friend Request failed\n");
+            return;
+        }
+
+        System.out.println("Creating user3...");
+
+        String user3 = createUser("name3", "username3", "password3", "email3@gmail.com", "handle3");
+        if (user3 == null) return; // failed;
+        System.out.println("User3 ID: " + user3);
+
+        System.out.println("Creating user4...");
+
+        String user4 = createUser("name4", "username4", "password4", "email4@gmail.com", "handle4");
+        if (user4 == null) return; // failed;
+        System.out.println("User4 ID: " + user4);
+
+        System.out.println("Test for Duplicate Friend Request Send Failure:\n----------------------------");
+        checkDoubleAddFails(user3, user4);
+
+        System.out.println("Test that accepting the same friend request twice succeeds, then fails:\n----------------------------");
+        checkDoubleAcceptFails(user3, user4);
+
+        System.out.println("Test that two users sending each other friend requests will automatically be added::\n----------------------------");
+        checkAcceptRequest(user3, user4);
+    }
+
+    public static void checkDoubleAddFails(String user1ID, String user2ID)  throws IOException, InterruptedException{
+
+
+        System.out.println("Sending duplicate friend request from User3 to User4");
+
+        boolean ret = sendOutRequest(user1ID, user2ID);
+        System.out.println("Request from User3 to User4 succeeded: " + ret);
+
+        ret = sendOutRequest(user1ID, user2ID);
+        System.out.println("Request from User3 to User4 succeeded: " + ret);
+
+        System.out.println("Cancelling friend request");
+
+        ret = cancelFriendRequest(user1ID, user2ID);
+        System.out.println("Cancelling request succeeded: " + ret);
+
+        String outgoingFriendRequest = getUserOutgoingFriendRequest(user1ID);
+        if (outgoingFriendRequest == null) System.out.println("Failed to get User3's Outgoing Friend Requests");
+        System.out.println("User3 OutgoingFriendRequests: " + outgoingFriendRequest + "\n");
+
+    }
+
+    public static void checkDoubleAcceptFails(String user1ID, String user2ID)  throws IOException, InterruptedException{
+
+        System.out.println("Sending friend request from user3 to user4");
+        boolean ret = sendOutRequest(user1ID, user2ID);
+
+        ret = acceptIncomingRequest(user2ID, user1ID);
+        System.out.println("Accepting request succeeded: " + ret);
+        ret = acceptIncomingRequest(user2ID, user1ID);
+        System.out.println("Accepting request succeeded: " + ret);
+
+        deleteFriend(user1ID, user2ID);
+        System.out.println("Deleted friend user4 from user3");
+    }
+
+    public static void checkAcceptRequest(String user1ID, String user2ID) throws IOException, InterruptedException{
+        System.out.println("If a user sends a friend request to another user that has already sent them a friend request, it will automatically accept.");
+
+        boolean ret = sendOutRequest(user1ID, user2ID);
+        System.out.println("Request from user3 to user4 succeeded: " + ret);
+
+        ret = sendOutRequest(user2ID, user1ID);
+        System.out.println("Request from user4 to user3 succeeded: " + ret);
+
+        System.out.println("Getting User4 friend list:");
+        String user5FriendList = getUserFriendList(user2ID);
+        if (user5FriendList == null) return;
+        System.out.println("User4 FriendList: " + user5FriendList);
+
+
+
         Long user5Balance = getUserBalance(user5);
         if (user5Balance == null) return true;
         System.out.println("User5 Balance: " + user5Balance);

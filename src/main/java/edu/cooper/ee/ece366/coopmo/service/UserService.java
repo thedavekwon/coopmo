@@ -21,19 +21,18 @@ public class UserService {
 
     public User createUser(String name, String username, String password, String email, String handle) {
         User newUser = new User(name, username, password, email, handle);
-        if (userRepository.containsUsername(username) || userRepository.containsUsername(username) || userRepository.containsUsername(username)) {
+        if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
             return null;
         }
         userRepository.insertUsername(username, newUser.getId());
-        userRepository.insertHandle(username, newUser.getId());
-        userRepository.insertEmail(username, newUser.getId());
+        userRepository.insertHandle(handle, newUser.getId());
+        userRepository.insertEmail(email, newUser.getId());
         userRepository.getIncomingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getOutgoingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getFriendMap().put(newUser.getId(), new ConcurrentHashMap<>());
         userRepository.getPaymentListMap().put(newUser.getId(), new ArrayList<>());
         userRepository.getCashListMap().put(newUser.getId(), new ArrayList<>());
         userRepository.getBankAccountListMap().put(newUser.getId(), new ArrayList<>());
-
         userRepository.save(newUser);
         return newUser;
     }

@@ -31,20 +31,21 @@ public class CoopmoTest {
         String original = createUser("Original", "original", "password", "original@gmail.com", "superoriginal");
         if (original == null)
             System.out.println("Creating a new User failed");
-        System.out.println("Minh-Thai ID: " + original + "\n");
+        System.out.println("Original ID: " + original + "\n");
 
+        //Test username
         String clone = createUser("clone", "original", "password", "clone@gmail.com", "imaclone");
         if (clone == null)
             System.out.println("Creating a new User failed");
         System.out.println("Clone ID: " + clone + "\n");
 
-        // Doesnt Work
+        // Test email
         String clone2 = createUser("clone2", "clone2", "password", "original@gmail.com", "imaclone2");
         if (clone2 == null)
             System.out.println("Creating a new User failed");
         System.out.println("Clone2 ID: " + clone2 + "\n");
 
-        // Doesnt Work
+        // Test handle
         String clone3 = createUser("clone3", "clone3", "password", "clone3@gmail.com", "superoriginal");
         if (clone3 == null)
             System.out.println("Creating a new User failed");
@@ -91,8 +92,10 @@ public class CoopmoTest {
             System.out.println("Failed to get User's Incoming Friend Requests");
         System.out.println("Dan IncomingFriendRequests: " + danIncomingFriendRequest + "\n");
 
+        System.out.println("Cancelling Friend Request");
         ret = cancelFriendRequest(minh, dan);
 
+        minhOutgoingFriendRequest = getUserOutgoingFriendRequest(minh);
         if (minhOutgoingFriendRequest == null)
             System.out.println("Failed to get User's Outgoing Friend Requests");
         System.out.println("Minh OutgoingFriendRequests: " + minhOutgoingFriendRequest + "\n");
@@ -128,7 +131,7 @@ public class CoopmoTest {
         ret = createCash(user1, user1BankAccount, "9000", "IN");
         if (!ret) return;
 
-        // Check to see if created Cash has been globally updated in relevant fields
+        // Check to see created Cash has been globally updated in relevant fields
         Long user1Balance = getUserBalance(user1);
         if (user1Balance == null) return;
         System.out.println("User1 Balance: " + user1Balance);
@@ -507,7 +510,7 @@ public class CoopmoTest {
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
-                .withPath("user/declineFriendRequest")
+                .withPath("user/cancelFriendRequest")
                 .addParameter("userId", userId)
                 .addParameter("friendId", friendId)
                 .toUri();

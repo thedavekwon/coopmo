@@ -342,7 +342,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/cancelOutgoingFriendRequest")
+    @PostMapping(path = "/cancelOutgoingFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {
@@ -365,7 +365,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/declineFriendRequest")
+    @PostMapping(path = "/declineFriendRequest")
     public ResponseEntity<?> declineFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

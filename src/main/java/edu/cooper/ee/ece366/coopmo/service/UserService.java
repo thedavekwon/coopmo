@@ -53,7 +53,7 @@ public class UserService {
 
     private boolean editUsername(String id, String newUsername) {
         Optional<User> user = userRepository.findById(id);
-        if (!user.isPresent()) return false;
+        if (user.isEmpty()) return false;
         if (userRepository.changeUsername(user.get().getUsername(), newUsername
                 , id)) {
             user.get().setUsername(newUsername);
@@ -81,7 +81,7 @@ public class UserService {
                                           String newEmail, String newHandle) {
         ArrayList<Integer> errors = new ArrayList<>();
         Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             errors.add(-1);
         } else {
             user.get().setName(newName);
@@ -158,7 +158,7 @@ public class UserService {
         if (userId == null) return null;
 
         Optional<User> curUser = userRepository.findById(userId);
-        if (!curUser.isPresent()) return null;
+        if (curUser.isEmpty()) return null;
         if (curUser.get().getPassword().equals(password)) {
             return curUser.get();
         } else {
@@ -262,5 +262,20 @@ public class UserService {
 
     public ArrayList<String> getUserBankAccountList(String userId) {
         return userRepository.getBankAccountListMap().get(userId);
+    }
+
+    public Long getUserBalance(String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
+        return curUser.map(User::getBalance).orElse(null);
+    }
+
+    // -1 is if either user not found
+    // -2 if not friends
+    public int deleteFriend(String userId, String friendId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> friendUser = userRepository.findById(friendId);
+        if (user.isEmpty() || friendUser.isEmpty()) return -1;
+        else
+            return userRepository.deleteFriends(userId, friendId);
     }
 }

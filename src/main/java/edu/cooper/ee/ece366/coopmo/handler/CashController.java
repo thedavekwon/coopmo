@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/cash")
+@RequestMapping(path = "/cash", produces = "application/json")
 public class CashController extends BaseController {
     private final CashService cashService;
 
@@ -18,7 +18,7 @@ public class CashController extends BaseController {
         this.cashService = cashService;
     }
 
-    @GetMapping("createCash")
+    @PostMapping("createCash")
     @ResponseBody
     public ResponseEntity<?> createCash(
             @RequestParam(value = "userId", defaultValue = "") String userId,
@@ -39,7 +39,7 @@ public class CashController extends BaseController {
             cashType = Cash.CashType.valueOf(type);
         } catch (IllegalArgumentException e) {
             respBody.addProperty("message", "Invalid Cash Type");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         int ret = cashService.createCash(userId, bankAccountId, amount, cashType);
@@ -47,13 +47,13 @@ public class CashController extends BaseController {
         switch (ret) {
             case -1:
                 respBody.addProperty("message", "Invalid userId");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             case -2:
                 respBody.addProperty("message", "Invalid bankAccountId");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             case -3:
                 respBody.addProperty("message", "Invalid amount");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         respBody.addProperty("message", "CashOut request succeed");
@@ -62,6 +62,6 @@ public class CashController extends BaseController {
         } else {
             respBody.addProperty("message", "CashIn request succeed");
         }
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pay")
+@RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;
 
@@ -19,7 +19,7 @@ public class PaymentController extends BaseController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("/createPayment")
+    @PostMapping(path = "/createPayment")
     public ResponseEntity<?> createPayment(
             @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
             @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
@@ -37,39 +37,39 @@ public class PaymentController extends BaseController {
             paymentType = Payment.PaymentType.valueOf(type);
         } catch (IllegalArgumentException e) {
             respBody.addProperty("message", "Invalid Payment Type");
-            return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
         int ret = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
         switch (ret) {
             case -1:
                 respBody.addProperty("message", "Invalid fromUserId");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             case -2:
                 respBody.addProperty("message", "Invalid toUserId");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             case -3:
                 respBody.addProperty("message", "Invalid amount");
-                return new ResponseEntity<>(respBody, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
         respBody.addProperty("message", "Payment request succeed");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestPublicPayment")
+    @GetMapping(path = "/getLatestPublicPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") long n) {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive(n, "n", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
+        friend_json.add("LatestPublicPayment", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest public payments");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestPrivatePayment")
+    @GetMapping(path = "/getLatestPrivatePayment")
     @ResponseBody
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
@@ -81,13 +81,13 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
+        friend_json.add("LatestPrivatePayment", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest private payments");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/getLatestFriendPayment")
+    @GetMapping(path = "/getLatestFriendPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestFriendPayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
@@ -99,9 +99,9 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("friendList", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
+        friend_json.add("LatestFriendPayment", new Gson().toJsonTree(paymentService.getLatestFriendPayment(userId, n)));
         respBody.add("messagePayload", friend_json);
         respBody.addProperty("message", "Successfully got latest friend payments");
-        return new ResponseEntity<>(respBody, HttpStatus.OK);
+        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 }

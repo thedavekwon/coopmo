@@ -16,27 +16,91 @@ public class CoopmoTest {
     private static HttpClient client = HttpClient.newHttpClient();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        // Test: creating two users
+        // Test: Creating two users
         String user1 = createUser("name1", "username1", "password1", "email1@gmail.com", "handle1");
-        if (user1 == null) return; // failed;
-        System.out.println("User1 ID: " + user1);
+        if (user1 == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("User1 ID: " + user1 + "\n");
 
         String user2 = createUser("name2", "username2", "password2", "email2@gmail.com", "handle2");
-        if (user2 == null) return; // failed;
-        System.out.println("User2 ID: " + user2);
+        if (user2 == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("User2 ID: " + user2 + "\n");
+
+        // Test: Creating duplicate users
+        String original = createUser("Original", "original", "password", "original@gmail.com", "superoriginal");
+        if (original == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Minh-Thai ID: " + original + "\n");
+
+        String clone = createUser("clone", "original", "password", "clone@gmail.com", "imaclone");
+        if (clone == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Clone ID: " + clone + "\n");
+
+        // Doesnt Work
+        String clone2 = createUser("clone2", "clone2", "password", "original@gmail.com", "imaclone2");
+        if (clone2 == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Clone2 ID: " + clone2 + "\n");
+
+        // Doesnt Work
+        String clone3 = createUser("clone3", "clone3", "password", "clone3@gmail.com", "superoriginal");
+        if (clone3 == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Clone3 ID: " + clone + "\n");
 
         // Test: sending Friend Request
         boolean ret = sendOutRequest(user1, user2);
-        if (!ret) return;
+        if (!ret)
+            System.out.println("Sending Friend Request failed\n");
 
         // Check to see if sent Friend Request has been globally updated in relevant fields
         String user1OutgoingFriendRequest = getUserOutgoingFriendRequest(user1);
-        if (user1OutgoingFriendRequest == null) return;
-        System.out.println("User1 OutgoingFriendRequests: " + user1OutgoingFriendRequest);
+        if (user1OutgoingFriendRequest == null)
+            System.out.println("Failed to get User's Outgoing Friend Requests");
+        System.out.println("User1 OutgoingFriendRequests: " + user1OutgoingFriendRequest + "\n");
 
         String user2IncomingFriendRequest = getUserIncomingFriendRequest(user2);
-        if (user2IncomingFriendRequest == null) return;
-        System.out.println("User2 IncomingFriendRequests: " + user2IncomingFriendRequest);
+        if (user2IncomingFriendRequest == null)
+            System.out.println("Failed to get User's Incoming Friend Requests");
+        System.out.println("User2 IncomingFriendRequests: " + user2IncomingFriendRequest + "\n");
+
+        // Test: deleting Friend Request
+        String minh = createUser("Minh-Thai", "minhthai", "password", "minhtyufa@gmail.com", "Edge-Lord");
+        if (original == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Minh-Thai ID: " + minh + "\n");
+
+        String dan = createUser("Dan", "swoledan", "password", "danqian@gmail.com", "bigboi");
+        if (original == null)
+            System.out.println("Creating a new User failed");
+        System.out.println("Dan ID: " + dan + "\n");
+
+        ret = sendOutRequest(minh, dan);
+        if (!ret)
+            System.out.println("Canceling Friend Request failed\n");
+
+        String minhOutgoingFriendRequest = getUserOutgoingFriendRequest(minh);
+        if (minhOutgoingFriendRequest == null)
+            System.out.println("Failed to get User's Outgoing Friend Requests");
+        System.out.println("Minh OutgoingFriendRequests: " + minhOutgoingFriendRequest + "\n");
+
+        String danIncomingFriendRequest = getUserIncomingFriendRequest(dan);
+        if (danIncomingFriendRequest == null)
+            System.out.println("Failed to get User's Incoming Friend Requests");
+        System.out.println("Dan IncomingFriendRequests: " + danIncomingFriendRequest + "\n");
+
+        ret = cancelFriendRequest(minh, dan);
+
+        if (minhOutgoingFriendRequest == null)
+            System.out.println("Failed to get User's Outgoing Friend Requests");
+        System.out.println("Minh OutgoingFriendRequests: " + minhOutgoingFriendRequest + "\n");
+
+        danIncomingFriendRequest = getUserIncomingFriendRequest(dan);
+        if (danIncomingFriendRequest == null)
+            System.out.println("Failed to get User's Incoming Friend Requests");
+        System.out.println("Dan IncomingFriendRequests: " + danIncomingFriendRequest + "\n");
 
         // Test: accepting Friend Request
         ret = acceptIncomingRequest(user2, user1);
@@ -135,14 +199,6 @@ public class CoopmoTest {
         if (user2FriendPaymentList == null) return;
         System.out.println("User2 FriendPaymentList: " + user2FriendPaymentList);
 
-        // Doesn't work according to Dave
-        /*
-        System.out.println(user1);
-        if(!editProfile(user1, "name3", "username3", "password3", "user1@gmail.com", "handle3"))
-            return;
-
-        showUser("username3", "password3");
-        */
     }
 
     public static String createUser(String name, String username, String password, String email, String handle) throws IOException, InterruptedException {
@@ -165,6 +221,8 @@ public class CoopmoTest {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
             JsonElement messagePayload = jsonObject.get("messagePayload");
             System.out.println(jsonObject.get("message").getAsString());
+            if (messagePayload == null)
+                return null;
             if (messagePayload.isJsonObject()) {
                 JsonElement user = messagePayload.getAsJsonObject().get("user");
                 if (user.getAsJsonObject().isJsonObject()) {

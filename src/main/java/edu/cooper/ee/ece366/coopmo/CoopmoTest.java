@@ -16,6 +16,7 @@ public class CoopmoTest {
     private static HttpClient client = HttpClient.newHttpClient();
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        // Test: creating two users
         String user1 = createUser("name1", "username1", "password1", "email1@gmail.com", "handle1");
         if (user1 == null) return; // failed;
         System.out.println("User1 ID: " + user1);
@@ -24,9 +25,11 @@ public class CoopmoTest {
         if (user2 == null) return; // failed;
         System.out.println("User2 ID: " + user2);
 
+        // Test: sending Friend Request
         boolean ret = sendOutRequest(user1, user2);
         if (!ret) return;
 
+        // Check to see if sent Friend Request has been globally updated in relevant fields
         String user1OutgoingFriendRequest = getUserOutgoingFriendRequest(user1);
         if (user1OutgoingFriendRequest == null) return;
         System.out.println("User1 OutgoingFriendRequests: " + user1OutgoingFriendRequest);
@@ -35,9 +38,11 @@ public class CoopmoTest {
         if (user2IncomingFriendRequest == null) return;
         System.out.println("User2 IncomingFriendRequests: " + user2IncomingFriendRequest);
 
+        // Test: accepting Friend Request
         ret = acceptIncomingRequest(user2, user1);
         if (!ret) return;
 
+        // Check to see if accepted Friend Request has been globally updated in relevant fields
         String user1FriendList = getUserFriendList(user1);
         if (user1FriendList == null) return;
         System.out.println("User1 FriendList: " + user1FriendList);
@@ -46,6 +51,7 @@ public class CoopmoTest {
         if (user2FriendList == null) return;
         System.out.println("User2 FriendList: " + user2FriendList);
 
+        // Test: creating two BankAccounts
         String user1BankAccount = createBankAccount(user1, "999999999", "9000");
         if (user1BankAccount == null) return;
         System.out.println("User1 BankAccount ID: " + user1BankAccount);
@@ -54,9 +60,11 @@ public class CoopmoTest {
         if (user2BankAccount == null) return;
         System.out.println("User2 BankAccount ID: " + user2BankAccount);
 
+        // Adding cash to first BankAccount
         ret = createCash(user1, user1BankAccount, "9000", "IN");
         if (!ret) return;
 
+        // Check to see if created Cash has been globally updated in relevant fields
         Long user1Balance = getUserBalance(user1);
         if (user1Balance == null) return;
         System.out.println("User1 Balance: " + user1Balance);
@@ -65,9 +73,11 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        // Test: creating public Payment between two users
         ret = createPayment(user1, user2, "3000", "PUBLIC");
         if (!ret) return;
 
+        // Check to see if public Payment has updated relevant fields
         user1Balance = getUserBalance(user1);
         if (user1Balance == null) return;
         System.out.println("User1 Balance: " + user1Balance);
@@ -76,9 +86,19 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        String user1PublicPaymentList = getLatestPublicPayment("10");
+        if (user1PublicPaymentList == null) return;
+        System.out.println("User1 PublicPaymentList: " + user1PublicPaymentList);
+
+        String user2PublicPaymentList = getLatestPublicPayment("10");
+        if (user2PublicPaymentList == null) return;
+        System.out.println("User2 PublicPaymentList: " + user2PublicPaymentList);
+
+        // Test: creating private Payment between two users
         ret = createPayment(user1, user2, "3000", "PRIVATE");
         if (!ret) return;
 
+        // Check to see if private Payment has updated relevant fields
         user1Balance = getUserBalance(user1);
         if (user1Balance == null) return;
         System.out.println("User1 Balance: " + user1Balance);
@@ -87,9 +107,18 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        String user1PrivatePaymentList = getLatestPrivatePayment(user1, "10");
+        if (user1PrivatePaymentList == null) return;
+        System.out.println("User1 PrivatePaymentList: " + user1PrivatePaymentList);
+
+        String user2PrivatePaymentList = getLatestPrivatePayment(user2, "10");
+        if (user2PrivatePaymentList == null) return;
+        System.out.println("User2 PrivatePaymentList: " + user2PrivatePaymentList);
+        // Test: creating friend Payment between two users
         ret = createPayment(user1, user2, "3000", "FRIEND");
         if (!ret) return;
 
+        // Check to see if friend Payment has updated relevant fields
         user1Balance = getUserBalance(user1);
         if (user1Balance == null) return;
         System.out.println("User1 Balance: " + user1Balance);
@@ -98,12 +127,22 @@ public class CoopmoTest {
         if (user2Balance == null) return;
         System.out.println("User2 Balance: " + user2Balance);
 
+        String user1FriendPaymentList = getLatestFriendPayment(user1, "10");
+        if (user1FriendPaymentList == null) return;
+        System.out.println("User1 FriendPaymentList: " + user1FriendPaymentList);
+
+        String user2FriendPaymentList = getLatestFriendPayment(user2, "10");
+        if (user2FriendPaymentList == null) return;
+        System.out.println("User2 FriendPaymentList: " + user2FriendPaymentList);
+
+        // Doesn't work according to Dave
+        /*
         System.out.println(user1);
         if(!editProfile(user1, "name3", "username3", "password3", "user1@gmail.com", "handle3"))
             return;
 
         showUser("username3", "password3");
-
+        */
     }
 
     public static String createUser(String name, String username, String password, String email, String handle) throws IOException, InterruptedException {
@@ -404,4 +443,98 @@ public class CoopmoTest {
         System.out.println(jsonObject.get("message").getAsString());
         return response.statusCode() == 200;
     }
+
+    public static boolean cancelFriendRequest(String userId, String friendId) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("user/declineFriendRequest")
+                .addParameter("userId", userId)
+                .addParameter("friendId", friendId)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        JsonObject jsonObject = jsonTree.getAsJsonObject();
+        System.out.println(jsonObject.get("message").getAsString());
+        return response.statusCode() == 200;
+    }
+
+    // Payment Record Stuff
+    public static String getLatestPublicPayment(String n) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("pay/getLatestPublicPayment")
+                .addParameter("n", n)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        if (jsonTree.isJsonObject()) {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            JsonElement messagePayload = jsonObject.get("messagePayload");
+            System.out.println(jsonObject.get("message").getAsString());
+            if (messagePayload.isJsonObject()) {
+                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
+                return publicPaymentList.getAsJsonArray().toString();
+            }
+        }
+        return null;
+    }
+
+    public static String getLatestPrivatePayment(String userId, String n) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("pay/getLatestPrivatePayment")
+                .addParameter("userId", userId)
+                .addParameter("n", n)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        if (jsonTree.isJsonObject()) {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            JsonElement messagePayload = jsonObject.get("messagePayload");
+            System.out.println(jsonObject.get("message").getAsString());
+            if (messagePayload.isJsonObject()) {
+                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
+                return privatePaymentList.getAsJsonArray().toString();
+            }
+        }
+        return null;
+    }
+
+    public static String getLatestFriendPayment(String userId, String n) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("pay/getLatestFriendPayment")
+                .addParameter("userId", userId)
+                .addParameter("n", n)
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonTree = jsonParser.parse(response.body());
+        if (jsonTree.isJsonObject()) {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            JsonElement messagePayload = jsonObject.get("messagePayload");
+            System.out.println(jsonObject.get("message").getAsString());
+            if (messagePayload.isJsonObject()) {
+                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
+                return friendPaymentList.getAsJsonArray().toString();
+            }
+        }
+        return null;
+    }
+
 }

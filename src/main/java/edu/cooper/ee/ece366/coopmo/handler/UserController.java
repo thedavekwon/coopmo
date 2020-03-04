@@ -342,7 +342,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/cancelFriendRequest")
+    @GetMapping(path = "/cancelOutgoingFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
             @RequestParam(value = "id", defaultValue = "") String userId,
             @RequestParam(value = "friendId", defaultValue = "") String friendId) {

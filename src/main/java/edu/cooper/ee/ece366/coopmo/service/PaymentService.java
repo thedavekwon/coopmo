@@ -83,12 +83,15 @@ public class PaymentService {
                 String paymentId = iterator.previous();
                 Optional<Payment> payment = paymentRepository.findById(paymentId);
                 if (payment.isPresent()) {
-                    paymentList.add(payment.get());
-                    cnt++;
-                    if (cnt >= n) break;
+                    if (payment.get().getType() != Payment.PaymentType.PRIVATE) {
+                        paymentList.add(payment.get());
+                        cnt++;
+                        if (cnt >= n) break;
+                    }
                 }
             }
         }
+        if (paymentList.size() < n) return new ArrayList<>(paymentList);
         return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - n, paymentList.size()));
     }
 }

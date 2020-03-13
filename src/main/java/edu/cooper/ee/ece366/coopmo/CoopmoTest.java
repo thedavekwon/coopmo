@@ -196,12 +196,12 @@ public class CoopmoTest {
         String user3 = createUser("n3", "u3", "p3", "e3@gmail.com", "h3");
         if (user3 == null)
             System.out.println("Creating a new User failed");
-        System.out.println("User1 ID: " + user3 + "\n");
+        System.out.println("User3 ID: " + user3 + "\n");
 
         String user4 = createUser("n4", "u4", "p4", "e4@gmail.com", "h4");
         if (user4 == null)
             System.out.println("Creating a new User failed");
-        System.out.println("User2 ID: " + user4 + "\n");
+        System.out.println("User4 ID: " + user4 + "\n");
 
         String user5 = createUser("n5", "u5", "p5", "e5@gmail.com", "h5");
         if (user5 == null)

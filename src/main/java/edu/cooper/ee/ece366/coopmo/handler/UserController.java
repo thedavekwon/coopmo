@@ -2,6 +2,8 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
@@ -10,9 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -21,6 +24,8 @@ import java.util.regex.Pattern;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final Type userSetType = new TypeToken<Set<User>>() {
+    }.getType();
 
     @Autowired
     public UserController(UserService userService, UserRepository userRepository) {
@@ -126,8 +131,9 @@ public class UserController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        ConcurrentHashMap<String, Boolean> userFriendList = userService.getUserFriendList(userId);
-        friendJson.add("friendList", new Gson().toJsonTree(new ArrayList<>(userFriendList.keySet())));
+        Set<User> userSet = userService.getUserFriendList(userId);
+        if (userSet == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        friendJson.add("friendList", new Gson().toJsonTree(userSet));
         respBody.add("messagePayload", friendJson);
         respBody.addProperty("message", "successfully returned user's friend list");
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
@@ -143,8 +149,10 @@ public class UserController {
             respBody.addProperty("message", "userId is empty");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
+        Set<BankAccount> bankAccountList = userService.getBankAccountList(userId);
+        if (bankAccountList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         respBody.addProperty("message", "get Bank Account List succeed");
-        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(userService.getUserBankAccountList(userId)));
+        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
         respBody.add("messagePayload", bankAccountJson);
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
@@ -154,17 +162,14 @@ public class UserController {
     public ResponseEntity<?> getUserIncomingFriendRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId) {
         JsonObject respBody = new JsonObject();
-        JsonObject incomingFriendRequestJson = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "userId is empty");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
-
-        ConcurrentHashMap<String, Boolean> userIncomingFriendRequest = userService.getUserIncomingFriendRequest(userId);
-        incomingFriendRequestJson.add("userIncomingFriendRequestList", new Gson().toJsonTree(new ArrayList<>(userIncomingFriendRequest.keySet())));
-        respBody.add("messagePayload", incomingFriendRequestJson);
+        Set<User> incomingFriendRequestList = userService.getIncomingFriendRequest(userId);
+        if (incomingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         respBody.addProperty("message", "Successfully returned user's incoming friend request list");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(incomingFriendRequestList, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserOutgoingFriendRequest")
@@ -178,11 +183,10 @@ public class UserController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        ConcurrentHashMap<String, Boolean> userOutgoingFriendRequest = userService.getUserOutgoingFriendRequest(userId);
-        outgoingFriendRequestJson.add("userOutgoingFriendRequest", new Gson().toJsonTree(new ArrayList<>(userOutgoingFriendRequest.keySet())));
-        respBody.add("messagePayload", outgoingFriendRequestJson);
+        Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequest(userId);
+        if (outgoingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         respBody.addProperty("message", "Successfully returned user's outgoing friend request list");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(outgoingFriendRequestList, HttpStatus.OK);
     }
 
 

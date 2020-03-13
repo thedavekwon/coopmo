@@ -1,20 +1,39 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.*;
 
+@Entity
 public class BankAccount {
     @Id
-    private final String id;
-    private final long routingNumber;
-    private AtomicLong balance;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(updatable = false, nullable = false)
+    private String id;
 
-    public BankAccount(long routingNumber, long balance) {
-        this.id = UUID.randomUUID().toString();
-        this.routingNumber = routingNumber;
-        this.balance = new AtomicLong(balance);
+    @Column(nullable = false)
+    private long routingNumber;
+
+    @Column(nullable = false)
+    private long balance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JoinColumn(nullable = false)
+    private User user;
+
+    public BankAccount() {
+    }
+
+    public BankAccount(long _routingNumber, long _balance, User _user) {
+        routingNumber = _routingNumber;
+        balance = _balance;
+        user = _user;
     }
 
     public String getId() {
@@ -26,18 +45,18 @@ public class BankAccount {
     }
 
     public long getBalance() {
-        return balance.get();
+        return balance;
     }
 
     public void setBalance(long newBalance) {
-        balance.getAndSet(newBalance);
+        balance = newBalance;
     }
 
     public void incrementBalance(long amount) {
-        balance.getAndAdd(amount);
+        balance = balance + amount;
     }
 
     public void decrementBalance(long amount) {
-        balance.getAndAdd(-amount);
+        balance = balance - amount;
     }
 }

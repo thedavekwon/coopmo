@@ -11,14 +11,10 @@ import java.util.Optional;
 
 @Service
 public class BankAccountService {
-    private final BankAccountRepository bankAccountRepository;
-    private final UserRepository userRepository;
-
     @Autowired
-    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository) {
-        this.bankAccountRepository = bankAccountRepository;
-        this.userRepository = userRepository;
-    }
+    private BankAccountRepository bankAccountRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public BankAccount createBankAccount(String userId, long routingNumber, long balance) {
         Optional<User> curUser = userRepository.findById(userId);
@@ -28,8 +24,7 @@ public class BankAccountService {
         if (!checkValidRoutingNumberWithBankApi(routingNumber)) {
             return null;
         }
-        BankAccount bankAccount = new BankAccount(routingNumber, balance);
-        userRepository.getBankAccountListMap().get(userId).add(bankAccount.getId());
+        BankAccount bankAccount = new BankAccount(routingNumber, balance, curUser.get());
         bankAccountRepository.save(bankAccount);
         return bankAccount;
     }

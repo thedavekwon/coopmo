@@ -1,28 +1,95 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import org.springframework.data.annotation.Id;
 
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+// https://stackoverflow.com/questions/51998450/auto-generate-string-primary-key-with-annotation-in-hibernate
+// String UUID Id
+@Entity
 public class User {
     @Id
-    private final String id;
-    private String name;
-    private String username;
-    private String password;
-    private String email;
-    private String handle;
-    private AtomicLong balance = new AtomicLong();
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(updatable = false, nullable = false)
+    private String id;
 
-    public User(String name, String username, String password, String email, String handle) {
-        this.id = UUID.randomUUID().toString();
-        this.name = name;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.handle = handle;
-        balance.set(0);
+    @Column(nullable = false)
+    private String name;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(unique = true, nullable = false)
+    private String handle;
+
+    @Column(nullable = false)
+    private long balance;
+
+    @Column(nullable = false)
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Set<Payment> fromPaymentSet;
+
+    @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Set<Payment> toPaymentSet;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Set<Cash> cashSet;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Set<BankAccount> bankAccountSet;
+
+    @OneToMany
+    @JsonBackReference
+    @JoinTable
+    private Set<User> friendSet;
+
+    @OneToMany
+    @JsonBackReference
+    @JoinTable
+    private Set<User> outgoingFriendRequestSet;
+
+    @OneToMany
+    @JsonBackReference
+    @JoinTable
+    private Set<User> incomingFriendRequestSet;
+
+    public User() {
+    }
+
+    public User(String _name, String _username, String _password, String _email, String _handle) {
+        name = _name;
+        username = _username;
+        password = _password;
+        email = _email;
+        handle = _handle;
+        deleted = false;
+        friendSet = new HashSet<>();
+        bankAccountSet = new HashSet<>();
+        cashSet = new HashSet<>();
+        toPaymentSet = new HashSet<>();
+        fromPaymentSet = new HashSet<>();
+        incomingFriendRequestSet = new HashSet<>();
+        outgoingFriendRequestSet = new HashSet<>();
     }
 
     public String getId() {
@@ -70,18 +137,66 @@ public class User {
     }
 
     public Long getBalance() {
-        return balance.get();
-    }
-
-    public void setBalance(long newBalance) {
-        balance.getAndSet(newBalance);
+        return balance;
     }
 
     public void incrementBalance(long amount) {
-        balance.getAndAdd(amount);
+        balance = balance + amount;
     }
 
     public void decrementBalance(long amount) {
-        balance.getAndAdd(-amount);
+        balance = balance - amount;
+    }
+
+    public void addFriend(User friend) {
+        friendSet.add(friend);
+    }
+
+    public void deleteFriend(User friend) {
+        friendSet.remove(friend);
+    }
+
+    public void addOutgoingFriendRequest(User friend) {
+        outgoingFriendRequestSet.add(friend);
+    }
+
+    public boolean removeOutgoingFriendRequest(User friend) {
+        return outgoingFriendRequestSet.remove(friend);
+    }
+
+    public void addIncomingFriendRequest(User friend) {
+        incomingFriendRequestSet.add(friend);
+    }
+
+    public boolean removeIncomingFriendRequest(User friend) {
+        return incomingFriendRequestSet.remove(friend);
+    }
+
+    public boolean isFriend(User friend) {
+        return friendSet.contains(friend);
+    }
+
+    public boolean isOutgoingFriend(User friend) {
+        return outgoingFriendRequestSet.contains(friend);
+    }
+
+    public boolean isIncomingFriend(User friend) {
+        return incomingFriendRequestSet.contains(friend);
+    }
+
+    public Set<User> getFriendList() {
+        return friendSet;
+    }
+
+    public Set<BankAccount> getBankAccount() {
+        return bankAccountSet;
+    }
+
+    public Set<User> getOutgoingFriendRequestSet() {
+        return outgoingFriendRequestSet;
+    }
+
+    public Set<User> getIncomingFriendRequestSet() {
+        return incomingFriendRequestSet;
     }
 }

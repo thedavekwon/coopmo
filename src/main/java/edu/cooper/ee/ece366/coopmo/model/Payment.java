@@ -1,26 +1,50 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.UUID;
 
+@Entity
 public class Payment implements Comparable<Payment> {
-    private final String fromUserId;
     @Id
-    private final String id;
-    private final String toUserId;
-    private final long amount;
-    private final PaymentType type; // public/friends/private
-    private final Timestamp timestamp;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(updatable = false, nullable = false)
+    private String id;
 
-    public Payment(String fromUserId, String toUserId, long amount, PaymentType type) {
-        this.id = UUID.randomUUID().toString();
-        this.fromUserId = fromUserId;
-        this.toUserId = toUserId;
-        this.amount = amount;
-        this.type = type;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
+    @Column(nullable = false)
+    private long amount;
+
+    @Column(nullable = false)
+    private PaymentType type;
+
+    @Column(nullable = false)
+    private Timestamp timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JoinColumn(nullable = false)
+    private User fromUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JoinColumn(nullable = false)
+    private User toUser;
+
+    public Payment() {
+    }
+
+    public Payment(User _fromUser, User _toUser, long _amount, PaymentType _type) {
+        fromUser = _fromUser;
+        toUser = _toUser;
+        amount = _amount;
+        type = _type;
+        timestamp = new Timestamp(System.currentTimeMillis());
     }
 
     public long getAmount() {
@@ -29,14 +53,6 @@ public class Payment implements Comparable<Payment> {
 
     public String getId() {
         return id;
-    }
-
-    public String getFromUserId() {
-        return fromUserId;
-    }
-
-    public String getToUserId() {
-        return toUserId;
     }
 
     public PaymentType getType() {

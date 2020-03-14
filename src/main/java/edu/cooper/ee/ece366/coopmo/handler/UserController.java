@@ -131,12 +131,9 @@ public class UserController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        Set<User> userSet = userService.getUserFriendList(userId);
-        if (userSet == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        friendJson.add("friendList", new Gson().toJsonTree(userSet));
-        respBody.add("messagePayload", friendJson);
-        respBody.addProperty("message", "successfully returned user's friend list");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        Set<User> friendList = userService.getUserFriendList(userId);
+        if (friendList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(friendList, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserBankAccountList")
@@ -151,10 +148,10 @@ public class UserController {
         }
         Set<BankAccount> bankAccountList = userService.getBankAccountList(userId);
         if (bankAccountList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        respBody.addProperty("message", "get Bank Account List succeed");
-        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
-        respBody.add("messagePayload", bankAccountJson);
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+//        respBody.addProperty("message", "get Bank Account List succeed");
+//        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
+//        respBody.add("messagePayload", bankAccountJson);
+        return new ResponseEntity<>(bankAccountList, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserIncomingFriendRequest")

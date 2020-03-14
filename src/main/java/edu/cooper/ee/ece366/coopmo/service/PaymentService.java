@@ -38,18 +38,12 @@ public class PaymentService {
         return 0;
     }
 
+    // TODO()
     public ArrayList<Payment> getLatestPublicPayment(long n) {
-        ArrayList<Payment> payments = new ArrayList<>();
-//        final NavigableSet<String> paymentDescendingOrder = paymentRepository.getPaymentMap().descendingKeySet();
-//        for (String s : paymentDescendingOrder) {
-//            Optional<Payment> curPayment = paymentRepository.findById(s);
-//            if (curPayment.isEmpty()) continue;
-//            if (curPayment.get().getType() == Payment.PaymentType.PUBLIC) payments.add(curPayment.get());
-//            if (payments.size() > n) break;
-//        }
-        return payments;
+        return null;
     }
 
+    // TODO()
     public ArrayList<Payment> getLatestPrivatePayment(String userId, int n) {
         ArrayList<Payment> payments = new ArrayList<>();
 //        synchronized (userRepository.getPaymentListMap()) {
@@ -65,6 +59,7 @@ public class PaymentService {
         return payments;
     }
 
+    // TODO()
     public ArrayList<Payment> getLatestFriendPayment(String userId, int n) {
         TreeSet<Payment> paymentList = new TreeSet<>();
 //        List<String> curUserPaymentList;

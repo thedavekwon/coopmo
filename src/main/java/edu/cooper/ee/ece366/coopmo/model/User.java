@@ -42,33 +42,33 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
-    @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Payment> fromPaymentSet;
 
-    @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Payment> toPaymentSet;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Cash> cashSet;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<BankAccount> bankAccountSet;
 
-    @OneToMany
+    @ManyToMany
     @JsonBackReference
     @JoinTable
     private Set<User> friendSet;
 
-    @OneToMany
+    @ManyToMany
     @JsonBackReference
     @JoinTable
     private Set<User> outgoingFriendRequestSet;
 
-    @OneToMany
+    @ManyToMany
     @JsonBackReference
     @JoinTable
     private Set<User> incomingFriendRequestSet;
@@ -184,10 +184,6 @@ public class User {
         return incomingFriendRequestSet.contains(friend);
     }
 
-    public Set<User> getFriendList() {
-        return friendSet;
-    }
-
     public Set<BankAccount> getBankAccount() {
         return bankAccountSet;
     }
@@ -198,5 +194,21 @@ public class User {
 
     public Set<User> getIncomingFriendRequestSet() {
         return incomingFriendRequestSet;
+    }
+
+    public Set<User> getFriendSet() {
+        return friendSet;
+    }
+
+    public void addBankAccount(BankAccount bankAccount) {
+        bankAccountSet.add(bankAccount);
+    }
+
+    public void addCash(Cash cash) {
+        cashSet.add(cash);
+    }
+
+    public Set<Cash> getCashSet() {
+        return cashSet;
     }
 }

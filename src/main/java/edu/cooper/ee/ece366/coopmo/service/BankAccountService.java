@@ -24,8 +24,10 @@ public class BankAccountService {
         if (!checkValidRoutingNumberWithBankApi(routingNumber)) {
             return null;
         }
-        BankAccount bankAccount = new BankAccount(routingNumber, balance, curUser.get());
+        BankAccount bankAccount = new BankAccount(routingNumber, balance);
+        curUser.get().addBankAccount(bankAccount);
         bankAccountRepository.save(bankAccount);
+        userRepository.save(curUser.get());
         return bankAccount;
     }
 

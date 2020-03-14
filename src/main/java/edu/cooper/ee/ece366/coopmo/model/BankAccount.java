@@ -1,9 +1,11 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 public class BankAccount {
@@ -22,18 +24,12 @@ public class BankAccount {
     @Column(nullable = false)
     private long balance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
-    @JoinColumn(nullable = false)
-    private User user;
-
     public BankAccount() {
     }
 
-    public BankAccount(long _routingNumber, long _balance, User _user) {
+    public BankAccount(long _routingNumber, long _balance) {
         routingNumber = _routingNumber;
         balance = _balance;
-        user = _user;
     }
 
     public String getId() {

@@ -531,17 +531,16 @@ public class CoopmoTest {
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement friendList = messagePayload.getAsJsonObject().get("friendList");
-                return friendList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement friendList = messagePayload.getAsJsonObject().get("friendList");
+//                return friendList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String createBankAccount(String userId, String routingNumber, String balance) throws IOException, InterruptedException {

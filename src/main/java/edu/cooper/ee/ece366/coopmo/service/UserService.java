@@ -111,8 +111,8 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
         Optional<User> friend = userRepository.findById(friendId);
         if (user.isEmpty() || friend.isEmpty()) return -1;
-        if (!acceptIncomingFriendRequest(friend.get(), user.get())) return -2;
-        acceptedOutgoingFriendRequest(user.get(), friend.get());
+        if (!acceptIncomingFriendRequest(user.get(), friend.get())) return -2;
+        acceptedOutgoingFriendRequest(friend.get(), user.get());
         userRepository.save(user.get());
         userRepository.save(friend.get());
         return 0;
@@ -124,7 +124,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
         Optional<User> friend = userRepository.findById(friendId);
         if (user.isEmpty() || friend.isEmpty()) return -1;
-        if (user.get().isOutgoingFriend(friend.get())) return -2;
+        if (user.get().isOutgoingFriend(friend.get()) || user.get().isFriend(friend.get())) return -2;
         sendOutgoingFriendRequest(user.get(), friend.get());
         receivedIncomingFriendRequest(friend.get(), user.get());
         userRepository.save(user.get());
@@ -202,7 +202,7 @@ public class UserService {
 
     public Set<User> getUserFriendList(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getFriendList).orElse(null);
+        return curUser.map(User::getFriendSet).orElse(null);
     }
 
     public Set<User> getOutgoingFriendRequest(String userId) {
@@ -247,8 +247,5 @@ public class UserService {
 
     private void addFriend(User user, User friend) {
         user.addFriend(friend);
-        friend.addFriend(user);
-        userRepository.save(user);
-        userRepository.save(friend);
     }
 }

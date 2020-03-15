@@ -1,6 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -27,12 +26,10 @@ public class Payment implements Comparable<Payment> {
     private Timestamp timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
     @JoinColumn(nullable = false)
     private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
     @JoinColumn(nullable = false)
     private User toUser;
 

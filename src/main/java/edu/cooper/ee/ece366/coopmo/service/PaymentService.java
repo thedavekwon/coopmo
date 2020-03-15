@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -34,64 +35,55 @@ public class PaymentService {
         Payment newPayment = new Payment(fromUser.get(), toUser.get(), amount, type);
         fromUser.get().decrementBalance(amount);
         toUser.get().incrementBalance(amount);
+        fromUser.get().addFromPayment(newPayment);
+        toUser.get().addToPayment(newPayment);
         paymentRepository.save(newPayment);
         return 0;
     }
 
-    // TODO()
-    public ArrayList<Payment> getLatestPublicPayment(long n) {
-        return null;
+    public ArrayList<Payment> getLatestPublicPayment(int n) {
+        ArrayList<Payment> payments = (ArrayList<Payment>) paymentRepository.getLatestPublicPayments();
+        if (payments.size() < n) return payments;
+        return new ArrayList<>(payments.subList(payments.size() - n, payments.size()));
     }
 
-    // TODO()
+    // TODO(use heap)
     public ArrayList<Payment> getLatestPrivatePayment(String userId, int n) {
         ArrayList<Payment> payments = new ArrayList<>();
-//        synchronized (userRepository.getPaymentListMap()) {
-//            int curSize = userRepository.getPaymentListMap().get(userId).size();
-//            if (curSize < n) paymentList = userRepository.getPaymentListMap().get(userId);
-//            else paymentList = userRepository.getPaymentListMap().get(userId).subList(curSize - n, curSize);
-//        }
-//        ArrayList<Payment> payments = new ArrayList<>();
-//        paymentList.forEach(paymentId -> {
-//            Optional<Payment> payment = paymentRepository.findById(paymentId);
-//            payment.ifPresent(payments::add);
-//        });
-        return payments;
+        Optional<User> curUser = userRepository.findById(userId);
+        if (curUser.isEmpty()) return null;
+        payments.addAll(curUser.get().getFromPaymentSet());
+        payments.addAll(curUser.get().getToPaymentSet());
+        Collections.sort(payments);
+        if (payments.size() < n) return payments;
+        return new ArrayList<>(payments.subList(payments.size() - n, payments.size()));
     }
 
-    // TODO()
+    // TODO(change to heap)
     public ArrayList<Payment> getLatestFriendPayment(String userId, int n) {
         TreeSet<Payment> paymentList = new TreeSet<>();
-//        List<String> curUserPaymentList;
-//        int cnt;
-//        synchronized (userRepository.getPaymentListMap()) {
-//            int curSize = userRepository.getPaymentListMap().get(userId).size();
-//            if (curSize < n) curUserPaymentList = userRepository.getPaymentListMap().get(userId);
-//            else curUserPaymentList = userRepository.getPaymentListMap().get(userId).subList(curSize - n, curSize);
-//            ArrayList<Payment> payments = new ArrayList<>();
-//            curUserPaymentList.forEach(paymentId -> {
-//                Optional<Payment> payment = paymentRepository.findById(paymentId);
-//                payment.ifPresent(payments::add);
-//            });
-//            paymentList.addAll(payments);
-//
-//            for (String friendId : Collections.list(userRepository.getFriendMap().get(userId).keys())) {
-//                curSize = userRepository.getPaymentListMap().get(friendId).size();
-//                cnt = 0;
-//                ListIterator<String> iterator = userRepository.getPaymentListMap().get(friendId).listIterator(curSize);
-//                while (iterator.hasPrevious()) {
-//                    String paymentId = iterator.previous();
-//                    Optional<Payment> payment = paymentRepository.findById(paymentId);
-//                    if (payment.isPresent()) {
-//                        if (payment.get().getType() != Payment.PaymentType.PRIVATE) {
-//                            paymentList.add(payment.get());
-//                            cnt++;
-//                            if (cnt >= n) break;
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        Optional<User> curUser = userRepository.findById(userId);
+        if (curUser.isEmpty()) return null;
+        paymentList.addAll(curUser.get().getFromPaymentSet());
+        paymentList.addAll(curUser.get().getToPaymentSet());
+        for (User friend : curUser.get().getFriendSet()) {
+            int cnt = 0;
+            for (Payment payment : friend.getFromPaymentSet()) {
+                if (payment.getType() != Payment.PaymentType.PRIVATE) {
+                    paymentList.add(payment);
+                    cnt++;
+                    if (cnt >= n) break;
+                }
+            }
+            cnt = 0;
+            for (Payment payment : friend.getToPaymentSet()) {
+                if (payment.getType() != Payment.PaymentType.PRIVATE) {
+                    paymentList.add(payment);
+                    cnt++;
+                    if (cnt >= n) break;
+                }
+            }
+        }
         if (paymentList.size() < n) return new ArrayList<>(paymentList);
         return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - n, paymentList.size()));
     }

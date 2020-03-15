@@ -211,4 +211,28 @@ public class User {
     public Set<Cash> getCashSet() {
         return cashSet;
     }
+
+    public void addFromPayment(Payment payment) {
+        fromPaymentSet.add(payment);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Set<Payment> getFromPaymentSet() {
+        return fromPaymentSet;
+    }
+
+    public Set<Payment> getToPaymentSet() {
+        return toPaymentSet;
+    }
+
+    public Set<BankAccount> getBankAccountSet() {
+        return bankAccountSet;
+    }
+
+    public void addToPayment(Payment payment) {
+        toPaymentSet.add(payment);
+    }
 }

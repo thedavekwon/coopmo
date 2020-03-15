@@ -735,19 +735,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
-                System.out.println("size: " + publicPaymentList.getAsJsonArray().size());
-                return publicPaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
+//                System.out.println("size: " + publicPaymentList.getAsJsonArray().size());
+//                return publicPaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String getLatestPrivatePayment(String userId, String n) throws IOException, InterruptedException {
@@ -761,19 +761,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
-                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
-                return privatePaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
+//                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
+//                return privatePaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String getLatestFriendPayment(String userId, String n) throws IOException, InterruptedException {
@@ -787,19 +787,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
-                System.out.println("size: " + friendPaymentList.getAsJsonArray().size());
-                return friendPaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
+//                System.out.println("size: " + friendPaymentList.getAsJsonArray().size());
+//                return friendPaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static void checkDoubleAddFails(String user1ID, String user2ID) throws IOException, InterruptedException {

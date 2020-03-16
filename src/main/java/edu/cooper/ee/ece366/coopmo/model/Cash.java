@@ -1,14 +1,16 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class Cash {
-    private final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+public class Cash extends Transaction {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -24,6 +26,9 @@ public class Cash {
     @Column(nullable = false)
     private long amount;
 
+    @Column(updatable = false, nullable = false)
+    protected Timestamp timestamp;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "user")
     @JoinColumn(nullable = false)
@@ -34,6 +39,10 @@ public class Cash {
     @JoinColumn(nullable = false)
     private BankAccount bankAccount;
 
+    @OneToMany
+    @JsonIgnore
+    private Set<User> likes;
+
     public Cash() {
     }
 
@@ -42,6 +51,8 @@ public class Cash {
         bankAccount = _bankAccount;
         type = _type;
         amount = _amount;
+        likes = new HashSet<>();
+        timestamp = new Timestamp(System.currentTimeMillis());
     }
 
     public long getAmount() {
@@ -56,8 +67,18 @@ public class Cash {
         return type;
     }
 
+    @Override
+    public int compareTo(Transaction o) {
+        return getTimestamp().compareTo(o.getTimestamp());
+    }
+
     public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    @JsonIgnore
+    public Set<User> getLikes() {
+        return likes;
     }
 
     public enum CashType {

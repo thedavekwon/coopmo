@@ -7,6 +7,7 @@ import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,6 +20,7 @@ public class CashService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public CashService(CashRepository cashRepository, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
         this.cashRepository = cashRepository;
         this.bankAccountRepository = bankAccountRepository;
@@ -46,8 +48,7 @@ public class CashService {
             curBankAccount.get().decrementBalance(amount);
         }
         Cash newCash = new Cash(curUser.get(), curBankAccount.get(), amount, type);
-        userRepository.save(curUser.get());
-        bankAccountRepository.save(curBankAccount.get());
+        curUser.get().addCash(newCash);
         cashRepository.save(newCash);
         return 0;
     }

@@ -1,9 +1,12 @@
 package edu.cooper.ee.ece366.coopmo;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
+import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
 
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.net.http.HttpResponse;
 
 public class CoopmoTest {
     private static HttpClient client = HttpClient.newHttpClient();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -409,31 +413,21 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/createUser")
-                .addParameter("name", name)
-                .addParameter("username", username)
-                .addParameter("password", password)
-                .addParameter("email", email)
-                .addParameter("handle", handle)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        User user = new User(name, username, password, email, handle);
+        System.out.println(mapper.writeValueAsString(user));
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers
+                        .ofString(mapper.writeValueAsString(user)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload == null)
-                return null;
-            if (messagePayload.isJsonObject()) {
-                JsonElement user = messagePayload.getAsJsonObject().get("user");
-                if (user.getAsJsonObject().isJsonObject()) {
-                    JsonElement id = user.getAsJsonObject().get("id");
-                    return id.getAsString();
-                }
-            }
+        if (response.statusCode() != 200) {
+            System.out.println(response.body());
+            return null;
         }
-        return null;
+        User curUser = mapper.readValue(response.body(), User.class);
+        return curUser.getId();
     }
 
     public static boolean sendOutRequest(String userId, String friendId) throws IOException, InterruptedException {
@@ -555,21 +549,12 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement bankAccount = messagePayload.getAsJsonObject().get("bankAccount");
-                if (bankAccount.getAsJsonObject().isJsonObject()) {
-                    JsonElement id = bankAccount.getAsJsonObject().get("id");
-                    return id.getAsString();
-                }
-            }
+        if (response.statusCode() != 200) {
+            System.out.println(response.body());
+            return null;
         }
-        return null;
+        BankAccount curBankAccount = mapper.readValue(response.body(), BankAccount.class);
+        return curBankAccount.getId();
     }
 
     public static boolean createCash(String userId, String bankAccountId, String amount, String type) throws IOException, InterruptedException {

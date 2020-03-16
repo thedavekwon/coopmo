@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -24,7 +24,8 @@ public class BankAccount {
     private long balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnore
     @JoinColumn(nullable = false)
     private User user;
 

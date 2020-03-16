@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.ValidFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -43,14 +43,14 @@ public class UserController {
 
     @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, ValidFieldException {
+    public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldException {
         JsonObject respBody = new JsonObject();
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
 
         if (!validateEmail(user.getEmail())) {
-            throw new ValidFieldException("Invalid Email Address");
+            throw new InValidFieldException("Invalid Email Address");
         }
 
         userService.check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
@@ -62,7 +62,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> getUserWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "password", defaultValue = "") String password) throws EmptyFieldException, ValidFieldException {
+            @RequestParam(value = "password", defaultValue = "") String password) throws EmptyFieldException, InValidFieldException {
         JsonObject respBody = new JsonObject();
         JsonObject userJson = new JsonObject();
 

@@ -1,9 +1,12 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
 import edu.cooper.ee.ece366.coopmo.model.Payment;
+import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.model.User;
+import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,12 +17,14 @@ import java.util.TreeSet;
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-
     private final UserRepository userRepository;
+    private final CashRepository cashRepository;
 
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository) {
+    @Autowired
+    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CashRepository cashRepository) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
+        this.cashRepository = cashRepository;
     }
 
     // return error code
@@ -50,15 +55,16 @@ public class PaymentService {
     }
 
     // TODO(use heap)
-    public ArrayList<Payment> getLatestPrivatePayment(String userId, int n) {
-        ArrayList<Payment> payments = new ArrayList<>();
+    public ArrayList<Transaction> getLatestPrivatePayment(String userId, int n) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
         Optional<User> curUser = userRepository.findById(userId);
         if (curUser.isEmpty()) return null;
-        payments.addAll(curUser.get().getFromPaymentSet());
-        payments.addAll(curUser.get().getToPaymentSet());
-        Collections.sort(payments);
-        if (payments.size() < n) return payments;
-        return new ArrayList<>(payments.subList(payments.size() - n, payments.size()));
+        transactions.addAll(curUser.get().getFromPaymentSet());
+        transactions.addAll(curUser.get().getToPaymentSet());
+        transactions.addAll(curUser.get().getCashSet());
+        Collections.sort(transactions);
+        if (transactions.size() < n) return transactions;
+        return new ArrayList<>(transactions.subList(transactions.size() - n, transactions.size()));
     }
 
     // TODO(change to heap)

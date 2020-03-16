@@ -1,9 +1,10 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.ValidFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -32,13 +34,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void check_if_taken(String username, String email, String handle) throws ValidFieldException {
+    public void check_if_taken(String username, String email, String handle) throws InValidFieldException {
         if (userRepository.containsUsername(username))
-            throw new ValidFieldException("Invalid Username");
+            throw new InValidFieldException("Invalid Username");
         if (userRepository.containsEmail(email))
-            throw new ValidFieldException("Invalid Email");
+            throw new InValidFieldException("Invalid Email");
         if (userRepository.containsHandle(handle))
-            throw new ValidFieldException("Invalid handle");
+            throw new InValidFieldException("Invalid handle");
     }
 
     private boolean editUsername(String id, String newUsername) {
@@ -137,14 +139,14 @@ public class UserService {
         return 0;
     }
 
-    public User getUserWithUsername(String username, String password) throws ValidFieldException {
+    public User getUserWithUsername(String username, String password) throws InValidFieldException {
         String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) throw new ValidFieldException("Invalid Username");
+        if (userId == null) throw new InValidFieldException("Invalid Username");
 
         Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) throw new ValidFieldException("Invalid Username");
+        if (curUser.isEmpty()) throw new InValidFieldException("Invalid Username");
         if (!curUser.get().getPassword().equals(password)) {
-            throw new ValidFieldException("Invalid Password");
+            throw new InValidFieldException("Invalid Password");
         }
         return curUser.get();
     }

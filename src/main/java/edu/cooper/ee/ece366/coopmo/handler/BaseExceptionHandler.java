@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class BaseExceptionHandler {
-    @ExceptionHandler(value = {EmptyFieldException.class, ValidFieldException.class})
+    @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
         // TODO (add more exceptions)
-        return handleAllInvalidException(ex);
+        return handleAllInValidException(ex);
     }
 
-    private ResponseEntity<?> handleAllInvalidException(Exception ex) {
+    private ResponseEntity<?> handleAllInValidException(Exception ex) {
         JsonObject respBody = new JsonObject();
         respBody.addProperty("message", ex.getMessage());
         return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
     }
 
-    public static class ValidFieldException extends Exception {
-        public ValidFieldException(String message) {
+    public static class InValidFieldException extends Exception {
+        public InValidFieldException(String message) {
             super(message);
         }
     }

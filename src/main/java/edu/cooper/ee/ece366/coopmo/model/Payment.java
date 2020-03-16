@@ -1,13 +1,16 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class Payment implements Comparable<Payment> {
+public class Payment extends Transaction {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -23,8 +26,8 @@ public class Payment implements Comparable<Payment> {
     @Column(nullable = false)
     private PaymentType type;
 
-    @Column(nullable = false)
-    private Timestamp timestamp;
+    @Column(updatable = false, nullable = false)
+    protected Timestamp timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "fromUser")
@@ -36,6 +39,10 @@ public class Payment implements Comparable<Payment> {
     @JoinColumn(nullable = false)
     private User toUser;
 
+    @OneToMany
+    @JsonIgnore
+    private Set<User> likes;
+
     public Payment() {
     }
 
@@ -45,6 +52,7 @@ public class Payment implements Comparable<Payment> {
         amount = _amount;
         type = _type;
         timestamp = new Timestamp(System.currentTimeMillis());
+        likes = new HashSet<>();
     }
 
     public long getAmount() {
@@ -63,8 +71,13 @@ public class Payment implements Comparable<Payment> {
         return timestamp;
     }
 
+    @JsonIgnore
+    public Set<User> getLikes() {
+        return likes;
+    }
+
     @Override
-    public int compareTo(Payment o) {
+    public int compareTo(Transaction o) {
         return getTimestamp().compareTo(o.getTimestamp());
     }
 

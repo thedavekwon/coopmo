@@ -1,7 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -43,33 +43,38 @@ public class User {
     private boolean deleted;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+//    @JsonManagedReference(value="fromUser")
+    @JsonIgnore
     private Set<Payment> fromPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+//    @JsonManagedReference(value = "toUser")
+    @JsonIgnore
     private Set<Payment> toPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+//    @JsonManagedReference(value="user")
+    @JsonIgnore
     private Set<Cash> cashSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+//    @JsonBackReference(value="BankAccount_user")
+    @JsonIgnore
     private Set<BankAccount> bankAccountSet;
 
+
     @ManyToMany
-    @JsonBackReference
+    @JsonIgnore
     @JoinTable
     private Set<User> friendSet;
 
     @ManyToMany
-    @JsonBackReference
+    @JsonIgnore
     @JoinTable
     private Set<User> outgoingFriendRequestSet;
 
     @ManyToMany
-    @JsonBackReference
+    @JsonIgnore
     @JoinTable
     private Set<User> incomingFriendRequestSet;
 
@@ -184,18 +189,22 @@ public class User {
         return incomingFriendRequestSet.contains(friend);
     }
 
+    @JsonIgnore
     public Set<BankAccount> getBankAccount() {
         return bankAccountSet;
     }
 
+    @JsonIgnore
     public Set<User> getOutgoingFriendRequestSet() {
         return outgoingFriendRequestSet;
     }
 
+    @JsonIgnore
     public Set<User> getIncomingFriendRequestSet() {
         return incomingFriendRequestSet;
     }
 
+    @JsonIgnore
     public Set<User> getFriendSet() {
         return friendSet;
     }
@@ -208,6 +217,7 @@ public class User {
         cashSet.add(cash);
     }
 
+    @JsonIgnore
     public Set<Cash> getCashSet() {
         return cashSet;
     }
@@ -220,14 +230,17 @@ public class User {
         return deleted;
     }
 
+    @JsonIgnore
     public Set<Payment> getFromPaymentSet() {
         return fromPaymentSet;
     }
 
+    @JsonIgnore
     public Set<Payment> getToPaymentSet() {
         return toPaymentSet;
     }
 
+    @JsonIgnore
     public Set<BankAccount> getBankAccountSet() {
         return bankAccountSet;
     }

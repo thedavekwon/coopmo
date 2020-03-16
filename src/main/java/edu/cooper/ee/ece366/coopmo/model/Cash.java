@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -25,12 +25,12 @@ public class Cash {
     private long amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference(value = "user")
     @JoinColumn(nullable = false)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference(value = "bankAccount")
     @JoinColumn(nullable = false)
     private BankAccount bankAccount;
 

@@ -7,21 +7,23 @@ import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class CashService {
-    @Autowired
-    private CashRepository cashRepository;
+    private final CashRepository cashRepository;
 
-    @Autowired
-    private BankAccountRepository bankAccountRepository;
+    private final BankAccountRepository bankAccountRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public CashService(CashRepository cashRepository, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
+        this.cashRepository = cashRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.userRepository = userRepository;
+    }
 
     // return error code
     // -1 : Invalid userId

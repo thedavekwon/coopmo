@@ -1,9 +1,9 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.ValidFieldException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,8 +13,11 @@ import java.util.Set;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User createUser(String name, String username, String password, String email, String handle) {
         if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
@@ -25,15 +28,17 @@ public class UserService {
         return newUser;
     }
 
-    public ArrayList<Integer> check_if_taken(String username, String email, String handle) {
-        ArrayList<Integer> errors = new ArrayList<>();
+    public void addUser(User user) {
+        userRepository.save(user);
+    }
+
+    public void check_if_taken(String username, String email, String handle) throws ValidFieldException {
         if (userRepository.containsUsername(username))
-            errors.add(-2);
+            throw new ValidFieldException("Invalid Username");
         if (userRepository.containsEmail(email))
-            errors.add(-3);
+            throw new ValidFieldException("Invalid Email");
         if (userRepository.containsHandle(handle))
-            errors.add(-4);
-        return errors;
+            throw new ValidFieldException("Invalid handle");
     }
 
     private boolean editUsername(String id, String newUsername) {
@@ -132,17 +137,16 @@ public class UserService {
         return 0;
     }
 
-    public User getUserWithUsername(String username, String password) {
+    public User getUserWithUsername(String username, String password) throws ValidFieldException {
         String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) return null;
+        if (userId == null) throw new ValidFieldException("Invalid Username");
 
         Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) return null;
-        if (curUser.get().getPassword().equals(password)) {
-            return curUser.get();
-        } else {
-            return null;
+        if (curUser.isEmpty()) throw new ValidFieldException("Invalid Username");
+        if (!curUser.get().getPassword().equals(password)) {
+            throw new ValidFieldException("Invalid Password");
         }
+        return curUser.get();
     }
 
     public boolean acceptIncomingFriendRequest(User user, User friend) {

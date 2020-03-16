@@ -3,6 +3,8 @@ package edu.cooper.ee.ece366.coopmo.handler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.ValidFieldException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -34,90 +36,42 @@ public class UserController {
     }
 
     private boolean validateEmail(String email) {
-        // email regex taken from https://howtodoinjava.com/regex/java-regex-validate-email-address/
+        // https://howtodoinjava.com/regex/java-regex-validate-email-address/
         String EMAIL_REGEX = "^(.+)@(.+)$";
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
     }
 
-    @PostMapping(path = "/createUser")
+    @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> createUser(
-            @RequestParam(value = "name", defaultValue = "") String name,
-            @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "password", defaultValue = "") String password,
-            @RequestParam(value = "email", defaultValue = "") String email,
-            @RequestParam(value = "handle", defaultValue = "") String handle) {
+    public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, ValidFieldException {
         JsonObject respBody = new JsonObject();
-        if (name.equals("") || username.equals("") || password.equals("") || email.equals("") || handle.equals("")) {
-            respBody.addProperty("message", "One or more of submitted name, username, password, email, or handle is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
+            throw new EmptyFieldException("Empty Field");
         }
 
-        if (!validateEmail(email)) {
-            respBody.addProperty("message", "Please enter a valid email address");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        if (!validateEmail(user.getEmail())) {
+            throw new ValidFieldException("Invalid Email Address");
         }
 
-        ArrayList<Integer> errors = userService.check_if_taken(username, email, handle);
-        if (errors.isEmpty()) {
-            User newUser = userService.createUser(name, username, password, email, handle);
-            if (newUser == null) {
-                respBody.addProperty("message", "Error Creating User");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.SERVICE_UNAVAILABLE);
-            } else {
-                JsonObject userJson = new JsonObject();
-                userJson.add("user", new Gson().toJsonTree(newUser));
-                respBody.add("messagePayload", userJson);
-                respBody.addProperty("message", "Successfully created user");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
-            }
-
-        } else {
-            ArrayList<String> error_msg = new ArrayList<>();
-            for (Integer error : errors) {
-                switch (error) {
-                    case -2:
-                        error_msg.add("Username Taken");
-                        break;
-                    case -3:
-                        error_msg.add("Email Taken");
-                        break;
-                    case -4:
-                        error_msg.add("Handle taken");
-                        break;
-                    default:
-                        error_msg.add("Unknown error");
-                }
-            }
-            respBody.add("errorMessages", new Gson().toJsonTree(error_msg));
-            respBody.addProperty("message", "Error Creating User");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
+        userService.check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
+        userService.addUser(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserWithUsername")
     @ResponseBody
     public ResponseEntity<?> getUserWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "password", defaultValue = "") String password) {
+            @RequestParam(value = "password", defaultValue = "") String password) throws EmptyFieldException, ValidFieldException {
         JsonObject respBody = new JsonObject();
         JsonObject userJson = new JsonObject();
 
         if (username.equals("") || password.equals("")) {
-            respBody.addProperty("message", "One or more of submitted name, username, password, email, or handle is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("Empty Field");
         }
 
         User curUser = userService.getUserWithUsername(username, password);
-        if (curUser == null) {
-            respBody.addProperty("message", "Wrong username or password");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-
-        userJson.add("user", new Gson().toJsonTree(curUser));
-        respBody.add("messagePayload", userJson);
-        respBody.addProperty("message", "Successfully returned user data");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(curUser, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserFriendList")

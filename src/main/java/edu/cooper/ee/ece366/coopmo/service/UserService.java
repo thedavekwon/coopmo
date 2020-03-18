@@ -62,12 +62,22 @@ public class UserService {
 
     private boolean editEmail(String id, String newEmail) {
         Optional<User> user = userRepository.findById(id);
-        return user.filter(value -> userRepository.changeEmail(value.getEmail(), newEmail, id)).isPresent();
+        if (user.isEmpty()) return false;
+        if (userRepository.changeEmail(user.get().getEmail(), newEmail, id)) {
+            user.get().setEmail(newEmail);
+            return true;
+        } else
+            return false;
     }
 
     private boolean editHandle(String id, String newHandle) {
         Optional<User> user = userRepository.findById(id);
-        return user.filter(value -> userRepository.changeHandle(value.getHandle(), newHandle, id)).isPresent();
+        if (user.isEmpty()) return false;
+        if (userRepository.changeHandle(user.get().getHandle(), newHandle, id)) {
+            user.get().setHandle(newHandle);
+            return true;
+        } else
+            return false;
     }
 
     // empty if no errors

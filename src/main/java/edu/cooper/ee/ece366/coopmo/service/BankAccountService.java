@@ -36,8 +36,6 @@ public class BankAccountService {
         return bankAccount;
     }
 
-    // return error code
-    // -1 : Invalid bankAccountId
     public long getBalance(String bankAccountId) {
         Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
         return curBankAccount.map(BankAccount::getBalance).orElse(-1L);

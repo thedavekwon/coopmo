@@ -1,7 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
 import edu.cooper.ee.ece366.coopmo.model.Payment;
-import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -52,19 +50,6 @@ public class PaymentService {
         ArrayList<Payment> payments = (ArrayList<Payment>) paymentRepository.getLatestPublicPayments();
         if (payments.size() < n) return payments;
         return new ArrayList<>(payments.subList(payments.size() - n, payments.size()));
-    }
-
-    // TODO(use heap)
-    public ArrayList<Transaction> getLatestPrivatePayment(String userId, int n) {
-        ArrayList<Transaction> transactions = new ArrayList<>();
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) return null;
-        transactions.addAll(curUser.get().getFromPaymentSet());
-        transactions.addAll(curUser.get().getToPaymentSet());
-        transactions.addAll(curUser.get().getCashSet());
-        Collections.sort(transactions);
-        if (transactions.size() < n) return transactions;
-        return new ArrayList<>(transactions.subList(transactions.size() - n, transactions.size()));
     }
 
     // TODO(change to heap)

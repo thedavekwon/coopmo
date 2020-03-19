@@ -45,16 +45,19 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference(value="fromUser")
     @JsonIgnore
+    @OrderBy("timestamp DESC")
     private Set<Payment> fromPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference(value = "toUser")
     @JsonIgnore
+    @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference(value="user")
     @JsonIgnore
+    @OrderBy("timestamp DESC")
     private Set<Cash> cashSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -1,24 +1,26 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
-import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
 import edu.cooper.ee.ece366.coopmo.service.PaymentService;
+import edu.cooper.ee.ece366.coopmo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
-    @Autowired
-    private PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
+    private final TransactionService transactionService;
 
     @Autowired
-    private PaymentService paymentService;
+    public PaymentController(PaymentService paymentService, TransactionService transactionService) {
+        this.paymentService = paymentService;
+        this.transactionService = transactionService;
+    }
 
     @PostMapping(path = "/createPayment")
     public ResponseEntity<?> createPayment(
@@ -57,12 +59,6 @@ public class PaymentController extends BaseController {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/getPaymentWithId")
-    public Payment getPaymentWithId(@RequestParam(value = "paymentId", defaultValue = "") String paymentId) {
-        Optional<Payment> curPayment = paymentRepository.findById(paymentId);
-        return curPayment.orElse(null);
-    }
-
     @GetMapping(path = "/getLatestPublicPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") int n) {
@@ -78,19 +74,14 @@ public class PaymentController extends BaseController {
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
-    ) {
+    ) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-//        friend_json.add("LatestPrivatePayment", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
-//        respBody.add("messagePayload", friend_json);
-//        respBody.addProperty("message", "Successfully got latest private payments");
-//        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
-        if (response != null) return response;
-        return new ResponseEntity<>(paymentService.getLatestPrivatePayment(userId, n), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.getLatestTransaction(userId, n), HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestFriendPayment")

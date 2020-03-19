@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -34,13 +34,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void check_if_taken(String username, String email, String handle) throws InValidFieldException {
+    public void check_if_taken(String username, String email, String handle) throws InValidFieldValueException {
         if (userRepository.containsUsername(username))
-            throw new InValidFieldException("Invalid Username");
+            throw new InValidFieldValueException("Invalid Username");
         if (userRepository.containsEmail(email))
-            throw new InValidFieldException("Invalid Email");
+            throw new InValidFieldValueException("Invalid Email");
         if (userRepository.containsHandle(handle))
-            throw new InValidFieldException("Invalid handle");
+            throw new InValidFieldValueException("Invalid handle");
     }
 
     private boolean editUsername(String id, String newUsername) {
@@ -139,14 +139,14 @@ public class UserService {
         return 0;
     }
 
-    public User getUserWithUsername(String username, String password) throws InValidFieldException {
+    public User getUserWithUsername(String username, String password) throws InValidFieldValueException {
         String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) throw new InValidFieldException("Invalid Username");
+        if (userId == null) throw new InValidFieldValueException("Invalid Username");
 
         Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) throw new InValidFieldException("Invalid Username");
+        if (curUser.isEmpty()) throw new InValidFieldValueException("Invalid Username");
         if (!curUser.get().getPassword().equals(password)) {
-            throw new InValidFieldException("Invalid Password");
+            throw new InValidFieldValueException("Invalid Password");
         }
         return curUser.get();
     }

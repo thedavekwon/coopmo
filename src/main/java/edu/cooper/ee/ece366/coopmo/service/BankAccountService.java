@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
@@ -21,13 +21,13 @@ public class BankAccountService {
         this.userRepository = userRepository;
     }
 
-    public BankAccount createBankAccount(String userId, long routingNumber, long balance) throws InValidFieldException {
+    public BankAccount createBankAccount(String userId, long routingNumber, long balance) throws InValidFieldValueException {
         Optional<User> curUser = userRepository.findById(userId);
         if (curUser.isEmpty())
-            throw new InValidFieldException("Invalid User Id");
+            throw new InValidFieldValueException("Invalid User Id");
 
         if (!checkValidRoutingNumberWithBankApi(routingNumber))
-            throw new InValidFieldException("Invalid Routing Number");
+            throw new InValidFieldValueException("Invalid Routing Number");
 
         BankAccount bankAccount = new BankAccount(curUser.get(), routingNumber, balance);
         curUser.get().addBankAccount(bankAccount);

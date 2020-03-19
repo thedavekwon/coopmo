@@ -29,17 +29,17 @@ public class Cash extends Transaction {
     @Column(updatable = false, nullable = false)
     protected Timestamp timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "user")
     @JoinColumn(nullable = false)
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "bankAccount")
     @JoinColumn(nullable = false)
     private BankAccount bankAccount;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<User> likes;
 

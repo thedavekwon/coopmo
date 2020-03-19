@@ -6,11 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+// TODO (add more exceptions)
+
 @ControllerAdvice
 public class BaseExceptionHandler {
-    @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldException.class})
+    @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
-        // TODO (add more exceptions)
         return handleAllInValidException(ex);
     }
 
@@ -20,14 +21,20 @@ public class BaseExceptionHandler {
         return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
     }
 
-    public static class InValidFieldException extends Exception {
-        public InValidFieldException(String message) {
+    public static class InValidFieldValueException extends Exception {
+        public InValidFieldValueException(String message) {
             super(message);
         }
     }
 
     public static class EmptyFieldException extends Exception {
         public EmptyFieldException(String message) {
+            super(message);
+        }
+    }
+
+    public static class InValidFieldTypeException extends Exception {
+        public InValidFieldTypeException(String message) {
             super(message);
         }
     }

@@ -2,7 +2,7 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class BankAccountController extends BaseController {
     public ResponseEntity<?> createBankAccount(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "routingNumber", defaultValue = "") long routingNumber,
-            @RequestParam(value = "balance", defaultValue = "") long balance) throws InValidFieldException, EmptyFieldException {
+            @RequestParam(value = "balance", defaultValue = "") long balance) throws InValidFieldValueException, EmptyFieldException {
         if (!checkValidRoutingNumberByDigit(routingNumber))
-            throw new InValidFieldException("Invalid Routing Number");
+            throw new InValidFieldValueException("Invalid Routing Number");
 
         if (userId.isEmpty() || balance < 0)
             throw new EmptyFieldException("Empty Field");

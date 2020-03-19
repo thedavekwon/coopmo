@@ -6,4 +6,8 @@ public abstract class Transaction implements Comparable<Transaction> {
     public abstract int compareTo(Transaction o);
 
     protected abstract Timestamp getTimestamp();
+
+    public enum TransactionType {
+        CASH, PAY
+    }
 }

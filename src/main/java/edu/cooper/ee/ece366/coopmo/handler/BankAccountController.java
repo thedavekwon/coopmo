@@ -1,7 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,26 +24,15 @@ public class BankAccountController extends BaseController {
     public ResponseEntity<?> createBankAccount(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "routingNumber", defaultValue = "") long routingNumber,
-            @RequestParam(value = "balance", defaultValue = "") long balance) {
+            @RequestParam(value = "balance", defaultValue = "") long balance) throws InValidFieldValueException, EmptyFieldException {
         if (!checkValidRoutingNumberByDigit(routingNumber))
-            return ResponseEntity.badRequest().body("Routing number must be 9 digits");
+            throw new InValidFieldValueException("Invalid Routing Number");
 
-        JsonObject respBody = new JsonObject();
-        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-        response = checkPositive(balance, "balance", respBody);
-        if (response != null) return response;
+        if (userId.isEmpty() || balance < 0)
+            throw new EmptyFieldException("Empty Field");
 
         BankAccount newBankAccount = bankAccountService.createBankAccount(userId, routingNumber, balance);
-        if (newBankAccount == null) {
-            respBody.addProperty("message", "Invalid userId or routingNumber");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        JsonObject bankJson = new JsonObject();
-        bankJson.add("bankAccount", new Gson().toJsonTree(newBankAccount));
-        respBody.add("messagePayload", bankJson);
-        respBody.addProperty("message", "Bankaccount request succeed");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(newBankAccount, HttpStatus.OK);
     }
 
     @GetMapping("getBalance")

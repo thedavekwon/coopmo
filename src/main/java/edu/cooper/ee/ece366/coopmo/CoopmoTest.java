@@ -1,9 +1,12 @@
 package edu.cooper.ee.ece366.coopmo;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
+import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
 
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.net.http.HttpResponse;
 
 public class CoopmoTest {
     private static HttpClient client = HttpClient.newHttpClient();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -196,12 +200,12 @@ public class CoopmoTest {
         String user3 = createUser("n3", "u3", "p3", "e3@gmail.com", "h3");
         if (user3 == null)
             System.out.println("Creating a new User failed");
-        System.out.println("User1 ID: " + user3 + "\n");
+        System.out.println("User3 ID: " + user3 + "\n");
 
         String user4 = createUser("n4", "u4", "p4", "e4@gmail.com", "h4");
         if (user4 == null)
             System.out.println("Creating a new User failed");
-        System.out.println("User2 ID: " + user4 + "\n");
+        System.out.println("User4 ID: " + user4 + "\n");
 
         String user5 = createUser("n5", "u5", "p5", "e5@gmail.com", "h5");
         if (user5 == null)
@@ -409,31 +413,21 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/createUser")
-                .addParameter("name", name)
-                .addParameter("username", username)
-                .addParameter("password", password)
-                .addParameter("email", email)
-                .addParameter("handle", handle)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        User user = new User(name, username, password, email, handle);
+        System.out.println(mapper.writeValueAsString(user));
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers
+                        .ofString(mapper.writeValueAsString(user)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload == null)
-                return null;
-            if (messagePayload.isJsonObject()) {
-                JsonElement user = messagePayload.getAsJsonObject().get("user");
-                if (user.getAsJsonObject().isJsonObject()) {
-                    JsonElement id = user.getAsJsonObject().get("id");
-                    return id.getAsString();
-                }
-            }
+        if (response.statusCode() != 200) {
+            System.out.println(response.body());
+            return null;
         }
-        return null;
+        User curUser = mapper.readValue(response.body(), User.class);
+        return curUser.getId();
     }
 
     public static boolean sendOutRequest(String userId, String friendId) throws IOException, InterruptedException {
@@ -531,17 +525,16 @@ public class CoopmoTest {
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement friendList = messagePayload.getAsJsonObject().get("friendList");
-                return friendList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement friendList = messagePayload.getAsJsonObject().get("friendList");
+//                return friendList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String createBankAccount(String userId, String routingNumber, String balance) throws IOException, InterruptedException {
@@ -556,21 +549,12 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement bankAccount = messagePayload.getAsJsonObject().get("bankAccount");
-                if (bankAccount.getAsJsonObject().isJsonObject()) {
-                    JsonElement id = bankAccount.getAsJsonObject().get("id");
-                    return id.getAsString();
-                }
-            }
+        if (response.statusCode() != 200) {
+            System.out.println(response.body());
+            return null;
         }
-        return null;
+        BankAccount curBankAccount = mapper.readValue(response.body(), BankAccount.class);
+        return curBankAccount.getId();
     }
 
     public static boolean createCash(String userId, String bankAccountId, String amount, String type) throws IOException, InterruptedException {
@@ -736,19 +720,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
-                System.out.println("size: " + publicPaymentList.getAsJsonArray().size());
-                return publicPaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
+//                System.out.println("size: " + publicPaymentList.getAsJsonArray().size());
+//                return publicPaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String getLatestPrivatePayment(String userId, String n) throws IOException, InterruptedException {
@@ -762,19 +746,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
-                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
-                return privatePaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
+//                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
+//                return privatePaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static String getLatestFriendPayment(String userId, String n) throws IOException, InterruptedException {
@@ -788,19 +772,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
-                System.out.println("size: " + friendPaymentList.getAsJsonArray().size());
-                return friendPaymentList.getAsJsonArray().toString();
-            }
-        }
-        return null;
+//        JsonParser jsonParser = new JsonParser();
+//        JsonElement jsonTree = jsonParser.parse(response.body());
+//        if (jsonTree.isJsonObject()) {
+//            JsonObject jsonObject = jsonTree.getAsJsonObject();
+//            JsonElement messagePayload = jsonObject.get("messagePayload");
+//            System.out.println(jsonObject.get("message").getAsString());
+//            if (messagePayload.isJsonObject()) {
+//                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
+//                System.out.println("size: " + friendPaymentList.getAsJsonArray().size());
+//                return friendPaymentList.getAsJsonArray().toString();
+//            }
+//        }
+        return response.body();
     }
 
     public static void checkDoubleAddFails(String user1ID, String user2ID) throws IOException, InterruptedException {

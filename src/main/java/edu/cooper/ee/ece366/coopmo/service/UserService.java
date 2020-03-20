@@ -1,5 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 
 @Service
@@ -24,60 +26,52 @@ public class UserService {
         if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
             return null;
         }
-        userRepository.insertUsername(username, newUser.getId());
-        userRepository.insertHandle(handle, newUser.getId());
-        userRepository.insertEmail(email, newUser.getId());
-        userRepository.getIncomingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
-        userRepository.getOutgoingFriendRequestMap().put(newUser.getId(), new ConcurrentHashMap<>());
-        userRepository.getFriendMap().put(newUser.getId(), new ConcurrentHashMap<>());
-        userRepository.getPaymentListMap().put(newUser.getId(), new ArrayList<>());
-        userRepository.getCashListMap().put(newUser.getId(), new ArrayList<>());
-        userRepository.getBankAccountListMap().put(newUser.getId(), new ArrayList<>());
+        User newUser = new User(name, username, password, email, handle);
         userRepository.save(newUser);
         return newUser;
     }
 
-    public ArrayList<Integer> check_if_taken(String username, String email, String handle) {
-        ArrayList<Integer> errors = new ArrayList<>();
+    public void addUser(User user) {
+        userRepository.save(user);
+    }
 
+    public void check_if_taken(String username, String email, String handle) throws InValidFieldValueException {
         if (userRepository.containsUsername(username))
-            errors.add(-2);
+            throw new InValidFieldValueException("Invalid Username");
         if (userRepository.containsEmail(email))
-            errors.add(-3);
+            throw new InValidFieldValueException("Invalid Email");
         if (userRepository.containsHandle(handle))
-            errors.add(-4);
-        return errors;
-
+            throw new InValidFieldValueException("Invalid handle");
     }
 
     private boolean editUsername(String id, String newUsername) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) return false;
-        if (userRepository.changeUsername(user.get().getUsername(), newUsername, id)) {
+        if (user.isEmpty() || user.get().getUsername().equals(newUsername)) return false;
+        if (checkChangeUsername(newUsername)) {
             user.get().setUsername(newUsername);
+            userRepository.save(user.get());
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     private boolean editEmail(String id, String newEmail) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) return false;
-        if (userRepository.changeEmail(user.get().getEmail(), newEmail, id)) {
+        if (user.isEmpty() || user.get().getEmail().equals(newEmail)) return false;
+        if (checkChangeEmail(newEmail)) {
             user.get().setEmail(newEmail);
+            userRepository.save(user.get());
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     private boolean editHandle(String id, String newHandle) {
         Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) return false;
-        if (userRepository.changeHandle(user.get().getHandle(), newHandle, id)) {
-            user.get().setHandle(newHandle);
+        if (user.isEmpty() || user.get().getHandle().equals(newHandle)) return false;
+        if (checkChangeHandler(newHandle)) {
+            user.get().setEmail(newHandle);
+            userRepository.save(user.get());
             return true;
-        } else
-            return false;
+        } else return false;
     }
 
     // empty if no errors
@@ -100,6 +94,7 @@ public class UserService {
                 errors.add(-3);
             if (!editHandle(userId, newHandle))
                 errors.add(-4);
+            userRepository.save(user.get());
         }
         return errors;
     }
@@ -109,156 +104,93 @@ public class UserService {
     // -2 if friend not found in incoming friend request
     // 0 if success
     public int cancelOutgoingFriendRequest(String userId, String friendId) {
-        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
-            return -1;
-        } else {
-            //if compare to returns pos use that user first
-            //else use other
-            synchronized (userRepository.getFriendMap()) {
-                synchronized (userRepository.getOutgoingFriendRequestMap()) {
-                    synchronized (userRepository.getIncomingFriendRequestMap()) {
-                        deleteOutgoingFriendRequest(userId, friendId);
-                        deleteIncomingFriendRequest(friendId, userId);
-                    }
-                }
-            }
-            return 0;
-        }
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> friend = userRepository.findById(friendId);
+        if (user.isEmpty() || friend.isEmpty()) return -1;
+        user.get().removeOutgoingFriendRequest(friend.get());
+        friend.get().removeIncomingFriendRequest(user.get());
+        userRepository.save(user.get());
+        userRepository.save(friend.get());
+        return 0;
     }
 
     // -1 if user not found
     public int acceptIncomingRequest(String userId, String friendId) {
-        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
-            return -1;
-        } else {
-            synchronized (userRepository.getFriendMap()) {
-                synchronized (userRepository.getOutgoingFriendRequestMap()) {
-                    synchronized (userRepository.getIncomingFriendRequestMap()) {
-                        if (!acceptIncomingFriendRequest(userId, friendId)) return -2;
-                        acceptedOutgoingFriendRequest(friendId, userId);
-                    }
-                }
-            }
-            return 0;
-        }
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> friend = userRepository.findById(friendId);
+        if (user.isEmpty() || friend.isEmpty()) return -1;
+        if (!acceptIncomingFriendRequest(user.get(), friend.get())) return -2;
+        acceptedOutgoingFriendRequest(friend.get(), user.get());
+        userRepository.save(user.get());
+        userRepository.save(friend.get());
+        return 0;
     }
 
     // -1 if users not found
     // -2 if friend request already sent
     public int sendOutRequest(String userId, String friendId) {
-        if (!userRepository.existsById(userId) || !userRepository.existsById(friendId)) {
-            return -1;
-        } else {
-            ConcurrentHashMap<String, Boolean> userOutgoingFriendRequests = getUserOutgoingFriendRequest(userId);
-            if (userOutgoingFriendRequests.containsKey(friendId)) return -2;
-            synchronized (userRepository.getFriendMap()) {
-                synchronized (userRepository.getOutgoingFriendRequestMap()) {
-                    synchronized (userRepository.getIncomingFriendRequestMap()) {
-                        sendOutgoingFriendRequest(userId, friendId);
-                        receivedIncomingFriendRequest(friendId, userId);
-                    }
-                }
-            }
-            return 0;
-        }
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> friend = userRepository.findById(friendId);
+        if (user.isEmpty() || friend.isEmpty()) return -1;
+        if (user.get().isOutgoingFriend(friend.get()) || user.get().isFriend(friend.get())) return -2;
+        sendOutgoingFriendRequest(user.get(), friend.get());
+        receivedIncomingFriendRequest(friend.get(), user.get());
+        userRepository.save(user.get());
+        userRepository.save(friend.get());
+        return 0;
     }
 
-    public User getUserWithUsername(String username, String password) {
+    public User getUserWithUsername(String username, String password) throws InValidFieldValueException {
         String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) return null;
+        if (userId == null) throw new InValidFieldValueException("Invalid Username");
 
         Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) return null;
-        if (curUser.get().getPassword().equals(password)) {
-            return curUser.get();
-        } else {
-            return null;
+        if (curUser.isEmpty()) throw new InValidFieldValueException("Invalid Username");
+        if (!curUser.get().getPassword().equals(password)) {
+            throw new InValidFieldValueException("Invalid Password");
         }
+        return curUser.get();
     }
 
-    public void addPayment(String userId, String paymentId) {
-        userRepository.getPaymentListMap().get(userId).add(paymentId);
-    }
-
-    private void addFriend(String userId, String friendId) {
-        userRepository.getFriendMap().get(userId).put(friendId, true);
-    }
-
-    public boolean removeFriend(String userId, String friendId) {
-        return userRepository.getFriendMap().get(userId).remove(friendId) != null;
-    }
-
-    public boolean deleteIncomingFriendRequest(String userId, String friendId) {
-        return userRepository.getIncomingFriendRequestMap().get(userId).remove(friendId) != null;
-    }
-
-    public boolean deleteOutgoingFriendRequest(String userId, String friendId) {
-        return userRepository.getOutgoingFriendRequestMap().get(userId).remove(friendId) != null;
-    }
-
-    public boolean acceptIncomingFriendRequest(String userId, String friendId) {
-        if (deleteIncomingFriendRequest(userId, friendId)) {
-            userRepository.getFriendMap().get(userId).put(friendId, true);
+    public boolean acceptIncomingFriendRequest(User user, User friend) {
+        if (user.removeIncomingFriendRequest(friend)) {
+            addFriend(user, friend);
             return true;
         }
         return false;
     }
 
     // Adds incoming friend request. Returns true if accepted or put into incoming Friend Request Map
-    public boolean receivedIncomingFriendRequest(String userId, String friendId) {
+    public boolean receivedIncomingFriendRequest(User user, User friend) {
         // already sent a request so just add friend
-        if (userRepository.getFriendMap().get(userId).containsKey(friendId))
+        if (user.isFriend(friend))
             return false;
-        else if (userRepository.getOutgoingFriendRequestMap().get(userId).containsKey(friendId)) {
-            acceptedOutgoingFriendRequest(userId, friendId);
+        else if (user.isOutgoingFriend(friend)) {
+            acceptedOutgoingFriendRequest(user, friend);
             return true;
         } else {
-            userRepository.getIncomingFriendRequestMap().get(userId).put(friendId, true);
+            user.addIncomingFriendRequest(friend);
             return true;
         }
     }
 
-    public void acceptedOutgoingFriendRequest(String userId, String friendId) {
-        if (userRepository.getOutgoingFriendRequestMap().get(userId).remove(friendId) != null) {
-            addFriend(userId, friendId);
+    public void acceptedOutgoingFriendRequest(User user, User friend) {
+        if (user.removeOutgoingFriendRequest(friend)) {
+            addFriend(user, friend);
         }
     }
 
     // Sends friend request. Returns true if sent or accepted. Returns false if already friends
-    public boolean sendOutgoingFriendRequest(String userId, String friendId) {
-        if (userRepository.getFriendMap().get(userId).containsKey(friendId)) {
+    public boolean sendOutgoingFriendRequest(User user, User friend) {
+        if (user.isFriend(friend)) {
             return false;
-        } else if (userRepository.getIncomingFriendRequestMap().get(userId).containsKey(friendId)) {
-            acceptIncomingFriendRequest(userId, friendId);
+        } else if (user.isIncomingFriend(friend)) {
+            acceptIncomingFriendRequest(user, friend);
             return true;
         } else {
-            userRepository.getOutgoingFriendRequestMap().get(userId).put(friendId, true);
+            user.addOutgoingFriendRequest(friend);
             return true;
         }
-    }
-
-    public void addCash(String userId, String cashId) {
-        userRepository.getCashListMap().get(userId).add(cashId);
-    }
-
-    public boolean checkBankAccount(String userId, String bankAccountId) {
-        return userRepository.getBankAccountListMap().get(userId).contains(bankAccountId);
-    }
-
-    public void addBankAccount(String userId, String bankAccountId) {
-        userRepository.getBankAccountListMap().get(userId).add(bankAccountId);
-    }
-
-    public ConcurrentHashMap<String, Boolean> getUserFriendList(String userId) {
-        return userRepository.getFriendMap().get(userId);
-    }
-
-    public ConcurrentHashMap<String, Boolean> getUserIncomingFriendRequest(String userId) {
-        return userRepository.getIncomingFriendRequestMap().get(userId);
-    }
-
-    public ConcurrentHashMap<String, Boolean> getUserOutgoingFriendRequest(String userId) {
-        return userRepository.getOutgoingFriendRequestMap().get(userId);
     }
 
     public int sendOutRequestWithUsername(String username, String friendUsername) {
@@ -270,22 +202,57 @@ public class UserService {
         return sendOutRequest(userId, friendId);
     }
 
-    public ArrayList<String> getUserBankAccountList(String userId) {
-        return userRepository.getBankAccountListMap().get(userId);
-    }
-
     public Long getUserBalance(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getBalance).orElse(null);
+    }
+
+    public Set<User> getUserFriendList(String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
+        return curUser.map(User::getFriendSet).orElse(null);
+    }
+
+    public Set<User> getOutgoingFriendRequest(String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
+        return curUser.map(User::getOutgoingFriendRequestSet).orElse(null);
+    }
+
+    public Set<User> getIncomingFriendRequest(String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
+        return curUser.map(User::getIncomingFriendRequestSet).orElse(null);
+    }
+
+    public Set<BankAccount> getBankAccountList(String userId) {
+        Optional<User> curUser = userRepository.findById(userId);
+        return curUser.map(User::getBankAccount).orElse(null);
     }
 
     // -1 is if either user not found
     // -2 if not friends
     public int deleteFriend(String userId, String friendId) {
         Optional<User> user = userRepository.findById(userId);
-        Optional<User> friendUser = userRepository.findById(friendId);
-        if (user.isEmpty() || friendUser.isEmpty()) return -1;
-        else
-            return userRepository.deleteFriends(userId, friendId);
+        Optional<User> friend = userRepository.findById(friendId);
+        if (user.isEmpty() || friend.isEmpty()) return -1;
+        user.get().deleteFriend(friend.get());
+        friend.get().deleteFriend(user.get());
+        userRepository.save(user.get());
+        userRepository.save(friend.get());
+        return 0;
+    }
+
+    private boolean checkChangeEmail(String newEmail) {
+        return !userRepository.containsEmail(newEmail);
+    }
+
+    private boolean checkChangeUsername(String newUsername) {
+        return !userRepository.containsUsername(newUsername);
+    }
+
+    private boolean checkChangeHandler(String newHandle) {
+        return !userRepository.containsHandle(newHandle);
+    }
+
+    private void addFriend(User user, User friend) {
+        user.addFriend(friend);
     }
 }

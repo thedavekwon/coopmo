@@ -1,26 +1,58 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Payment implements Comparable<Payment> {
-    private final String fromUserId;
+@Entity
+public class Payment extends Transaction {
     @Id
-    private final String id;
-    private final String toUserId;
-    private final long amount;
-    private final PaymentType type; // public/friends/private
-    private final Timestamp timestamp;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(updatable = false, nullable = false)
+    private String id;
 
-    public Payment(String fromUserId, String toUserId, long amount, PaymentType type) {
-        this.id = UUID.randomUUID().toString();
-        this.fromUserId = fromUserId;
-        this.toUserId = toUserId;
-        this.amount = amount;
-        this.type = type;
-        this.timestamp = new Timestamp(System.currentTimeMillis());
+    @Column(nullable = false)
+    private long amount;
+
+    @Column(nullable = false)
+    private PaymentType type;
+
+    @Column(updatable = false, nullable = false)
+    protected Timestamp timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference(value = "fromUser")
+    @JoinColumn(nullable = false)
+    private User fromUser;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference(value = "toUser")
+    @JoinColumn(nullable = false)
+    private User toUser;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<User> likes;
+
+    public Payment() {
+    }
+
+    public Payment(User _fromUser, User _toUser, long _amount, PaymentType _type) {
+        fromUser = _fromUser;
+        toUser = _toUser;
+        amount = _amount;
+        type = _type;
+        timestamp = new Timestamp(System.currentTimeMillis());
+        likes = new HashSet<>();
     }
 
     public long getAmount() {
@@ -31,14 +63,6 @@ public class Payment implements Comparable<Payment> {
         return id;
     }
 
-    public String getFromUserId() {
-        return fromUserId;
-    }
-
-    public String getToUserId() {
-        return toUserId;
-    }
-
     public PaymentType getType() {
         return type;
     }
@@ -47,8 +71,13 @@ public class Payment implements Comparable<Payment> {
         return timestamp;
     }
 
+    @JsonIgnore
+    public Set<User> getLikes() {
+        return likes;
+    }
+
     @Override
-    public int compareTo(Payment o) {
+    public int compareTo(Transaction o) {
         return getTimestamp().compareTo(o.getTimestamp());
     }
 

@@ -1,9 +1,10 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.service.PaymentService;
+import edu.cooper.ee.ece366.coopmo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;
+    private final TransactionService transactionService;
 
     @Autowired
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, TransactionService transactionService) {
         this.paymentService = paymentService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping(path = "/createPayment")
@@ -58,15 +61,12 @@ public class PaymentController extends BaseController {
 
     @GetMapping(path = "/getLatestPublicPayment")
     @ResponseBody
-    public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") long n) {
+    public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") int n) {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive(n, "n", respBody);
+        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
-        friend_json.add("LatestPublicPayment", new Gson().toJsonTree(paymentService.getLatestPublicPayment(n)));
-        respBody.add("messagePayload", friend_json);
-        respBody.addProperty("message", "Successfully got latest public payments");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.getLatestPublicPayment(n), HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestPrivatePayment")
@@ -74,17 +74,14 @@ public class PaymentController extends BaseController {
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
-    ) {
+    ) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("LatestPrivatePayment", new Gson().toJsonTree(paymentService.getLatestPrivatePayment(userId, n)));
-        respBody.add("messagePayload", friend_json);
-        respBody.addProperty("message", "Successfully got latest private payments");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.getLatestTransaction(userId, n), HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestFriendPayment")
@@ -99,9 +96,11 @@ public class PaymentController extends BaseController {
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        friend_json.add("LatestFriendPayment", new Gson().toJsonTree(paymentService.getLatestFriendPayment(userId, n)));
-        respBody.add("messagePayload", friend_json);
-        respBody.addProperty("message", "Successfully got latest friend payments");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+//        friend_json.add("LatestFriendPayment", new Gson().toJsonTree(paymentService.getLatestFriendPayment(userId, n)));
+//        respBody.add("messagePayload", friend_json);
+//        respBody.addProperty("message", "Successfully got latest friend payments");
+//        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        if (response != null) return response;
+        return new ResponseEntity<>(paymentService.getLatestFriendPayment(userId, n), HttpStatus.OK);
     }
 }

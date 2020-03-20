@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+// TODO (migrate to BaseExceptionHandler)
 public class BaseController {
     protected ResponseEntity<?> checkEmpty(String input, String field, JsonObject respBody) {
         if (input.equals("")) {

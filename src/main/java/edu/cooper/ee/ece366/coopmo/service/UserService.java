@@ -254,4 +254,8 @@ public class UserService {
     private void addFriend(User user, User friend) {
         user.addFriend(friend);
     }
+
+    public Set<User> findUsers(String username_match) {
+        return userRepository.findByUsernameStartsWith(username_match);
+    }
 }

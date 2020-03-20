@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 // TODO (add more exceptions)
-
+// TODO (make custom message for different exceptions)
 @ControllerAdvice
 public class BaseExceptionHandler {
     @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class})

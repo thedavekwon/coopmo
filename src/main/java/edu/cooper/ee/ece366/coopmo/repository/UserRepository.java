@@ -2,11 +2,13 @@ package edu.cooper.ee.ece366.coopmo.repository;
 
 import edu.cooper.ee.ece366.coopmo.model.User;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
-public interface UserRepository extends CrudRepository<User, String> {
+public interface UserRepository extends PagingAndSortingRepository<User, String> {
     @Query("SELECT u.id FROM User u WHERE u.username = :username")
     String getIdfromUsername(String username);
 
@@ -18,4 +20,6 @@ public interface UserRepository extends CrudRepository<User, String> {
 
     @Query("SELECT CASE WHEN count(u) > 0 THEN true ELSE false END FROM User u WHERE u.handle = :handle AND u.deleted = FALSE")
     boolean containsHandle(String handle);
+
+    Set<User> findByUsernameStartsWith(String username_match);
 }

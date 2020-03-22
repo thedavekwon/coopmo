@@ -22,4 +22,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, String>
     boolean containsHandle(String handle);
 
     Set<User> findByUsernameStartsWith(String username_match);
+
+    Set<User> findByHandleStartsWith(String handle_match);
 }

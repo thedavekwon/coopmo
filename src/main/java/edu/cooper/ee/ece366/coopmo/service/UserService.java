@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.handler.UserController;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -255,7 +256,13 @@ public class UserService {
         user.addFriend(friend);
     }
 
-    public Set<User> findUsers(String username_match) {
-        return userRepository.findByUsernameStartsWith(username_match);
+    public Set<User> findUsers(UserController.FindUsersRequest findUsersRequest) {
+        if (findUsersRequest.isHandle())
+            return userRepository.findByHandleStartsWith(findUsersRequest.getMatch());
+        else if (findUsersRequest.isUsername())
+            return userRepository.findByUsernameStartsWith(findUsersRequest.getMatch());
+        else if (findUsersRequest.isEmail())
+            return userRepository.findByUsernameStartsWith(findUsersRequest.getMatch());
+        return null;
     }
 }

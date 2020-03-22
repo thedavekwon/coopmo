@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldTypeException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
@@ -17,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 
+// TODO (set all handler produce json and consumes json after converting)
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
@@ -365,13 +364,40 @@ public class UserController {
     }
 
     @PostMapping(path = "/findUsers", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> findUsers(@RequestBody Map<String, String> request) throws InValidFieldTypeException, EmptyFieldException {
-        String field = "username_match";
-        if (!request.containsKey(field))
-            throw new InValidFieldTypeException("Invalid Field");
-        if (request.get(field).equals(""))
+    public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
+        if (request.getMatch().equals(""))
             throw new EmptyFieldException("Empty Field");
-        Set<User> users = userService.findUsers(request.get(field));
+        Set<User> users = userService.findUsers(request);
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    public static class FindUsersRequest {
+        private String match;
+        private Type type;
+
+        FindUsersRequest(String match, Type type) {
+            this.match = match;
+            this.type = type;
+        }
+
+        public String getMatch() {
+            return match;
+        }
+
+        public boolean isEmail() {
+            return type == Type.EMAIL;
+        }
+
+        public boolean isUsername() {
+            return type == Type.USERNAME;
+        }
+
+        public boolean isHandle() {
+            return type == Type.HANDLE;
+        }
+
+        private enum Type {
+            HANDLE, USERNAME, EMAIL
+        }
     }
 }

@@ -27,6 +27,7 @@ public class Payment extends Transaction {
     private PaymentType type;
 
     @Column(updatable = false, nullable = false)
+    @OrderBy
     protected Timestamp timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -22,15 +22,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(String name, String username, String password, String email, String handle) {
-        User newUser = new User(name, username, password, email, handle);
-        if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
-            return null;
-        }
-        userRepository.save(newUser);
-        return newUser;
-    }
-
+    @Transactional
     public void addUser(User user) {
         userRepository.save(user);
     }
@@ -44,32 +36,29 @@ public class UserService {
             throw new InValidFieldValueException("Invalid handle");
     }
 
-    private boolean editUsername(String id, String newUsername) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty() || user.get().getUsername().equals(newUsername)) return false;
+    @Transactional
+    public boolean editUsername(String userId, String newUsername) throws InValidFieldValueException {
+        User curUser = checkValidUserId(userId);
         if (checkChangeUsername(newUsername)) {
-            user.get().setUsername(newUsername);
-            userRepository.save(user.get());
+            curUser.setUsername(newUsername);
             return true;
         } else return false;
     }
 
-    private boolean editEmail(String id, String newEmail) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty() || user.get().getEmail().equals(newEmail)) return false;
+    @Transactional
+    public boolean editEmail(String userId, String newEmail) throws InValidFieldValueException {
+        User curUser = checkValidUserId(userId);
         if (checkChangeEmail(newEmail)) {
-            user.get().setEmail(newEmail);
-            userRepository.save(user.get());
+            curUser.setEmail(newEmail);
             return true;
         } else return false;
     }
 
-    private boolean editHandle(String id, String newHandle) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty() || user.get().getHandle().equals(newHandle)) return false;
-        if (checkChangeHandler(newHandle)) {
-            user.get().setEmail(newHandle);
-            userRepository.save(user.get());
+    @Transactional
+    public boolean editHandle(String userId, String newHandle) throws InValidFieldValueException {
+        User curUser = checkValidUserId(userId);
+        if (checkChangeHandle(newHandle)) {
+            curUser.setHandle(newHandle);
             return true;
         } else return false;
     }
@@ -80,7 +69,7 @@ public class UserService {
     // -3 Email already exists
     // -4 Handle already exists
     public ArrayList<Integer> editProfile(String userId, String newName, String newUsername, String newPassword,
-                                          String newEmail, String newHandle) {
+                                          String newEmail, String newHandle) throws InValidFieldValueException {
         ArrayList<Integer> errors = new ArrayList<>();
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
@@ -94,49 +83,45 @@ public class UserService {
                 errors.add(-3);
             if (!editHandle(userId, newHandle))
                 errors.add(-4);
-            userRepository.save(user.get());
         }
         return errors;
     }
 
-    // This is also used to decline Friend Requests
-    // -1 is user not found
-    // -2 if friend not found in incoming friend request
     // 0 if success
-    public int cancelOutgoingFriendRequest(String userId, String friendId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<User> friend = userRepository.findById(friendId);
-        if (user.isEmpty() || friend.isEmpty()) return -1;
-        user.get().removeOutgoingFriendRequest(friend.get());
-        friend.get().removeIncomingFriendRequest(user.get());
-        userRepository.save(user.get());
-        userRepository.save(friend.get());
+    @Transactional
+    public int cancelOutgoingFriendRequest(String userId, String friendId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        User friend = checkValidUserId(friendId, "Friend Id");
+        user.removeOutgoingFriendRequest(friend);
+        friend.removeIncomingFriendRequest(user);
+        userRepository.save(user);
+        userRepository.save(friend);
         return 0;
     }
 
     // -1 if user not found
-    public int acceptIncomingRequest(String userId, String friendId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<User> friend = userRepository.findById(friendId);
-        if (user.isEmpty() || friend.isEmpty()) return -1;
-        if (!acceptIncomingFriendRequest(user.get(), friend.get())) return -2;
-        acceptedOutgoingFriendRequest(friend.get(), user.get());
-        userRepository.save(user.get());
-        userRepository.save(friend.get());
+    @Transactional
+    public int acceptIncomingRequest(String userId, String friendId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        User friend = checkValidUserId(friendId, "Friend Id");
+        if (!acceptIncomingFriendRequest(user, friend)) return -2;
+        acceptedOutgoingFriendRequest(friend, user);
+        userRepository.save(user);
+        userRepository.save(friend);
         return 0;
     }
 
     // -1 if users not found
     // -2 if friend request already sent
-    public int sendOutRequest(String userId, String friendId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<User> friend = userRepository.findById(friendId);
-        if (user.isEmpty() || friend.isEmpty()) return -1;
-        if (user.get().isOutgoingFriend(friend.get()) || user.get().isFriend(friend.get())) return -2;
-        sendOutgoingFriendRequest(user.get(), friend.get());
-        receivedIncomingFriendRequest(friend.get(), user.get());
-        userRepository.save(user.get());
-        userRepository.save(friend.get());
+    @Transactional
+    public int sendOutRequest(String userId, String friendId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        User friend = checkValidUserId(friendId, "Friend Id");
+        if (user.isOutgoingFriend(friend) || user.isFriend(friend)) return -2;
+        sendOutgoingFriendRequest(user, friend);
+        receivedIncomingFriendRequest(friend, user);
+        userRepository.save(user);
+        userRepository.save(friend);
         return 0;
     }
 
@@ -144,14 +129,14 @@ public class UserService {
         String userId = userRepository.getIdfromUsername(username);
         if (userId == null) throw new InValidFieldValueException("Invalid Username");
 
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) throw new InValidFieldValueException("Invalid Username");
-        if (!curUser.get().getPassword().equals(password)) {
+        User curUser = checkValidUserId(userId);
+        if (!curUser.getPassword().equals(password)) {
             throw new InValidFieldValueException("Invalid Password");
         }
-        return curUser.get();
+        return curUser;
     }
 
+    @Transactional
     public boolean acceptIncomingFriendRequest(User user, User friend) {
         if (user.removeIncomingFriendRequest(friend)) {
             addFriend(user, friend);
@@ -160,40 +145,36 @@ public class UserService {
         return false;
     }
 
-    // Adds incoming friend request. Returns true if accepted or put into incoming Friend Request Map
-    public boolean receivedIncomingFriendRequest(User user, User friend) {
+    @Transactional
+    public void receivedIncomingFriendRequest(User user, User friend) {
         // already sent a request so just add friend
-        if (user.isFriend(friend))
-            return false;
-        else if (user.isOutgoingFriend(friend)) {
+        if (user.isFriend(friend)) {
+        } else if (user.isOutgoingFriend(friend)) {
             acceptedOutgoingFriendRequest(user, friend);
-            return true;
         } else {
             user.addIncomingFriendRequest(friend);
-            return true;
         }
     }
 
+    @Transactional
     public void acceptedOutgoingFriendRequest(User user, User friend) {
         if (user.removeOutgoingFriendRequest(friend)) {
             addFriend(user, friend);
         }
     }
 
-    // Sends friend request. Returns true if sent or accepted. Returns false if already friends
-    public boolean sendOutgoingFriendRequest(User user, User friend) {
+    @Transactional
+    public void sendOutgoingFriendRequest(User user, User friend) {
         if (user.isFriend(friend)) {
-            return false;
         } else if (user.isIncomingFriend(friend)) {
             acceptIncomingFriendRequest(user, friend);
-            return true;
         } else {
             user.addOutgoingFriendRequest(friend);
-            return true;
         }
     }
 
-    public int sendOutRequestWithUsername(String username, String friendUsername) {
+    @Transactional
+    public int sendOutRequestWithUsername(String username, String friendUsername) throws InValidFieldValueException {
         String userId = userRepository.getIdfromUsername(username);
         String friendId = userRepository.getIdfromUsername(friendUsername);
         if (userId == null || friendId == null) {
@@ -207,36 +188,36 @@ public class UserService {
         return curUser.map(User::getBalance).orElse(null);
     }
 
-    public Set<User> getUserFriendList(String userId) {
+    public Set<User> getUserFriendSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getFriendSet).orElse(null);
     }
 
-    public Set<User> getOutgoingFriendRequest(String userId) {
+    public Set<User> getOutgoingFriendRequestSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getOutgoingFriendRequestSet).orElse(null);
     }
 
-    public Set<User> getIncomingFriendRequest(String userId) {
+    public Set<User> getIncomingFriendRequestSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getIncomingFriendRequestSet).orElse(null);
     }
 
-    public Set<BankAccount> getBankAccountList(String userId) {
+    public Set<BankAccount> getBankAccountSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getBankAccount).orElse(null);
+        return curUser.map(User::getBankAccountSet).orElse(null);
     }
 
     // -1 is if either user not found
     // -2 if not friends
-    public int deleteFriend(String userId, String friendId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<User> friend = userRepository.findById(friendId);
-        if (user.isEmpty() || friend.isEmpty()) return -1;
-        user.get().deleteFriend(friend.get());
-        friend.get().deleteFriend(user.get());
-        userRepository.save(user.get());
-        userRepository.save(friend.get());
+    @Transactional
+    public int deleteFriend(String userId, String friendId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        User friend = checkValidUserId(friendId, "Friend Id");
+        user.deleteFriend(friend);
+        friend.deleteFriend(user);
+        userRepository.save(user);
+        userRepository.save(friend);
         return 0;
     }
 
@@ -248,13 +229,15 @@ public class UserService {
         return !userRepository.containsUsername(newUsername);
     }
 
-    private boolean checkChangeHandler(String newHandle) {
+    private boolean checkChangeHandle(String newHandle) {
         return !userRepository.containsHandle(newHandle);
     }
 
-    private void addFriend(User user, User friend) {
+    @Transactional
+    public void addFriend(User user, User friend) {
         user.addFriend(friend);
     }
+
 
     public Set<User> findUsers(UserController.FindUsersRequest findUsersRequest) {
         if (findUsersRequest.isHandle())
@@ -264,5 +247,19 @@ public class UserService {
         else if (findUsersRequest.isEmail())
             return userRepository.findByUsernameStartsWith(findUsersRequest.getMatch());
         return null;
+    }
+
+    public User checkValidUserId(String userId) throws InValidFieldValueException {
+        Optional<User> curUser = userRepository.findById(userId);
+        if (curUser.isEmpty())
+            throw new InValidFieldValueException("Invalid User Id");
+        return curUser.get();
+    }
+
+    public User checkValidUserId(String userId, String msg) throws InValidFieldValueException {
+        Optional<User> curUser = userRepository.findById(userId);
+        if (curUser.isEmpty())
+            throw new InValidFieldValueException("Invalid " + msg);
+        return curUser.get();
     }
 }

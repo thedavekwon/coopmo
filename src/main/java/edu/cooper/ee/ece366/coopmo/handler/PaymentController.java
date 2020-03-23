@@ -27,7 +27,7 @@ public class PaymentController extends BaseController {
             @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
             @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
             @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") String type) {
+            @RequestParam(value = "type", defaultValue = "") String type) throws InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         JsonObject respBody = new JsonObject();
         ResponseEntity<?> response = checkEmpty(fromUserId, "fromUserId", respBody);
         if (response != null) return response;
@@ -43,20 +43,8 @@ public class PaymentController extends BaseController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        int ret = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
-        switch (ret) {
-            case -1:
-                respBody.addProperty("message", "Invalid fromUserId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -2:
-                respBody.addProperty("message", "Invalid toUserId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -3:
-                respBody.addProperty("message", "Invalid amount");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        respBody.addProperty("message", "Payment request succeed");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
+        return new ResponseEntity<>(newPayment, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestPublicPayment")
@@ -89,17 +77,12 @@ public class PaymentController extends BaseController {
     public ResponseEntity<?> getLatestFriendPayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
-    ) {
+    ) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
         response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-//        friend_json.add("LatestFriendPayment", new Gson().toJsonTree(paymentService.getLatestFriendPayment(userId, n)));
-//        respBody.add("messagePayload", friend_json);
-//        respBody.addProperty("message", "Successfully got latest friend payments");
-//        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
         if (response != null) return response;
         return new ResponseEntity<>(paymentService.getLatestFriendPayment(userId, n), HttpStatus.OK);
     }

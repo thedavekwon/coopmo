@@ -24,7 +24,8 @@ public class CashController extends BaseController {
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
             @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") String type) {
+            @RequestParam(value = "type", defaultValue = "") String type)
+            throws BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.InValidFieldValueException {
         JsonObject respBody = new JsonObject();
 
         ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
@@ -42,19 +43,7 @@ public class CashController extends BaseController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        int ret = cashService.createCash(userId, bankAccountId, amount, cashType);
-
-        switch (ret) {
-            case -1:
-                respBody.addProperty("message", "Invalid userId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -2:
-                respBody.addProperty("message", "Invalid bankAccountId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -3:
-                respBody.addProperty("message", "Invalid amount");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
+        Cash newCash = cashService.createCash(userId, bankAccountId, amount, cashType);
 
         respBody.addProperty("message", "CashOut request succeed");
         if (cashType == Cash.CashType.OUT) {

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
@@ -17,8 +16,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class CoopmoTest {
-    private static final HttpClient client = HttpClient.newHttpClient();
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static HttpClient client = HttpClient.newHttpClient();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -250,11 +249,11 @@ public class CoopmoTest {
 
         // Test: creating two BankAccounts
         System.out.println("Test for creating two BankAccounts:\n----------------------------");
-        String user1BankAccount = createBankAccount(user1, "999999999", "9000");
+        BankAccount user1BankAccount = createBankAccount(user1, 999999999, 9000);
         if (user1BankAccount == null) return;
         System.out.println("User1 BankAccount ID: " + user1BankAccount);
 
-        String user2BankAccount = createBankAccount(user2, "999999998", "9000");
+        BankAccount user2BankAccount = createBankAccount(user2, 999999998, 9000);
         if (user2BankAccount == null) return;
         System.out.println("User2 BankAccount ID: " + user2BankAccount);
 
@@ -314,6 +313,13 @@ public class CoopmoTest {
 
         System.out.println("Test for displaying friend payments:\n----------------------------");
         if (getAllFriendPaymentList(user1, user2, user3, user4, user5)) return;
+
+        System.out.println("Test for Cashing Out:\n----------------------------");
+        ret = createCash(user2, user2BankAccount, "6000", "OUT");
+        if (!ret) return;
+
+        if (getAllUserBalance(user1, user2, user3, user4, user5)) return;
+        if (getAllBankAccountBalance(user1BankAccount, user2BankAccount)) return;
     }
 
     private static boolean getAllFriendLists(String user1, String user2, String user3, String user4, String user5) throws IOException, InterruptedException {
@@ -382,6 +388,17 @@ public class CoopmoTest {
         String user5FriendPaymentList = getLatestFriendPayment(user5, "10");
         if (user5FriendPaymentList == null) return true;
         System.out.println("User5 FriendPaymentList: " + user5FriendPaymentList);
+        return false;
+    }
+
+    private static boolean getAllBankAccountBalance(BankAccount bankAccount1, BankAccount bankAccount2) throws IOException, InterruptedException {
+        String bankAccountBalance1 = getBankAccountBalance(bankAccount1);
+        if (bankAccountBalance1 == null) return true;
+        System.out.println("BankAccount1 Balance: " + bankAccountBalance1);
+
+        String bankAccountBalance2 = getBankAccountBalance(bankAccount2);
+        if (bankAccountBalance2 == null) return true;
+        System.out.println("BankAccount2 Balance: " + bankAccountBalance2);
         return false;
     }
 
@@ -531,34 +548,53 @@ public class CoopmoTest {
         return response.body();
     }
 
-    public static String createBankAccount(String userId, String routingNumber, String balance) throws IOException, InterruptedException {
+    public static BankAccount createBankAccount(String userId, long routingNumber, long balance) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("bank/createBankAccount")
-                .addParameter("userId", userId)
-                .addParameter("routingNumber", routingNumber)
-                .addParameter("balance", balance)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(userId, routingNumber, balance);
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createBankAccountRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             System.out.println(response.body());
             return null;
         }
-        BankAccount curBankAccount = mapper.readValue(response.body(), BankAccount.class);
-        return curBankAccount.getId();
+        return mapper.readValue(response.body(), BankAccount.class);
     }
 
-    public static boolean createCash(String userId, String bankAccountId, String amount, String type) throws IOException, InterruptedException {
+    public static String getBankAccountBalance(BankAccount bankAccount) throws IOException, InterruptedException {
+        URI uri = UrlBuilder.empty()
+                .withScheme("http")
+                .withHost("localhost")
+                .withPort(8080)
+                .withPath("bank/getBankAccountBalance")
+                .toUri();
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(bankAccount.getId()))
+                .header("Content-Type", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            System.out.println(response.body());
+            return null;
+        }
+        return response.body();
+    }
+
+    public static boolean createCash(String userId, BankAccount bankAccount, String amount, String type) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("cash/createCash")
                 .addParameter("userId", userId)
-                .addParameter("bankAccountId", bankAccountId)
+                .addParameter("bankAccountId", bankAccount.getId())
                 .addParameter("amount", amount)
                 .addParameter("type", type)
                 .toUri();
@@ -587,7 +623,6 @@ public class CoopmoTest {
         JsonParser jsonParser = new JsonParser();
         JsonElement jsonTree = jsonParser.parse(response.body());
         JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
         return response.statusCode() == 200;
     }
 

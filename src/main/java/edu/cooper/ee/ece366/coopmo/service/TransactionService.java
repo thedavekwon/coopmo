@@ -7,60 +7,63 @@ import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
-import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class TransactionService {
-    private final PaymentRepository paymentRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final CashService cashService;
+    private final PaymentService paymentService;
+
     private final CashRepository cashRepository;
+    private final PaymentRepository paymentRepository;
+
 
     @Autowired
-    public TransactionService(CashRepository cashRepository, PaymentRepository paymentRepository, UserRepository userRepository) {
+    public TransactionService(UserService userService, CashService cashService, PaymentService paymentService,
+                              CashRepository cashRepository, PaymentRepository paymentRepository) {
+        this.userService = userService;
+        this.cashService = cashService;
+        this.paymentService = paymentService;
         this.cashRepository = cashRepository;
         this.paymentRepository = paymentRepository;
-        this.userRepository = userRepository;
     }
 
-    public Transaction likePayment(String userId, String transactionId, Transaction.TransactionType transactionType) throws InValidFieldValueException {
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty())
-            throw new InValidFieldValueException("Invalid UserId");
-
+    public Transaction likePayment(String userId, String transactionId, Transaction.TransactionType transactionType)
+            throws InValidFieldValueException {
+        User curUser = userService.checkValidUserId(userId);
         if (transactionType == Transaction.TransactionType.PAY) {
-            Optional<Payment> curPayment = paymentRepository.findById(transactionId);
-            if (curPayment.isEmpty())
-                throw new InValidFieldValueException("Invalid PaymentId");
-            curPayment.get().getLikes().add(curUser.get());
-            paymentRepository.save(curPayment.get());
-            return curPayment.get();
+            Payment curPayment = paymentService.checkValidPaymentId(transactionId);
+            curPayment.getLikes().add(curUser);
+            paymentRepository.save(curPayment);
+            return curPayment;
         } else {
-            Optional<Cash> curCash = cashRepository.findById(transactionId);
-            if (curCash.isEmpty())
-                throw new InValidFieldValueException("Invalid CashId");
-            curCash.get().getLikes().add(curUser.get());
-            cashRepository.save(curCash.get());
-            return curCash.get();
+            Cash curCash = cashService.checkValidCashId(transactionId);
+            curCash.getLikes().add(curUser);
+            cashRepository.save(curCash);
+            return curCash;
         }
     }
 
     // TODO(use heap)
-    public ArrayList<Transaction> getLatestTransaction(String userId, int n) throws InValidFieldValueException {
-        ArrayList<Transaction> transactions = new ArrayList<>();
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty())
-            throw new InValidFieldValueException("Invalid UserId");
-        transactions.addAll(curUser.get().getFromPaymentSet());
-        transactions.addAll(curUser.get().getToPaymentSet());
-        transactions.addAll(curUser.get().getCashSet());
-        Collections.sort(transactions);
-        if (transactions.size() < n) return transactions;
-        return new ArrayList<>(transactions.subList(transactions.size() - n, transactions.size()));
+    public Set<Transaction> getLatestTransaction(String userId, int n) throws InValidFieldValueException {
+        TreeSet<Transaction> transactions = new TreeSet<>();
+        User curUser = userService.checkValidUserId(userId);
+        transactions.addAll(curUser.getFromPaymentSet());
+        transactions.addAll(curUser.getToPaymentSet());
+        transactions.addAll(curUser.getCashSet());
+        if (transactions.size() < n) return transactions.descendingSet();
+        Set<Transaction> ret = new TreeSet<>();
+        Iterator<Transaction> it = transactions.descendingIterator();
+        while (it.hasNext()) {
+            ret.add(it.next());
+            if (ret.size() >= n) break;
+        }
+        return ret;
     }
 }

@@ -207,24 +207,24 @@ public class UserService {
         return curUser.map(User::getBalance).orElse(null);
     }
 
-    public Set<User> getUserFriendList(String userId) {
+    public Set<User> getUserFriendSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getFriendSet).orElse(null);
     }
 
-    public Set<User> getOutgoingFriendRequest(String userId) {
+    public Set<User> getOutgoingFriendRequestSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getOutgoingFriendRequestSet).orElse(null);
     }
 
-    public Set<User> getIncomingFriendRequest(String userId) {
+    public Set<User> getIncomingFriendRequestSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
         return curUser.map(User::getIncomingFriendRequestSet).orElse(null);
     }
 
-    public Set<BankAccount> getBankAccountList(String userId) {
+    public Set<BankAccount> getBankAccountSet(String userId) {
         Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getBankAccount).orElse(null);
+        return curUser.map(User::getBankAccountSet).orElse(null);
     }
 
     // -1 is if either user not found

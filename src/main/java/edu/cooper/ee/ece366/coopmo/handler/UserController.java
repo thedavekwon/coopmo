@@ -85,7 +85,7 @@ public class UserController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        Set<User> friendList = userService.getUserFriendList(userId);
+        Set<User> friendList = userService.getUserFriendSet(userId);
         if (friendList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(friendList, HttpStatus.OK);
     }
@@ -100,7 +100,7 @@ public class UserController {
             respBody.addProperty("message", "userId is empty");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
-        Set<BankAccount> bankAccountList = userService.getBankAccountList(userId);
+        Set<BankAccount> bankAccountList = userService.getBankAccountSet(userId);
         if (bankAccountList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
 //        respBody.addProperty("message", "get Bank Account List succeed");
 //        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
@@ -117,7 +117,7 @@ public class UserController {
             respBody.addProperty("message", "userId is empty");
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
-        Set<User> incomingFriendRequestList = userService.getIncomingFriendRequest(userId);
+        Set<User> incomingFriendRequestList = userService.getIncomingFriendRequestSet(userId);
         if (incomingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         respBody.addProperty("message", "Successfully returned user's incoming friend request list");
         return new ResponseEntity<>(incomingFriendRequestList, HttpStatus.OK);
@@ -134,7 +134,7 @@ public class UserController {
             return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         }
 
-        Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequest(userId);
+        Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequestSet(userId);
         if (outgoingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
         respBody.addProperty("message", "Successfully returned user's outgoing friend request list");
         return new ResponseEntity<>(outgoingFriendRequestList, HttpStatus.OK);

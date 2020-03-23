@@ -42,25 +42,25 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser")
 //    @JsonManagedReference(value="fromUser")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> fromPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser")
 //    @JsonManagedReference(value = "toUser")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
 //    @JsonManagedReference(value="user")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Cash> cashSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
 //    @JsonBackReference(value="BankAccount_user")
     @JsonIgnore
     private Set<BankAccount> bankAccountSet;
@@ -84,12 +84,12 @@ public class User {
     public User() {
     }
 
-    public User(String _name, String _username, String _password, String _email, String _handle) {
-        name = _name;
-        username = _username;
-        password = _password;
-        email = _email;
-        handle = _handle;
+    public User(String name, String username, String password, String email, String handle) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.handle = handle;
         deleted = false;
         friendSet = new HashSet<>();
         bankAccountSet = new HashSet<>();
@@ -190,11 +190,6 @@ public class User {
 
     public boolean isIncomingFriend(User friend) {
         return incomingFriendRequestSet.contains(friend);
-    }
-
-    @JsonIgnore
-    public Set<BankAccount> getBankAccount() {
-        return bankAccountSet;
     }
 
     @JsonIgnore

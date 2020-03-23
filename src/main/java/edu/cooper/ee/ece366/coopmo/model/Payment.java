@@ -32,12 +32,12 @@ public class Payment extends Transaction {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "fromUser")
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "toUser")
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private User toUser;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -47,11 +47,11 @@ public class Payment extends Transaction {
     public Payment() {
     }
 
-    public Payment(User _fromUser, User _toUser, long _amount, PaymentType _type) {
-        fromUser = _fromUser;
-        toUser = _toUser;
-        amount = _amount;
-        type = _type;
+    public Payment(User fromUser, User toUser, long amount, PaymentType type) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.amount = amount;
+        this.type = type;
         timestamp = new Timestamp(System.currentTimeMillis());
         likes = new HashSet<>();
     }

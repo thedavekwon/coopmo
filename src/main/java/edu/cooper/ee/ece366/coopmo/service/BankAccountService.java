@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
+import edu.cooper.ee.ece366.coopmo.handler.BankAccountController;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
@@ -21,27 +22,31 @@ public class BankAccountService {
         this.userRepository = userRepository;
     }
 
-    public BankAccount createBankAccount(String userId, long routingNumber, long balance) throws InValidFieldValueException {
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty())
+    public BankAccount createBankAccount(BankAccountController.CreateBankAccountRequest createBankAccountRequest) throws InValidFieldValueException {
+        Optional<User> user = userRepository.findById(createBankAccountRequest.getUserId());
+        if (user.isEmpty())
             throw new InValidFieldValueException("Invalid User Id");
-
-        if (!checkValidRoutingNumberWithBankApi(routingNumber))
-            throw new InValidFieldValueException("Invalid Routing Number");
-
-        BankAccount bankAccount = new BankAccount(curUser.get(), routingNumber, balance);
-        curUser.get().addBankAccount(bankAccount);
+        BankAccount bankAccount = new BankAccount(user.get(), createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
         bankAccountRepository.save(bankAccount);
-        userRepository.save(curUser.get());
         return bankAccount;
     }
 
-    public long getBalance(String bankAccountId) {
+    public long getBankAccountBalance(String bankAccountId) throws InValidFieldValueException {
         Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
-        return curBankAccount.map(BankAccount::getBalance).orElse(-1L);
+        if (curBankAccount.isEmpty())
+            throw new InValidFieldValueException("Invalid Bank Account Id");
+        return curBankAccount.get().getBalance();
     }
 
     private boolean checkValidRoutingNumberWithBankApi(long routingNumber) {
         return true;
+    }
+
+    public void addBankAccount(String userId, BankAccount bankAccount) throws InValidFieldValueException {
+        Optional<User> curUser = userRepository.findById(userId);
+        if (curUser.isEmpty())
+            throw new InValidFieldValueException("Invalid User Id");
+        bankAccountRepository.save(bankAccount);
+        curUser.get().addBankAccount(bankAccount);
     }
 }

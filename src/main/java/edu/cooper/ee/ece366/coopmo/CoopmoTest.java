@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
@@ -16,8 +17,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class CoopmoTest {
-    private static HttpClient client = HttpClient.newHttpClient();
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -415,6 +416,7 @@ public class CoopmoTest {
                 .withPath("user/createUser")
                 .toUri();
         User user = new User(name, username, password, email, handle);
+
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
                         .ofString(mapper.writeValueAsString(user)))
@@ -425,7 +427,10 @@ public class CoopmoTest {
             System.out.println(response.body());
             return null;
         }
-        User curUser = mapper.readValue(response.body(), User.class);
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+        User curUser = mapper.readValue(Obj.writeValueAsString(message.getData()), User.class);
         return curUser.getId();
     }
 

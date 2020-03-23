@@ -1,6 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
@@ -58,7 +57,8 @@ public class UserController {
 
         userService.check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
         userService.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        respMessage.setData(user);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserWithUsername")
@@ -66,81 +66,78 @@ public class UserController {
     public ResponseEntity<?> getUserWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
             @RequestParam(value = "password", defaultValue = "") String password) throws EmptyFieldException, InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
-        JsonObject userJson = new JsonObject();
+        Message respMessage = new Message();
 
         if (username.equals("") || password.equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
 
         User curUser = userService.getUserWithUsername(username, password);
-        return new ResponseEntity<>(curUser, HttpStatus.OK);
+        respMessage.setData(curUser);
+
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserFriendList")
     @ResponseBody
     public ResponseEntity<?> getUserFriendList(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject friendJson = new JsonObject();
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         }
 
         Set<User> friendList = userService.getUserFriendList(userId);
-        if (friendList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(friendList, HttpStatus.OK);
+        respMessage.setData(friendList);
+
+        if (friendList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserBankAccountList")
     @ResponseBody
     public ResponseEntity<?> getUserBankAccountList(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject bankAccountJson = new JsonObject();
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         }
+
+
         Set<BankAccount> bankAccountList = userService.getBankAccountList(userId);
-        if (bankAccountList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-//        respBody.addProperty("message", "get Bank Account List succeed");
-//        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
-//        respBody.add("messagePayload", bankAccountJson);
-        return new ResponseEntity<>(bankAccountList, HttpStatus.OK);
+        respMessage.setData(bankAccountList);
+        if (bankAccountList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserIncomingFriendRequest")
     @ResponseBody
     public ResponseEntity<?> getUserIncomingFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         }
+
         Set<User> incomingFriendRequestList = userService.getIncomingFriendRequest(userId);
-        if (incomingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        respBody.addProperty("message", "Successfully returned user's incoming friend request list");
-        return new ResponseEntity<>(incomingFriendRequestList, HttpStatus.OK);
+        respMessage.setData(incomingFriendRequestList);
+        if (incomingFriendRequestList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserOutgoingFriendRequest")
     @ResponseBody
     public ResponseEntity<?> getUserOutgoingFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject outgoingFriendRequestJson = new JsonObject();
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         }
 
         Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequest(userId);
-        if (outgoingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        respBody.addProperty("message", "Successfully returned user's outgoing friend request list");
-        return new ResponseEntity<>(outgoingFriendRequestList, HttpStatus.OK);
+        respMessage.setData(outgoingFriendRequestList);
+        if (outgoingFriendRequestList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
 
@@ -159,20 +156,18 @@ public class UserController {
 
     @GetMapping(path = "/getUserBalance")
     @ResponseBody
-    public ResponseEntity<?> getUserBalance(@RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
+    public ResponseEntity<?> getUserBalance(@RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException, InValidFieldValueException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         }
+
         Long balance = userService.getUserBalance(userId);
         if (balance == null) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new InValidFieldValueException("No user with userId exists");
         }
-        respBody.addProperty("messagePayload", balance);
-        respBody.addProperty("message", "Successfully returned user's balance");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        respMessage.setData(balance);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @PostMapping(path = "/editProfile")
@@ -183,28 +178,30 @@ public class UserController {
             @RequestParam(value = "newPassword", defaultValue = "") String newPassword,
             @RequestParam(value = "newEmail", defaultValue = "") String newEmail,
             @RequestParam(value = "newHandle", defaultValue = "") String newHandle
-    ) {
-        JsonObject respBody = new JsonObject();
+    ) throws EmptyFieldException {
+        Message respMessage = new Message();
         if (userId.equals("")) {
-            respBody.addProperty("message", "No id provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         } else if (newName.equals("") || newUsername.equals("") || newPassword.equals("") || newEmail.equals("") || newHandle.equals("")) {
             //This should actually be handled on the client side
-            respBody.addProperty("message", "All fields were not filled out properly");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("All fields were not filled out properly");
         } else {
             ArrayList<Integer> errors = userService.editProfile(userId, newName, newUsername, newPassword, newEmail, newHandle);
             if (errors.isEmpty()) {
-                respBody.addProperty("message", "Profile Updated");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else {
                 ArrayList<String> errorMsg = new ArrayList<>();
                 String[] posErrors = {"No userId found.", "Username already exists.", "Email already used by other user.",
                         "Handle already exists."};
-                errors.forEach(e -> errorMsg.add(posErrors[-e - 1]));
-                respBody.add("errorMessages", new Gson().toJsonTree(errorMsg));
-                respBody.addProperty("message", "Error editing profile");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+
+
+                Message.Err error = new Message.Err("2", "Error editing profile");
+                for (String s : posErrors) {
+                    error.addError("Editing Profile", s, s);
+                }
+
+                respMessage.setError(error);
+                return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
             }
         }
     }
@@ -375,8 +372,8 @@ public class UserController {
     }
 
     public static class FindUsersRequest {
-        private String match;
-        private Type type;
+        private final String match;
+        private final Type type;
 
         FindUsersRequest(String match, Type type) {
             this.match = match;

@@ -8,6 +8,7 @@ import edu.cooper.ee.ece366.coopmo.repository.BankAccountRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ public class BankAccountService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public BankAccount createBankAccount(BankAccountController.CreateBankAccountRequest createBankAccountRequest) throws InValidFieldValueException {
         User curUser = userService.checkValidUserId(createBankAccountRequest.getUserId());
         BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());

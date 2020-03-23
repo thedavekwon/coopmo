@@ -10,6 +10,7 @@ import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ public class CashService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Cash createCash(String userId, String bankAccountId, long amount, Cash.CashType type)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         User curUser = userService.checkValidUserId(userId);

@@ -8,6 +8,7 @@ import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class PaymentService {
     // -1: Invalid fromUserId
     // -2: Invalid toUserId
     // -3: Invalid amount
+    @Transactional
     public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         User fromUser = userService.checkValidUserId(fromUserId);

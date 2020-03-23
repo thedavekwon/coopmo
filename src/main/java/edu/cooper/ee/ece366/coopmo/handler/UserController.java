@@ -2,7 +2,6 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
@@ -27,8 +25,6 @@ import java.util.regex.Pattern;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final Type userSetType = new TypeToken<Set<User>>() {
-    }.getType();
 
     @Autowired
     public UserController(UserService userService, UserRepository userRepository) {
@@ -249,7 +245,7 @@ public class UserController {
     @PostMapping(path = "/sendOutRequest")
     public ResponseEntity<?> sendOutRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
 
         if (userId.equals("") || friendId.equals("")) {
@@ -274,7 +270,7 @@ public class UserController {
     @PostMapping(path = "/sendOutRequestWithUsername")
     public ResponseEntity<?> sendOutRequestWithUsername(
             @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) {
+            @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (username.equals("") || friendUsername.equals("")) {
             respBody.addProperty("message", "No Username and/or Friend Username provided");
@@ -343,7 +339,7 @@ public class UserController {
     @PostMapping(path = "/deleteFriend")
     public ResponseEntity<?> deleteFriend(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");

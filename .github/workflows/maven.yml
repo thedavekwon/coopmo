@@ -8,17 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
   steps:
-    - uses: mirromutth/mysql-action@v1.1
-      with:
-        mysql database: 'coopmo_db' # Optional, default value is "test". The specified database which will be create
-        mysql root password: 'coopmopass' # Required if "mysql user" is empty, default is empty. The root superuser password
-        mysql user: 'coopmo' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-        mysql password: 'coopmopass' # Required if "mysql user" exists. The password for the "mysql user"
-
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Setup MySQL
+    - uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql database: 'coopmo_db'
+        mysql root password: 'coopmopass'
+        mysql user: 'coopmo'
+        mysql password: 'coopmopass'
     - name: Build with Maven
       run: mvn -B package --file pom.xml

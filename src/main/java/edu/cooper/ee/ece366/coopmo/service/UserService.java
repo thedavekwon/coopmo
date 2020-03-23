@@ -26,7 +26,6 @@ public class UserService {
         if (userRepository.containsUsername(username) || userRepository.containsEmail(email) || userRepository.containsHandle(handle)) {
             return null;
         }
-        User newUser = new User(name, username, password, email, handle);
         userRepository.save(newUser);
         return newUser;
     }

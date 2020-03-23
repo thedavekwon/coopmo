@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -44,6 +45,8 @@ public class UserController {
     @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {
+        Message respMessage = new Message();
+
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
         }

@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,9 +16,10 @@ public class BaseExceptionHandler {
     }
 
     private ResponseEntity<?> handleAllInValidException(Exception ex) {
-        JsonObject respBody = new JsonObject();
-        respBody.addProperty("message", ex.getMessage());
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        Message respMessage = new Message();
+        Message.Err error = new Message.Err("1", ex.getMessage());
+        respMessage.setError(error);
+        return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
     }
 
     public static class InValidFieldValueException extends Exception {

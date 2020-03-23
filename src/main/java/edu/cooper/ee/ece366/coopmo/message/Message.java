@@ -17,6 +17,14 @@ public class Message {
         this.data = data;
     }
 
+    public Err getError() {
+        return error;
+    }
+
+    public void setError(Err error) {
+        this.error = error;
+    }
+
     public static class Err {
         private String code;
         private String message;

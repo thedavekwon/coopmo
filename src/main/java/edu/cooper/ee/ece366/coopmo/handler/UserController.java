@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 
+// TODO (set all handler produce json and consumes json after converting)
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
@@ -362,6 +363,44 @@ public class UserController {
                 respBody.addProperty("message", "The two user id's provided are not friends");
                 return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
             }
+        }
+    }
+
+    @PostMapping(path = "/findUsers", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
+        if (request.getMatch().equals(""))
+            throw new EmptyFieldException("Empty Field");
+        Set<User> users = userService.findUsers(request);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    public static class FindUsersRequest {
+        private String match;
+        private Type type;
+
+        FindUsersRequest(String match, Type type) {
+            this.match = match;
+            this.type = type;
+        }
+
+        public String getMatch() {
+            return match;
+        }
+
+        public boolean isEmail() {
+            return type == Type.EMAIL;
+        }
+
+        public boolean isUsername() {
+            return type == Type.USERNAME;
+        }
+
+        public boolean isHandle() {
+            return type == Type.HANDLE;
+        }
+
+        private enum Type {
+            HANDLE, USERNAME, EMAIL
         }
     }
 }

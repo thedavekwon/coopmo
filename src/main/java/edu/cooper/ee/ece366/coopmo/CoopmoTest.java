@@ -415,7 +415,6 @@ public class CoopmoTest {
                 .withPath("user/createUser")
                 .toUri();
         User user = new User(name, username, password, email, handle);
-        System.out.println(mapper.writeValueAsString(user));
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
                         .ofString(mapper.writeValueAsString(user)))
@@ -524,16 +523,6 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-//        if (jsonTree.isJsonObject()) {
-//            JsonObject jsonObject = jsonTree.getAsJsonObject();
-//            JsonElement messagePayload = jsonObject.get("messagePayload");
-//            System.out.println(jsonObject.get("message").getAsString());
-//            if (messagePayload.isJsonObject()) {
-//                JsonElement friendList = messagePayload.getAsJsonObject().get("friendList");
-//                return friendList.getAsJsonArray().toString();
-//            }
-//        }
         return response.body();
     }
 
@@ -720,18 +709,6 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        JsonParser jsonParser = new JsonParser();
-//        JsonElement jsonTree = jsonParser.parse(response.body());
-//        if (jsonTree.isJsonObject()) {
-//            JsonObject jsonObject = jsonTree.getAsJsonObject();
-//            JsonElement messagePayload = jsonObject.get("messagePayload");
-//            System.out.println(jsonObject.get("message").getAsString());
-//            if (messagePayload.isJsonObject()) {
-//                JsonElement publicPaymentList = messagePayload.getAsJsonObject().get("LatestPublicPayment");
-//                System.out.println("size: " + publicPaymentList.getAsJsonArray().size());
-//                return publicPaymentList.getAsJsonArray().toString();
-//            }
-//        }
         return response.body();
     }
 
@@ -772,18 +749,6 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        JsonParser jsonParser = new JsonParser();
-//        JsonElement jsonTree = jsonParser.parse(response.body());
-//        if (jsonTree.isJsonObject()) {
-//            JsonObject jsonObject = jsonTree.getAsJsonObject();
-//            JsonElement messagePayload = jsonObject.get("messagePayload");
-//            System.out.println(jsonObject.get("message").getAsString());
-//            if (messagePayload.isJsonObject()) {
-//                JsonElement friendPaymentList = messagePayload.getAsJsonObject().get("LatestFriendPayment");
-//                System.out.println("size: " + friendPaymentList.getAsJsonArray().size());
-//                return friendPaymentList.getAsJsonArray().toString();
-//            }
-//        }
         return response.body();
     }
 

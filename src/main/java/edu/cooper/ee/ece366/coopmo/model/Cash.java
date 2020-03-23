@@ -27,6 +27,7 @@ public class Cash extends Transaction {
     private long amount;
 
     @Column(updatable = false, nullable = false)
+    @OrderBy
     protected Timestamp timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

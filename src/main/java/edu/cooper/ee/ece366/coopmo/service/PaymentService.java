@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
@@ -14,12 +15,15 @@ import java.util.TreeSet;
 
 @Service
 public class PaymentService {
+    private final UserService userService;
+
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final CashRepository cashRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CashRepository cashRepository) {
+    public PaymentService(UserService userService, PaymentRepository paymentRepository, UserRepository userRepository, CashRepository cashRepository) {
+        this.userService = userService;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.cashRepository = cashRepository;
@@ -29,21 +33,18 @@ public class PaymentService {
     // -1: Invalid fromUserId
     // -2: Invalid toUserId
     // -3: Invalid amount
-    public int createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type) {
-        Optional<User> fromUser = userRepository.findById(fromUserId);
-        Optional<User> toUser = userRepository.findById(toUserId);
+    public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type)
+            throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
+        User fromUser = userService.checkValidUserId(fromUserId);
+        User toUser = userService.checkValidUserId(toUserId);
+        if (fromUser.getBalance() < amount)
+            throw new BaseExceptionHandler.InvalidBalanceException("from User Balance is less than requested amount");
 
-        if (fromUser.isEmpty()) return -1;
-        if (toUser.isEmpty()) return -2;
-        if (fromUser.get().getBalance() < amount) return -3;
-
-        Payment newPayment = new Payment(fromUser.get(), toUser.get(), amount, type);
-        fromUser.get().decrementBalance(amount);
-        toUser.get().incrementBalance(amount);
-        fromUser.get().addFromPayment(newPayment);
-        toUser.get().addToPayment(newPayment);
+        Payment newPayment = new Payment(fromUser, toUser, amount, type);
+        fromUser.decrementBalance(amount);
+        toUser.incrementBalance(amount);
         paymentRepository.save(newPayment);
-        return 0;
+        return newPayment;
     }
 
     public ArrayList<Payment> getLatestPublicPayment(int n) {
@@ -53,13 +54,12 @@ public class PaymentService {
     }
 
     // TODO(change to heap)
-    public ArrayList<Payment> getLatestFriendPayment(String userId, int n) {
+    public ArrayList<Payment> getLatestFriendPayment(String userId, int n) throws BaseExceptionHandler.InValidFieldValueException {
         TreeSet<Payment> paymentList = new TreeSet<>();
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty()) return null;
-        paymentList.addAll(curUser.get().getFromPaymentSet());
-        paymentList.addAll(curUser.get().getToPaymentSet());
-        for (User friend : curUser.get().getFriendSet()) {
+        User curUser = userService.checkValidUserId(userId);
+        paymentList.addAll(curUser.getFromPaymentSet());
+        paymentList.addAll(curUser.getToPaymentSet());
+        for (User friend : curUser.getFriendSet()) {
             int cnt = 0;
             for (Payment payment : friend.getFromPaymentSet()) {
                 if (payment.getType() != Payment.PaymentType.PRIVATE) {
@@ -79,5 +79,12 @@ public class PaymentService {
         }
         if (paymentList.size() < n) return new ArrayList<>(paymentList);
         return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - n, paymentList.size()));
+    }
+
+    public Payment checkValidPaymentId(String paymentId) throws BaseExceptionHandler.InValidFieldValueException {
+        Optional<Payment> curPayment = paymentRepository.findById(paymentId);
+        if (curPayment.isEmpty())
+            throw new BaseExceptionHandler.InValidFieldValueException("Invalid Payment Id");
+        return curPayment.get();
     }
 }

@@ -620,7 +620,6 @@ public class CoopmoTest {
         JsonParser jsonParser = new JsonParser();
         JsonElement jsonTree = jsonParser.parse(response.body());
         JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
         return response.statusCode() == 200;
     }
 

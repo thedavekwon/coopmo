@@ -43,25 +43,21 @@ public class User {
     private boolean deleted;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser")
-//    @JsonManagedReference(value="fromUser")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> fromPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser")
-//    @JsonManagedReference(value = "toUser")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-//    @JsonManagedReference(value="user")
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Cash> cashSet;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-//    @JsonBackReference(value="BankAccount_user")
     @JsonIgnore
     private Set<BankAccount> bankAccountSet;
 

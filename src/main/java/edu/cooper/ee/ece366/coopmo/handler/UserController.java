@@ -180,7 +180,7 @@ public class UserController {
             @RequestParam(value = "newPassword", defaultValue = "") String newPassword,
             @RequestParam(value = "newEmail", defaultValue = "") String newEmail,
             @RequestParam(value = "newHandle", defaultValue = "") String newHandle
-    ) {
+    ) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (userId.equals("")) {
             respBody.addProperty("message", "No id provided");
@@ -230,7 +230,7 @@ public class UserController {
     @PostMapping(path = "/acceptIncomingRequest")
     public ResponseEntity<?> acceptIncomingRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID found");
@@ -297,7 +297,7 @@ public class UserController {
     @PostMapping(path = "/cancelOutgoingFriendRequest")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");
@@ -320,7 +320,7 @@ public class UserController {
     @PostMapping(path = "/declineFriendRequest")
     public ResponseEntity<?> declineFriendRequest(
             @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) {
+            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
         if (userId.equals("") || friendId.equals("")) {
             respBody.addProperty("message", "No User ID and/or Friend ID provided");

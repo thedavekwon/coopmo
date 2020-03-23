@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
 
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.model.User;
@@ -14,42 +15,47 @@ import java.util.Optional;
 
 @Service
 public class CashService {
+    private final UserService userService;
+    private final BankAccountService bankAccountService;
+
     private final CashRepository cashRepository;
-
     private final BankAccountRepository bankAccountRepository;
-
     private final UserRepository userRepository;
 
     @Autowired
-    public CashService(CashRepository cashRepository, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
+    public CashService(UserService userService, BankAccountService bankAccountService,
+                       CashRepository cashRepository, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
+        this.userService = userService;
+        this.bankAccountService = bankAccountService;
         this.cashRepository = cashRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.userRepository = userRepository;
     }
 
-    // return error code
-    // -1 : Invalid userId
-    // -2 : Invalid bankAccountId
-    // -3 : Invalid amount
-    public int createCash(String userId, String bankAccountId, long amount, Cash.CashType type) {
-        Optional<User> curUser = userRepository.findById(userId);
-        Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
-
-        if (curUser.isEmpty()) return -1;
-        if (curBankAccount.isEmpty()) return -2;
-
+    public Cash createCash(String userId, String bankAccountId, long amount, Cash.CashType type)
+            throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
+        User curUser = userService.checkValidUserId(userId);
+        BankAccount curBankAccount = bankAccountService.checkValidBankAccountId(bankAccountId);
         if (type == Cash.CashType.OUT) {
-            if (curUser.get().getBalance() < amount) return -3;
-            curUser.get().decrementBalance(amount);
-            curBankAccount.get().incrementBalance(amount);
+            if (curUser.getBalance() < amount)
+                throw new BaseExceptionHandler.InvalidBalanceException("user balance is less than requested amount");
+            curUser.decrementBalance(amount);
+            curBankAccount.incrementBalance(amount);
         } else if (type == Cash.CashType.IN) {
-            if (curBankAccount.get().getBalance() < amount) return -3;
-            curUser.get().incrementBalance(amount);
-            curBankAccount.get().decrementBalance(amount);
+            if (curBankAccount.getBalance() < amount)
+                throw new BaseExceptionHandler.InvalidBalanceException("bank account balance is less than requested amount");
+            curUser.incrementBalance(amount);
+            curBankAccount.decrementBalance(amount);
         }
-        Cash newCash = new Cash(curUser.get(), curBankAccount.get(), amount, type);
-        curUser.get().addCash(newCash);
+        Cash newCash = new Cash(curUser, curBankAccount, amount, type);
         cashRepository.save(newCash);
-        return 0;
+        return newCash;
+    }
+
+    public Cash checkValidCashId(String cashId) throws BaseExceptionHandler.InValidFieldValueException {
+        Optional<Cash> curCash = cashRepository.findById(cashId);
+        if (curCash.isEmpty())
+            throw new BaseExceptionHandler.InValidFieldValueException("Invalid Payment Id");
+        return curCash.get();
     }
 }

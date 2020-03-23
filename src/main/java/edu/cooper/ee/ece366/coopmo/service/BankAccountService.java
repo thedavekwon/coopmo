@@ -13,20 +13,21 @@ import java.util.Optional;
 
 @Service
 public class BankAccountService {
+    private final UserService userService;
+
     private final BankAccountRepository bankAccountRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository) {
+    public BankAccountService(UserService userService, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
+        this.userService = userService;
         this.bankAccountRepository = bankAccountRepository;
         this.userRepository = userRepository;
     }
 
     public BankAccount createBankAccount(BankAccountController.CreateBankAccountRequest createBankAccountRequest) throws InValidFieldValueException {
-        Optional<User> user = userRepository.findById(createBankAccountRequest.getUserId());
-        if (user.isEmpty())
-            throw new InValidFieldValueException("Invalid User Id");
-        BankAccount bankAccount = new BankAccount(user.get(), createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
+        User curUser = userService.checkValidUserId(createBankAccountRequest.getUserId());
+        BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
         bankAccountRepository.save(bankAccount);
         return bankAccount;
     }
@@ -42,11 +43,10 @@ public class BankAccountService {
         return true;
     }
 
-    public void addBankAccount(String userId, BankAccount bankAccount) throws InValidFieldValueException {
-        Optional<User> curUser = userRepository.findById(userId);
-        if (curUser.isEmpty())
-            throw new InValidFieldValueException("Invalid User Id");
-        bankAccountRepository.save(bankAccount);
-        curUser.get().addBankAccount(bankAccount);
+    public BankAccount checkValidBankAccountId(String bankAccountId) throws InValidFieldValueException {
+        Optional<BankAccount> curBankAccount = bankAccountRepository.findById(bankAccountId);
+        if (curBankAccount.isEmpty())
+            throw new InValidFieldValueException("Bank Account Id");
+        return curBankAccount.get();
     }
 }

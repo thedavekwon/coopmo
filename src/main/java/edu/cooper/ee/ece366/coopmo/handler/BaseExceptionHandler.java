@@ -23,19 +23,25 @@ public class BaseExceptionHandler {
 
     public static class InValidFieldValueException extends Exception {
         public InValidFieldValueException(String message) {
-            super(message);
+            super("Invalid Field Value: " + message);
         }
     }
 
     public static class EmptyFieldException extends Exception {
         public EmptyFieldException(String message) {
-            super(message);
+            super("Empty Field Value: " + message);
         }
     }
 
     public static class InValidFieldTypeException extends Exception {
         public InValidFieldTypeException(String message) {
-            super(message);
+            super("Invalid Field Type: " + message);
+        }
+    }
+
+    public static class InvalidBalanceException extends Exception {
+        public InvalidBalanceException(String message) {
+            super("Invalid Balance: " + message);
         }
     }
 }

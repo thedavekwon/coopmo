@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import edu.cooper.ee.ece366.coopmo.handler.BankAccountController;
+import edu.cooper.ee.ece366.coopmo.handler.UserController;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
@@ -16,8 +19,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class CoopmoTest {
-    private static HttpClient client = HttpClient.newHttpClient();
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -433,10 +436,11 @@ public class CoopmoTest {
                 .withPath("user/createUser")
                 .toUri();
         User user = new User(name, username, password, email, handle);
+        UserController.CreateUserRequest createUserRequest = new UserController.CreateUserRequest(user);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
-                        .ofString(mapper.writeValueAsString(user)))
+                        .ofString(mapper.writeValueAsString(createUserRequest)))
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -457,10 +461,15 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/sendOutRequest")
-                .addParameter("userId", userId)
-                .addParameter("friendId", friendId)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(userId, friendId);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers
+                        .ofString(mapper.writeValueAsString(sendOutRequestRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         JsonParser jsonParser = new JsonParser();
         JsonElement jsonTree = jsonParser.parse(response.body());
@@ -477,6 +486,9 @@ public class CoopmoTest {
                 .withPath("user/getUserOutgoingFriendRequest")
                 .addParameter("userId", userId)
                 .toUri();
+
+        UserController.GetUserOutgoingFriendRequestRequest getUserOutgoingFriendRequestRequest = new UserController.GetUserOutgoingFriendRequestRequest(userId);
+
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         JsonParser jsonParser = new JsonParser();

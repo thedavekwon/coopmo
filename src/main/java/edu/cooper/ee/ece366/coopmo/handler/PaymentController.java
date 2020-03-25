@@ -1,5 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Timestamp;
 
 @RestController
 @RequestMapping(path = "/pay", produces = "application/json")
@@ -54,7 +58,13 @@ public class PaymentController extends BaseController {
         JsonObject friend_json = new JsonObject();
         ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
         if (response != null) return response;
-        return new ResponseEntity<>(paymentService.getLatestPublicPayment(n), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.getLatestPublicPayment(), HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/getLatestPublicPaymentFrom", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> getLatestPublicPaymentFrom(@RequestBody TimestampRequest timestampRequest) {
+        return new ResponseEntity<>(paymentService.getLatestPublicPaymentFrom(timestampRequest.getTimestamp()), HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestPrivatePayment")
@@ -75,15 +85,50 @@ public class PaymentController extends BaseController {
     @GetMapping(path = "/getLatestFriendPayment")
     @ResponseBody
     public ResponseEntity<?> getLatestFriendPayment(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "n", defaultValue = "") int n
+            @RequestParam(value = "userId", defaultValue = "") String userId
     ) throws InValidFieldValueException {
         JsonObject respBody = new JsonObject();
-        JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
+        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        response = checkEmpty(userId, "userId", respBody);
+        return new ResponseEntity<>(paymentService.getLatestFriendPayment(userId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getLatestFriendPaymentFrom")
+    @ResponseBody
+    public ResponseEntity<?> getLatestFriendPaymentFrom(
+            @RequestParam(value = "userId", defaultValue = "") String userId,
+            @RequestParam(value = "timestamp", defaultValue = "") Timestamp timestamp
+    ) throws InValidFieldValueException {
+        JsonObject respBody = new JsonObject();
+        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
         if (response != null) return response;
-        return new ResponseEntity<>(paymentService.getLatestFriendPayment(userId, n), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.getLatestFriendPaymentFrom(userId, timestamp), HttpStatus.OK);
+    }
+
+    public static class TimestampRequest {
+        @JsonProperty("timestamp")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+        private Timestamp timestamp;
+
+        public Timestamp getTimestamp() {
+            return timestamp;
+        }
+    }
+
+    public static class getLatestFriendPaymentFromRequest {
+        @JsonProperty("timestamp")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+        private Timestamp timestamp;
+
+        @JsonProperty("userId")
+        private String userId;
+
+        public Timestamp getTimestamp() {
+            return timestamp;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 public class Cash extends Transaction {
     @Column(updatable = false, nullable = false)
     @OrderBy
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
     @Id

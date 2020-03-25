@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
@@ -44,8 +45,13 @@ public class BankAccountController extends BaseController {
     }
 
     public static class CreateBankAccountRequest {
+        @JsonProperty("userId")
         private String userId;
+
+        @JsonProperty("routingNumber")
         private Long routingNumber;
+
+        @JsonProperty("balance")
         private Long balance;
 
         public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {

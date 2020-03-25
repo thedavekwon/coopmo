@@ -10,6 +10,7 @@ import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,6 +53,22 @@ public class TransactionService {
 
     // TODO(use heap)
     public Set<Transaction> getLatestTransaction(String userId, int n) throws InValidFieldValueException {
+        TreeSet<Transaction> transactions = new TreeSet<>();
+        User curUser = userService.checkValidUserId(userId);
+        transactions.addAll(curUser.getFromPaymentSet());
+        transactions.addAll(curUser.getToPaymentSet());
+        transactions.addAll(curUser.getCashSet());
+        if (transactions.size() < n) return transactions.descendingSet();
+        Set<Transaction> ret = new TreeSet<>();
+        Iterator<Transaction> it = transactions.descendingIterator();
+        while (it.hasNext()) {
+            ret.add(it.next());
+            if (ret.size() >= n) break;
+        }
+        return ret;
+    }
+
+    public Set<Transaction> getLatestTransactionFrom(String userId, Timestamp timestamp, int n) throws InValidFieldValueException {
         TreeSet<Transaction> transactions = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
         transactions.addAll(curUser.getFromPaymentSet());

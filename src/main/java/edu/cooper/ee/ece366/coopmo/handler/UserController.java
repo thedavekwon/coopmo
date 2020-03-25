@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
@@ -368,13 +369,11 @@ public class UserController {
     }
 
     public static class FindUsersRequest {
+        @JsonProperty("match")
         private String match;
-        private Type type;
 
-        FindUsersRequest(String match, Type type) {
-            this.match = match;
-            this.type = type;
-        }
+        @JsonProperty("type")
+        private Type type;
 
         public String getMatch() {
             return match;

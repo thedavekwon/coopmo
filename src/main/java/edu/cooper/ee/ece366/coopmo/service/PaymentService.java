@@ -2,6 +2,7 @@ package edu.cooper.ee.ece366.coopmo.service;
 
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
+import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -49,38 +51,43 @@ public class PaymentService {
         return newPayment;
     }
 
-    public ArrayList<Payment> getLatestPublicPayment(int n) {
-        ArrayList<Payment> payments = (ArrayList<Payment>) paymentRepository.getLatestPublicPayments();
-        if (payments.size() < n) return payments;
-        return new ArrayList<>(payments.subList(payments.size() - n, payments.size()));
+    public ArrayList<Payment> getLatestPublicPayment() {
+        return (ArrayList<Payment>) paymentRepository.findTop20ByTypeEqualsOrderByTimestampDesc(Payment.PaymentType.PUBLIC);
+    }
+
+    public ArrayList<Payment> getLatestPublicPaymentFrom(Timestamp timestamp) {
+        System.out.println(timestamp);
+        return (ArrayList<Payment>) paymentRepository.findTop20ByTypeEqualsAndTimestampLessThanOrderByTimestampDesc(Payment.PaymentType.PUBLIC, timestamp);
     }
 
     // TODO(change to heap)
-    public ArrayList<Payment> getLatestFriendPayment(String userId, int n) throws BaseExceptionHandler.InValidFieldValueException {
+    public ArrayList<Payment> getLatestFriendPayment(String userId) throws BaseExceptionHandler.InValidFieldValueException {
         TreeSet<Payment> paymentList = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
-        paymentList.addAll(curUser.getFromPaymentSet());
-        paymentList.addAll(curUser.getToPaymentSet());
+
+        // TODO (check if this is what we want to display)
+        // paymentList.addAll(curUser.getFromPaymentSet());
+        // paymentList.addAll(curUser.getToPaymentSet());
+        paymentList.addAll(paymentRepository.getLatestFriendPayment(curUser.getId()));
         for (User friend : curUser.getFriendSet()) {
-            int cnt = 0;
-            for (Payment payment : friend.getFromPaymentSet()) {
-                if (payment.getType() != Payment.PaymentType.PRIVATE) {
-                    paymentList.add(payment);
-                    cnt++;
-                    if (cnt >= n) break;
-                }
-            }
-            cnt = 0;
-            for (Payment payment : friend.getToPaymentSet()) {
-                if (payment.getType() != Payment.PaymentType.PRIVATE) {
-                    paymentList.add(payment);
-                    cnt++;
-                    if (cnt >= n) break;
-                }
-            }
+            paymentList.addAll(paymentRepository.getLatestFriendPayment(friend.getId()));
         }
-        if (paymentList.size() < n) return new ArrayList<>(paymentList);
-        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - n, paymentList.size()));
+
+        if (paymentList.size() < Transaction.AMOUNT) return new ArrayList<>(paymentList);
+        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
+    }
+
+    public ArrayList<Payment> getLatestFriendPaymentFrom(String userId, Timestamp timestamp) throws BaseExceptionHandler.InValidFieldValueException {
+        TreeSet<Payment> paymentList = new TreeSet<>();
+        User curUser = userService.checkValidUserId(userId);
+
+        paymentList.addAll(paymentRepository.getLatestFriendPaymentFrom(curUser.getId(), timestamp));
+        for (User friend : curUser.getFriendSet()) {
+            paymentList.addAll(paymentRepository.getLatestFriendPaymentFrom(friend.getId(), timestamp));
+        }
+
+        if (paymentList.size() < Transaction.AMOUNT) return new ArrayList<>(paymentList);
+        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
     }
 
     public Payment checkValidPaymentId(String paymentId) throws BaseExceptionHandler.InValidFieldValueException {

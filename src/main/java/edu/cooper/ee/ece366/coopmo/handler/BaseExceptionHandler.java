@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 // TODO (make custom message for different exceptions)
 @ControllerAdvice
 public class BaseExceptionHandler {
-    @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class})
+    @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class,
+            InvalidBalanceException.class, AlreadyFriendsException.class, NoUserFoundException.class, DuplicateFriendRequestException.class, UsersAreNotFriendsException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
         return handleAllInValidException(ex);
     }
@@ -43,6 +44,30 @@ public class BaseExceptionHandler {
     public static class InvalidBalanceException extends Exception {
         public InvalidBalanceException(String message) {
             super("Invalid Balance: " + message);
+        }
+    }
+
+    public static class AlreadyFriendsException extends Exception {
+        public AlreadyFriendsException(String message) {
+            super("Already Friends: " + message);
+        }
+    }
+
+    public static class NoUserFoundException extends Exception {
+        public NoUserFoundException(String message) {
+            super("No User Found: " + message);
+        }
+    }
+
+    public static class DuplicateFriendRequestException extends Exception {
+        public DuplicateFriendRequestException(String message) {
+            super("Duplicate Friend Request: " + message);
+        }
+    }
+
+    public static class UsersAreNotFriendsException extends Exception {
+        public UsersAreNotFriendsException(String message) {
+            super("Users Are Not Friends: " + message);
         }
     }
 }

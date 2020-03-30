@@ -24,7 +24,6 @@ public class Message {
     public void setError(Err error) {
         this.error = error;
     }
-
     public static class Err {
         private String code;
         private String message;
@@ -33,6 +32,9 @@ public class Message {
         public Err(String code, String message) {
             this.code = code;
             this.message = message;
+        }
+
+        public Err() {
         }
 
         public String getCode() {
@@ -60,6 +62,8 @@ public class Message {
         }
 
         public void addError(String domain, String reason, String message) {
+            if (errors == null)
+                errors = new ArrayList<>();
             errors.add(new ErrorReport(domain, reason, message));
         }
 
@@ -73,10 +77,35 @@ public class Message {
                 this.reason = reason;
                 this.message = message;
             }
+
+            public ErrorReport() {
+            }
+
+            public String getDomain() {
+                return domain;
+            }
+
+            public void setDomain(String domain) {
+                this.domain = domain;
+            }
+
+            public String getReason() {
+                return reason;
+            }
+
+            public void setReason(String reason) {
+                this.reason = reason;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
         }
 
 
     }
-
-
 }

@@ -42,37 +42,37 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> fromPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Cash> cashSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     @JsonIgnore
     private Set<BankAccount> bankAccountSet;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> friendSet;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> outgoingFriendRequestSet;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> incomingFriendRequestSet;

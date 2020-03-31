@@ -32,17 +32,17 @@ public class Payment extends Transaction {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "fromUser")
     @JoinColumn
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "toUser")
     @JoinColumn
     private User toUser;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Set<User> likes;
 

@@ -308,8 +308,8 @@ public class CoopmoTest {
         ret = createPayment(user2, user4, (long) 3000, "FRIEND");
         if (!ret) return;
         System.out.println("Expected friendPaymentList");
-        System.out.println("user1: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
-        System.out.println("user2: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user1: [PUBLIC user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user2: [PUBLIC user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
         System.out.println("user3: [PUBLIC user1->user2, FRIEND user1->user2]");
         System.out.println("user4: [FRIEND user2->user4]");
         System.out.println("user5: [FRIEND user2->user4]");

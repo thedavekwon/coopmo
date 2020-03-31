@@ -4,9 +4,7 @@ import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.model.User;
-import edu.cooper.ee.ece366.coopmo.repository.CashRepository;
 import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
-import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,21 +19,13 @@ public class PaymentService {
     private final UserService userService;
 
     private final PaymentRepository paymentRepository;
-    private final UserRepository userRepository;
-    private final CashRepository cashRepository;
 
     @Autowired
-    public PaymentService(UserService userService, PaymentRepository paymentRepository, UserRepository userRepository, CashRepository cashRepository) {
+    public PaymentService(UserService userService, PaymentRepository paymentRepository) {
         this.userService = userService;
         this.paymentRepository = paymentRepository;
-        this.userRepository = userRepository;
-        this.cashRepository = cashRepository;
     }
 
-    // return error code
-    // -1: Invalid fromUserId
-    // -2: Invalid toUserId
-    // -3: Invalid amount
     @Transactional
     public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
@@ -56,19 +46,13 @@ public class PaymentService {
     }
 
     public ArrayList<Payment> getLatestPublicPaymentFrom(Timestamp timestamp) {
-        System.out.println(timestamp);
         return (ArrayList<Payment>) paymentRepository.findTop20ByTypeEqualsAndTimestampLessThanOrderByTimestampDesc(Payment.PaymentType.PUBLIC, timestamp);
     }
 
-    // TODO(change to heap)
     public ArrayList<Payment> getLatestFriendPayment(String userId) throws BaseExceptionHandler.InValidFieldValueException {
-        TreeSet<Payment> paymentList = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
 
-        // TODO (check if this is what we want to display)
-        // paymentList.addAll(curUser.getFromPaymentSet());
-        // paymentList.addAll(curUser.getToPaymentSet());
-        paymentList.addAll(paymentRepository.getLatestFriendPayment(curUser.getId()));
+        TreeSet<Payment> paymentList = new TreeSet<>(paymentRepository.getLatestFriendPayment(curUser.getId()));
         for (User friend : curUser.getFriendSet()) {
             paymentList.addAll(paymentRepository.getLatestFriendPayment(friend.getId()));
         }
@@ -78,10 +62,9 @@ public class PaymentService {
     }
 
     public ArrayList<Payment> getLatestFriendPaymentFrom(String userId, Timestamp timestamp) throws BaseExceptionHandler.InValidFieldValueException {
-        TreeSet<Payment> paymentList = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
 
-        paymentList.addAll(paymentRepository.getLatestFriendPaymentFrom(curUser.getId(), timestamp));
+        TreeSet<Payment> paymentList = new TreeSet<>(paymentRepository.getLatestFriendPaymentFrom(curUser.getId(), timestamp));
         for (User friend : curUser.getFriendSet()) {
             paymentList.addAll(paymentRepository.getLatestFriendPaymentFrom(friend.getId(), timestamp));
         }

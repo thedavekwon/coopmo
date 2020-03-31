@@ -429,43 +429,6 @@ public class UserController {
         }
     }
 
-    public static class GetUserFriendListRequest extends UserIdRequest {
-        public GetUserFriendListRequest(String userId) {
-            super(userId);
-        }
-    }
-
-    public static class GetUserBankAccountListRequest extends UserIdRequest {
-        public GetUserBankAccountListRequest(String userId) {
-            super(userId);
-        }
-    }
-
-    public static class GetUserIncomingFriendRequestRequest extends UserIdRequest {
-
-        public GetUserIncomingFriendRequestRequest(String userId) {
-            super(userId);
-        }
-    }
-
-    public static class GetUserOutgoingFriendRequestRequest extends UserIdRequest {
-        public GetUserOutgoingFriendRequestRequest(String userId) {
-            super(userId);
-        }
-    }
-
-    public static class GetUserWithIdRequest extends UserIdRequest {
-        public GetUserWithIdRequest(String userId) {
-            super(userId);
-        }
-    }
-
-    public static class GetUserBalanceRequest extends UserIdRequest {
-        public GetUserBalanceRequest(String userId) {
-            super(userId);
-        }
-    }
-
     public static class EditProfileRequest {
         private String userId;
         private String newName;

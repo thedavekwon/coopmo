@@ -14,9 +14,19 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, S
 
     List<Payment> findTop20ByTypeEqualsAndTimestampLessThanOrderByTimestampDesc(Payment.PaymentType type, Timestamp timestamp);
 
-    @Query(value = "SELECT * FROM payment p WHERE p.type < 2 AND (p.from_user_id = :userId OR p.to_user_id = :userId) ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+    @Query(value = "SELECT * FROM payment p WHERE p.type < 2 AND (p.from_user_id = :userId OR p.to_user_id = :userId) " +
+            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
     List<Payment> getLatestFriendPayment(String userId);
 
-    @Query(value = "SELECT * FROM payment p WHERE (p.type < 2 AND (p.from_user_id = :userId OR p.to_user_id = :userId)) AND (p.timestamp < :timestamp) ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+    @Query(value = "SELECT * FROM payment p WHERE (p.type < 2 AND (p.from_user_id = :userId OR p.to_user_id = :userId)) AND (p.timestamp < :timestamp) " +
+            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
     List<Payment> getLatestFriendPaymentFrom(String userId, Timestamp timestamp);
+
+    @Query(value = "SELECT * FROM payment p WHERE (p.from_user_id = :userId OR p.to_user_id = :userId) " +
+            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+    List<Payment> getLatestPrivatePayment(String userId);
+
+    @Query(value = "SELECT * FROM payment p WHERE (p.from_user_id = :userId OR p.to_user_id = :userId) AND (p.timestamp < :timestamp) " +
+            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+    List<Payment> getLatestPrivatePaymentFrom(String userId, Timestamp timestamp);
 }

@@ -4,21 +4,18 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
   steps:
     - uses: actions/checkout@v2
     - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
-
+      run: sudo service mysql stop
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11
-
     - name: Set up MySQL
-      uses: mirromutth/mysql-action@v1.1
+      uses: mirromutth/mysql-action@master
       with:
         mysql database: coopmo_db
         mysql root password: coopmopass

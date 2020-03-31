@@ -42,6 +42,7 @@ public class UserService {
         User curUser = checkValidUserId(userId);
         if (checkChangeUsername(newUsername)) {
             curUser.setUsername(newUsername);
+            userRepository.save(curUser);
             return true;
         } else return false;
     }
@@ -51,6 +52,7 @@ public class UserService {
         User curUser = checkValidUserId(userId);
         if (checkChangeEmail(newEmail)) {
             curUser.setEmail(newEmail);
+            userRepository.save(curUser);
             return true;
         } else return false;
     }
@@ -60,6 +62,7 @@ public class UserService {
         User curUser = checkValidUserId(userId);
         if (checkChangeHandle(newHandle)) {
             curUser.setHandle(newHandle);
+            userRepository.save(curUser);
             return true;
         } else return false;
     }
@@ -78,6 +81,7 @@ public class UserService {
         } else {
             user.get().setName(newName);
             user.get().setPassword(newPassword);
+            userRepository.save(user.get());
             if (!editUsername(userId, newUsername))
                 errors.add(-2);
             if (!editEmail(userId, newEmail))

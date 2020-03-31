@@ -1,11 +1,13 @@
 package edu.cooper.ee.ece366.coopmo;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import edu.cooper.ee.ece366.coopmo.handler.BankAccountController;
+import edu.cooper.ee.ece366.coopmo.handler.CashController;
+import edu.cooper.ee.ece366.coopmo.handler.PaymentController;
+import edu.cooper.ee.ece366.coopmo.handler.UserController;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
@@ -15,10 +17,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Set;
 
 public class CoopmoTest {
-    private static HttpClient client = HttpClient.newHttpClient();
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -148,6 +151,7 @@ public class CoopmoTest {
         if (editProfile(minh, "name1", "username1", "password1",
                 "email1@gmail.com", "handle1")) return;
 
+        //Now updates everything
         System.out.println("Showing Minh user through username and password");
         if (!getUserWithUsername("minhthai", "password1")) return;
 
@@ -260,7 +264,7 @@ public class CoopmoTest {
 
         // Adding cash to first BankAccount
         System.out.println("Test for adding cash to first bank account:\n----------------------------");
-        ret = createCash(user1, user1BankAccount, "9000", "IN");
+        ret = createCash(user1, user1BankAccount, (long) 9000, "IN");
         if (!ret) return;
 
         // Check to see created Cash has been globally updated in relevant fields
@@ -269,7 +273,7 @@ public class CoopmoTest {
         // Test: creating public Payment between two users
         System.out.println("Test for sending a payment:\n----------------------------");
         System.out.println("Sending a public payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "PUBLIC");
+        ret = createPayment(user1, user2, (long) 3000, "PUBLIC");
         if (!ret) return;
 
         // Check to see if public Payment has updated relevant fields
@@ -285,7 +289,7 @@ public class CoopmoTest {
         // Test: creating private Payment between two users
         System.out.println("Test for creating Private payment between users:\n----------------------------");
         System.out.println("Sending a private payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "PRIVATE");
+        ret = createPayment(user1, user2, (long) 3000, "PRIVATE");
         if (!ret) return;
 
         // Check to see if private Payment has updated relevant fields
@@ -298,10 +302,10 @@ public class CoopmoTest {
         // Test: creating friend Payment between two users
         System.out.println("Test for creating a Friend payment of 3000 between two users:\n----------------------------");
         System.out.println("Sending a friend payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "FRIEND");
+        ret = createPayment(user1, user2, (long) 3000, "FRIEND");
         if (!ret) return;
         System.out.println("Sending a friend payment of 3000 from user 2 to user 4");
-        ret = createPayment(user2, user4, "3000", "FRIEND");
+        ret = createPayment(user2, user4, (long) 3000, "FRIEND");
         if (!ret) return;
         System.out.println("Expected friendPaymentList");
         System.out.println("user1: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
@@ -316,7 +320,7 @@ public class CoopmoTest {
         if (getAllFriendPaymentList(user1, user2, user3, user4, user5)) return;
 
         System.out.println("Test for Cashing Out:\n----------------------------");
-        ret = createCash(user2, user2BankAccount, "6000", "OUT");
+        ret = createCash(user2, user2BankAccount, (long) 6000, "OUT");
         if (!ret) return;
 
         if (getAllUserBalance(user1, user2, user3, user4, user5)) return;
@@ -434,6 +438,7 @@ public class CoopmoTest {
                 .withPath("user/createUser")
                 .toUri();
         User user = new User(name, username, password, email, handle);
+
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
                         .ofString(mapper.writeValueAsString(user)))
@@ -444,7 +449,10 @@ public class CoopmoTest {
             System.out.println(response.body());
             return null;
         }
-        User curUser = mapper.readValue(response.body(), User.class);
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+        User curUser = mapper.readValue(Obj.writeValueAsString(message.getData()), User.class);
         return curUser.getId();
     }
 
@@ -454,15 +462,24 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/sendOutRequest")
-                .addParameter("userId", userId)
-                .addParameter("friendId", friendId)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(userId, friendId);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers
+                        .ofString(mapper.writeValueAsString(sendOutRequestRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+        if (message.getError() == null) {
+            System.out.println("Successfully sent message request");
+        } else {
+            System.out.println(message.getError().getMessage());
+        }
         return response.statusCode() == 200;
     }
 
@@ -474,18 +491,18 @@ public class CoopmoTest {
                 .withPath("user/getUserOutgoingFriendRequest")
                 .addParameter("userId", userId)
                 .toUri();
+
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement requestList = messagePayload.getAsJsonObject().get("userOutgoingFriendRequest");
-                return requestList.getAsJsonArray().toString();
-            }
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() == null) {
+            //Unneeded but this is how you would do
+            Set<User> outgoingFriendRequestSet = mapper.readValue(Obj.writeValueAsString(message.getData()), new TypeReference<Set<User>>() {
+            });
+            return (Obj.writeValueAsString(outgoingFriendRequestSet));
         }
         return null;
     }
@@ -500,16 +517,16 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            if (messagePayload.isJsonObject()) {
-                JsonElement requestList = messagePayload.getAsJsonObject().get("userIncomingFriendRequestList");
-                return requestList.getAsJsonArray().toString();
-            }
+
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() == null) {
+            //Unneeded but this is how you would do
+            Set<User> incomingFriendRequestSet = mapper.readValue(Obj.writeValueAsString(message.getData()), new TypeReference<Set<User>>() {
+            });
+            return (Obj.writeValueAsString(incomingFriendRequestSet));
         }
         return null;
     }
@@ -520,15 +537,22 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/acceptIncomingRequest")
-                .addParameter("userId", userId)
-                .addParameter("friendId", friendId)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+        UserController.AcceptIncomingRequestRequest acceptIncomingRequestRequest = new UserController.AcceptIncomingRequestRequest(userId, friendId);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(acceptIncomingRequestRequest)))
+                .header("Content-Type", "application/json")
+                .build();
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+        }
         return response.statusCode() == 200;
     }
 
@@ -542,7 +566,19 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else {
+            //Unneeded but this is how you would do
+            Set<User> friendList = mapper.readValue(Obj.writeValueAsString(message.getData()), new TypeReference<Set<User>>() {
+            });
+            return (Obj.writeValueAsString(friendList));
+        }
     }
 
     public static BankAccount createBankAccount(String userId, long routingNumber, long balance) throws IOException, InterruptedException {
@@ -558,11 +594,16 @@ public class CoopmoTest {
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+
         if (response.statusCode() != 200) {
-            System.out.println(response.body());
+            System.out.println(message.getError().getMessage());
             return null;
         }
-        return mapper.readValue(response.body(), BankAccount.class);
+        return mapper.readValue(Obj.writeValueAsString(message.getData()), BankAccount.class);
     }
 
     public static String getBankAccountBalance(BankAccount bankAccount) throws IOException, InterruptedException {
@@ -572,55 +613,73 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("bank/getBankAccountBalance")
                 .toUri();
+
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(bankAccount.getId()))
                 .header("Content-Type", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
         if (response.statusCode() != 200) {
-            System.out.println(response.body());
+            System.out.println(message.getError().getMessage());
             return null;
         }
-        return response.body();
+        return Obj.writeValueAsString(message.getData());
     }
 
-    public static boolean createCash(String userId, BankAccount bankAccount, String amount, String type) throws IOException, InterruptedException {
+    public static boolean createCash(String userId, BankAccount bankAccount, Long amount, String type) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("cash/createCash")
-                .addParameter("userId", userId)
-                .addParameter("bankAccountId", bankAccount.getId())
-                .addParameter("amount", amount)
-                .addParameter("type", type)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(userId, bankAccount.getId(), amount, type);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createCashRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
-        return response.statusCode() == 200;
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return false;
+        } else
+            return true;
     }
 
-    public static boolean createPayment(String fromUserId, String toUserId, String amount, String type) throws IOException, InterruptedException {
+    public static boolean createPayment(String fromUserId, String toUserId, Long amount, String type) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("pay/createPayment")
-                .addParameter("fromUserId", fromUserId)
-                .addParameter("toUserId", toUserId)
-                .addParameter("amount", amount)
-                .addParameter("type", type)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(fromUserId, toUserId, amount, type);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createPaymentRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        return response.statusCode() == 200;
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return false;
+        } else
+            return true;
     }
 
     public static Long getUserBalance(String userId) throws IOException, InterruptedException {
@@ -633,15 +692,16 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            JsonElement messagePayload = jsonObject.get("messagePayload");
-            System.out.println(jsonObject.get("message").getAsString());
-            return messagePayload.getAsLong();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else {
+            return mapper.readValue(Obj.writeValueAsString(message.getData()), Long.class);
         }
-        return null;
     }
 
     public static boolean editProfile(String userId, String newName, String newUsername,
@@ -651,19 +711,27 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/editProfile")
-                .addParameter("userId", userId)
-                .addParameter("newName", newName)
-                .addParameter("newUsername", newUsername)
-                .addParameter("newPassword", newPassword)
-                .addParameter("newEmail", newEmail)
-                .addParameter("newHandle", newHandle)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(userId, newName, newUsername, newPassword, newEmail, newHandle);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(editProfileRequest)))
+                .header("Content-Type", "application/json")
+                .build();
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+
+            System.out.println("List of Errors");
+            for (Message.Err.ErrorReport errorReport : message.getError().getErrors()) {
+                System.out.println("\t" + errorReport.getMessage());
+            }
+        }
         return response.statusCode() == 200;
     }
 
@@ -673,28 +741,29 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/getUserWithUsername")
-                .addParameter("username", username)
-                .addParameter("password", password)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+
+        UserController.GetUserWithUsernameRequest getUserWithUsernameRequest = new UserController.GetUserWithUsernameRequest(username, password);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(getUserWithUsernameRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        if (jsonTree.isJsonObject()) {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            System.out.println(jsonObject.get("message").getAsString());
-            if (response.statusCode() == 200) {
-                JsonElement messagePayloadBuffer = jsonObject.get("messagePayload");
-                if (messagePayloadBuffer.isJsonObject()) {
-                    JsonObject user = messagePayloadBuffer.getAsJsonObject().get("user").getAsJsonObject();
-                    System.out.println("User ID: " + user.get("id").getAsString());
-                    System.out.println("Username: " + user.get("username").getAsString());
-                    System.out.println("Password: " + user.get("password").getAsString());
-                    System.out.println("Email: " + user.get("email").getAsString());
-                    System.out.println("Handle: " + user.get("handle").getAsString());
-                    System.out.println("Balance: " + user.get("balance").getAsString());
-                }
-            }
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+        } else {
+            User user = mapper.readValue(Obj.writeValueAsString(message.getData()), User.class);
+            System.out.println("User ID: " + user.getId());
+            System.out.println("Name: " + user.getName());
+            System.out.println("Username: " + user.getUsername());
+            System.out.println("Password: " + user.getPassword());
+            System.out.println("Email: " + user.getEmail());
+            System.out.println("Handle: " + user.getHandle());
+            System.out.println("Balance: " + user.getBalance());
         }
         return response.statusCode() == 200;
     }
@@ -705,15 +774,21 @@ public class CoopmoTest {
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("user/deleteFriend")
-                .addParameter("userId", userId)
-                .addParameter("friendId", friendId)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        UserController.DeleteFriendRequest deleteFriendRequest = new UserController.DeleteFriendRequest(userId, friendId);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(deleteFriendRequest)))
+                .header("Content-Type", "application/json")
+                .build();
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+        }
         return response.statusCode() == 200;
     }
 
@@ -726,12 +801,20 @@ public class CoopmoTest {
                 .addParameter("userId", userId)
                 .addParameter("friendId", friendId)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        UserController.CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest = new UserController.CancelOutgoingFriendRequestRequest(userId, friendId);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(cancelOutgoingFriendRequestRequest)))
+                .header("Content-Type", "application/json")
+                .build();
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (message.getError() != null) {
+            System.out.println(message.getError().getMessage());
+        }
         return response.statusCode() == 200;
     }
 
@@ -746,7 +829,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static String getLatestPrivatePayment(String userId, String n) throws IOException, InterruptedException {
@@ -760,19 +851,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        JsonParser jsonParser = new JsonParser();
-//        JsonElement jsonTree = jsonParser.parse(response.body());
-//        if (jsonTree.isJsonObject()) {
-//            JsonObject jsonObject = jsonTree.getAsJsonObject();
-//            JsonElement messagePayload = jsonObject.get("messagePayload");
-//            System.out.println(jsonObject.get("message").getAsString());
-//            if (messagePayload.isJsonObject()) {
-//                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
-//                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
-//                return privatePaymentList.getAsJsonArray().toString();
-//            }
-//        }
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static String getLatestFriendPayment(String userId, String n) throws IOException, InterruptedException {
@@ -786,7 +873,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static void checkDoubleAddFails(String user1ID, String user2ID) throws IOException, InterruptedException {

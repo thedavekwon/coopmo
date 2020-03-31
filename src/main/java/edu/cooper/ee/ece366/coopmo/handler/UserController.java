@@ -1,10 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
@@ -42,6 +40,8 @@ public class UserController {
     @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {
+        Message respMessage = new Message();
+
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
@@ -52,91 +52,92 @@ public class UserController {
 
         userService.check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
         userService.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        respMessage.setData(user);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/getUserWithUsername")
+    @GetMapping(path = "/getUserFriendList")
+    @ResponseBody
+    public ResponseEntity<?> getUserFriendList(
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
+
+        if (userId.equals("")) {
+            throw new EmptyFieldException("userId is empty");
+        }
+
+        Set<User> friendList = userService.getUserFriendSet(userId);
+        respMessage.setData(friendList);
+        if (friendList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getUserBankAccountList")
+    @ResponseBody
+    public ResponseEntity<?> getUserBankAccountList(
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
+
+        if (userId.equals("")) {
+            throw new EmptyFieldException("userId is empty");
+        }
+
+        Set<BankAccount> bankAccountList = userService.getBankAccountSet(userId);
+        respMessage.setData(bankAccountList);
+
+        if (bankAccountList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getUserIncomingFriendRequest")
+    @ResponseBody
+    public ResponseEntity<?> getUserIncomingFriendRequest(
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
+
+        if (userId.equals("")) {
+            throw new EmptyFieldException("userId is empty");
+        }
+
+        Set<User> incomingFriendRequestList = userService.getIncomingFriendRequestSet(userId);
+        respMessage.setData(incomingFriendRequestList);
+        if (incomingFriendRequestList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getUserOutgoingFriendRequest")
+    @ResponseBody
+    public ResponseEntity<?> getUserOutgoingFriendRequest(
+            @RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
+
+        if (userId.equals("")) {
+            throw new EmptyFieldException("userId is empty");
+        }
+
+        Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequestSet(userId);
+        respMessage.setData(outgoingFriendRequestList);
+        if (outgoingFriendRequestList == null) return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/getUserWithUsername", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getUserWithUsername(
-            @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "password", defaultValue = "") String password) throws EmptyFieldException, InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
-        JsonObject userJson = new JsonObject();
+            @RequestBody GetUserWithUsernameRequest getUserWithUsernameRequest) throws EmptyFieldException, InValidFieldValueException {
+        Message respMessage = new Message();
+        String username = getUserWithUsernameRequest.getUsername();
+        String password = getUserWithUsernameRequest.getPassword();
 
         if (username.equals("") || password.equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
 
         User curUser = userService.getUserWithUsername(username, password);
-        return new ResponseEntity<>(curUser, HttpStatus.OK);
+        respMessage.setData(curUser);
+
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
-
-    @GetMapping(path = "/getUserFriendList")
-    @ResponseBody
-    public ResponseEntity<?> getUserFriendList(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject friendJson = new JsonObject();
-        if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-
-        Set<User> friendList = userService.getUserFriendSet(userId);
-        if (friendList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(friendList, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getUserBankAccountList")
-    @ResponseBody
-    public ResponseEntity<?> getUserBankAccountList(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject bankAccountJson = new JsonObject();
-        if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        Set<BankAccount> bankAccountList = userService.getBankAccountSet(userId);
-        if (bankAccountList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-//        respBody.addProperty("message", "get Bank Account List succeed");
-//        bankAccountJson.add("bankAccountList", new Gson().toJsonTree(bankAccountList));
-//        respBody.add("messagePayload", bankAccountJson);
-        return new ResponseEntity<>(bankAccountList, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getUserIncomingFriendRequest")
-    @ResponseBody
-    public ResponseEntity<?> getUserIncomingFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        Set<User> incomingFriendRequestList = userService.getIncomingFriendRequestSet(userId);
-        if (incomingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        respBody.addProperty("message", "Successfully returned user's incoming friend request list");
-        return new ResponseEntity<>(incomingFriendRequestList, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/getUserOutgoingFriendRequest")
-    @ResponseBody
-    public ResponseEntity<?> getUserOutgoingFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
-        JsonObject outgoingFriendRequestJson = new JsonObject();
-        if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-
-        Set<User> outgoingFriendRequestList = userService.getOutgoingFriendRequestSet(userId);
-        if (outgoingFriendRequestList == null) return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        respBody.addProperty("message", "Successfully returned user's outgoing friend request list");
-        return new ResponseEntity<>(outgoingFriendRequestList, HttpStatus.OK);
-    }
-
 
     // Debug Purpose
     @GetMapping(path = "/getUserSize")
@@ -153,209 +154,208 @@ public class UserController {
 
     @GetMapping(path = "/getUserBalance")
     @ResponseBody
-    public ResponseEntity<?> getUserBalance(@RequestParam(value = "userId", defaultValue = "") String userId) {
-        JsonObject respBody = new JsonObject();
+    public ResponseEntity<?> getUserBalance(@RequestParam(value = "userId", defaultValue = "") String userId) throws EmptyFieldException {
+        Message respMessage = new Message();
+
         if (userId.equals("")) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId is empty");
         }
+
+
         Long balance = userService.getUserBalance(userId);
+        respMessage.setData(balance);
         if (balance == null) {
-            respBody.addProperty("message", "userId is empty");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
         }
-        respBody.addProperty("messagePayload", balance);
-        respBody.addProperty("message", "Successfully returned user's balance");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/editProfile")
+    @PostMapping(path = "/editProfile", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> editProfile(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "newName", defaultValue = "") String newName,
-            @RequestParam(value = "newUsername", defaultValue = "") String newUsername,
-            @RequestParam(value = "newPassword", defaultValue = "") String newPassword,
-            @RequestParam(value = "newEmail", defaultValue = "") String newEmail,
-            @RequestParam(value = "newHandle", defaultValue = "") String newHandle
-    ) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody EditProfileRequest editProfileRequest
+    ) throws EmptyFieldException, InValidFieldValueException {
+        Message respMessage = new Message();
+        String userId = editProfileRequest.getUserId();
+        String newName = editProfileRequest.getNewName();
+        String newUsername = editProfileRequest.getNewUsername();
+        String newPassword = editProfileRequest.getNewPassword();
+        String newEmail = editProfileRequest.getNewEmail();
+        String newHandle = editProfileRequest.getNewHandle();
+
+
         if (userId.equals("")) {
-            respBody.addProperty("message", "No id provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No User ID provided");
         } else if (newName.equals("") || newUsername.equals("") || newPassword.equals("") || newEmail.equals("") || newHandle.equals("")) {
             //This should actually be handled on the client side
-            respBody.addProperty("message", "All fields were not filled out properly");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("All fields were not filled out properly");
         } else {
             ArrayList<Integer> errors = userService.editProfile(userId, newName, newUsername, newPassword, newEmail, newHandle);
             if (errors.isEmpty()) {
-                respBody.addProperty("message", "Profile Updated");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else {
-                ArrayList<String> errorMsg = new ArrayList<>();
                 String[] posErrors = {"No userId found.", "Username already exists.", "Email already used by other user.",
                         "Handle already exists."};
-                errors.forEach(e -> errorMsg.add(posErrors[-e - 1]));
-                respBody.add("errorMessages", new Gson().toJsonTree(errorMsg));
-                respBody.addProperty("message", "Error editing profile");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                Message.Err error = new Message.Err("2", "Error editing profile");
+                for (Integer s : errors) {
+                    error.addError("Editing Profile", posErrors[-(s + 1)], posErrors[-(s + 1)]);
+                }
+                respMessage.setError(error);
+                return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+
             }
         }
     }
 
-    @PostMapping(path = "/requestCashOut")
+    @PostMapping(path = "/requestCashOut", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> requestCashOut(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "bankId", defaultValue = "") String bankId,
-            @RequestParam(value = "amount", defaultValue = "0") long amount
-    ) {
-        JsonObject respBody = new JsonObject();
-        if (amount < 0) {
-            respBody.addProperty("message", "Cannot cash out a negative amount of money");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
+            @RequestBody RequestCashOutRequest requestCashOutRequest
+    ) throws EmptyFieldException, InValidFieldValueException {
+        String userId = requestCashOutRequest.getUserId();
+        String bankId = requestCashOutRequest.getBankId();
+        long amount = requestCashOutRequest.getAmount();
+
+        Message respMessage = new Message();
 
         if (userId.equals("") || bankId.equals("")) {
-            respBody.addProperty("message", "User ID or bank ID not valid");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or bankId is empty");
         }
-        respBody.addProperty("message", "Valid cash out request");
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+
+        if (amount < 0) {
+            throw new InValidFieldValueException("Can't request a negative value for cashOut");
+        }
+
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
 
-    @PostMapping(path = "/acceptIncomingRequest")
+    @PostMapping(path = "/acceptIncomingRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> acceptIncomingRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody AcceptIncomingRequestRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException {
+
+        String userId = acceptIncomingRequestRequest.getUserId();
+        String friendId = acceptIncomingRequestRequest.getFriendId();
+        System.out.println(userId);
+        Message respMessage = new Message();
+
         if (userId.equals("") || friendId.equals("")) {
-            respBody.addProperty("message", "No User ID and/or Friend ID found");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or friendId is empty");
         } else {
             if (userService.acceptIncomingRequest(userId, friendId) == 0) {
-                respBody.addProperty("message", "Accepted Incoming Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found in Incoming Requests");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new InValidFieldValueException("No User with provided ID and/or Friend ID found in Incoming Requests");
             }
         }
     }
 
-    @PostMapping(path = "/sendOutRequest")
+    @PostMapping(path = "/sendOutRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> sendOutRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody SendOutRequestRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException {
+        String userId = sendOutRequestRequest.getUserId();
+        String friendId = sendOutRequestRequest.getFriendId();
+
+        Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {
-            respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or friendId is empty");
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0) {
-                respBody.addProperty("message", "Sent Outgoing Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
             } else {
-                respBody.addProperty("message", "Duplicate Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.DuplicateFriendRequestException("Duplicate Friend Request");
             }
         }
     }
 
 
-    @PostMapping(path = "/sendOutRequestWithUsername")
+    @PostMapping(path = "/sendOutRequestWithUsername", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> sendOutRequestWithUsername(
-            @RequestParam(value = "username", defaultValue = "") String username,
-            @RequestParam(value = "friendUsername", defaultValue = "") String friendUsername) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody SendOutRequestWithUsernameRequest sendOutRequestWithUsernameRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.AlreadyFriendsException {
+        String username = sendOutRequestWithUsernameRequest.getUsername();
+        String friendUsername = sendOutRequestWithUsernameRequest.getFriendUsername();
+
+        Message respMessage = new Message();
+
         if (username.equals("") || friendUsername.equals("")) {
-            respBody.addProperty("message", "No Username and/or Friend Username provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("No Username and/or Friend Username provided");
         } else {
             int ret_val = userService.sendOutRequestWithUsername(username, friendUsername);
             if (ret_val == 0) {
-                respBody.addProperty("message", "Sent Outgoing Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new InValidFieldValueException("No User with provided ID and/or Friend ID found");
             } else {
-                respBody.addProperty("message", "Already Friends");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.AlreadyFriendsException("Already Friends with given friend username");
             }
         }
     }
 
-    @PostMapping(path = "/cancelOutgoingFriendRequest")
+    @PostMapping(path = "/cancelOutgoingFriendRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> cancelOutgoingFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
+        String userId = cancelOutgoingFriendRequestRequest.getUserId();
+        String friendId = cancelOutgoingFriendRequestRequest.getFriendId();
+
+        Message respMessage = new Message();
+
         if (userId.equals("") || friendId.equals("")) {
-            respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or friendId is empty");
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(userId, friendId);
             if (ret_val == 0) {
-                respBody.addProperty("message", "Cancelled Outgoing Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
             } else {
-                respBody.addProperty("message", "User not found in outgoing friends requests");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("User not found in outgoing friends requests");
             }
         }
     }
 
-    @PostMapping(path = "/declineFriendRequest")
+    @PostMapping(path = "/declineFriendRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> declineFriendRequest(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody DeclineFriendRequestRequest declineFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
+        String userId = declineFriendRequestRequest.getUserId();
+        String friendId = declineFriendRequestRequest.getFriendId();
+
+
+        Message respMessage = new Message();
+
         if (userId.equals("") || friendId.equals("")) {
-            respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or friendId is empty");
         } else {
             int ret_val = userService.cancelOutgoingFriendRequest(friendId, userId);
             if (ret_val == 0) {
-                respBody.addProperty("message", "Declined Incoming Friend Request");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
             } else {
-                respBody.addProperty("message", "User not found in incoming friend requests");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("User not found in incoming friend requests");
             }
         }
     }
 
-    @PostMapping(path = "/deleteFriend")
+    @PostMapping(path = "/deleteFriend", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> deleteFriend(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "friendId", defaultValue = "") String friendId) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
+            @RequestBody DeleteFriendRequest deleteFriendRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.UsersAreNotFriendsException {
+        String userId = deleteFriendRequest.getUserId();
+        String friendId = deleteFriendRequest.getFriendId();
+
+        Message respMessage = new Message();
+
         if (userId.equals("") || friendId.equals("")) {
-            respBody.addProperty("message", "No User ID and/or Friend ID provided");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new EmptyFieldException("userId or friendId is empty");
         } else {
             int ret_val = userService.deleteFriend(userId, friendId);
             if (ret_val == 0) {
-                respBody.addProperty("message", "Deleted Friend");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
-                respBody.addProperty("message", "No User with provided ID and/or Friend ID found");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
             } else {
-                respBody.addProperty("message", "The two user id's provided are not friends");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+                throw new BaseExceptionHandler.UsersAreNotFriendsException("The two user id's provided are not friends");
             }
         }
     }
@@ -364,16 +364,300 @@ public class UserController {
     public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
         if (request.getMatch().equals(""))
             throw new EmptyFieldException("Empty Field");
+        Message respMessage = new Message();
         Set<User> users = userService.findUsers(request);
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        respMessage.setData(users);
+
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    public static class CreateUserRequest {
+        private User user;
+
+        public CreateUserRequest(User user) {
+            this.user = user;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+    }
+
+    public static class GetUserWithUsernameRequest {
+        private String username;
+        private String password;
+
+        public GetUserWithUsernameRequest(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    public static class UserIdRequest {
+        private String userId;
+
+        public UserIdRequest(String userId) {
+            this.userId = userId;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+    }
+
+    public static class GetUserFriendListRequest extends UserIdRequest {
+        public GetUserFriendListRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class GetUserBankAccountListRequest extends UserIdRequest {
+        public GetUserBankAccountListRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class GetUserIncomingFriendRequestRequest extends UserIdRequest {
+
+        public GetUserIncomingFriendRequestRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class GetUserOutgoingFriendRequestRequest extends UserIdRequest {
+        public GetUserOutgoingFriendRequestRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class GetUserWithIdRequest extends UserIdRequest {
+        public GetUserWithIdRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class GetUserBalanceRequest extends UserIdRequest {
+        public GetUserBalanceRequest(String userId) {
+            super(userId);
+        }
+    }
+
+    public static class EditProfileRequest {
+        private String userId;
+        private String newName;
+        private String newUsername;
+        private String newPassword;
+        private String newEmail;
+        private String newHandle;
+
+        public EditProfileRequest(String userId, String newName, String newUsername, String newPassword, String newEmail, String newHandle) {
+            this.userId = userId;
+            this.newName = newName;
+            this.newUsername = newUsername;
+            this.newPassword = newPassword;
+            this.newEmail = newEmail;
+            this.newHandle = newHandle;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getNewName() {
+            return newName;
+        }
+
+        public void setNewName(String newName) {
+            this.newName = newName;
+        }
+
+        public String getNewUsername() {
+            return newUsername;
+        }
+
+        public void setNewUsername(String newUsername) {
+            this.newUsername = newUsername;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
+
+        public String getNewEmail() {
+            return newEmail;
+        }
+
+        public void setNewEmail(String newEmail) {
+            this.newEmail = newEmail;
+        }
+
+        public String getNewHandle() {
+            return newHandle;
+        }
+
+        public void setNewHandle(String newHandle) {
+            this.newHandle = newHandle;
+        }
+    }
+
+    public static class RequestCashOutRequest {
+        private String userId;
+        private String bankId;
+        private long amount;
+
+        public RequestCashOutRequest(String userId, String bankId, long amount) {
+            this.userId = userId;
+            this.bankId = bankId;
+            this.amount = amount;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getBankId() {
+            return bankId;
+        }
+
+        public void setBankId(String bankId) {
+            this.bankId = bankId;
+        }
+
+        public long getAmount() {
+            return amount;
+        }
+
+        public void setAmount(long amount) {
+            this.amount = amount;
+        }
+    }
+
+    public static class SendOutRequestWithUsernameRequest {
+        private String username;
+        private String friendUsername;
+
+        public SendOutRequestWithUsernameRequest(String username, String friendUsername) {
+            this.username = username;
+            this.friendUsername = friendUsername;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getFriendUsername() {
+            return friendUsername;
+        }
+
+        public void setFriendUsername(String friendUsername) {
+            this.friendUsername = friendUsername;
+        }
+    }
+
+    public static class UserAndFriendRequest {
+        private String userId;
+        private String friendId;
+
+        public UserAndFriendRequest(String userId, String friendId) {
+            this.userId = userId;
+            this.friendId = friendId;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getFriendId() {
+            return friendId;
+        }
+
+        public void setFriendId(String friendId) {
+            this.friendId = friendId;
+        }
+    }
+
+    public static class AcceptIncomingRequestRequest extends UserAndFriendRequest {
+        public AcceptIncomingRequestRequest(String userId, String friendId) {
+            super(userId, friendId);
+        }
+    }
+
+    public static class SendOutRequestRequest extends UserAndFriendRequest {
+        public SendOutRequestRequest(String userId, String friendId) {
+            super(userId, friendId);
+        }
+    }
+
+    public static class CancelOutgoingFriendRequestRequest extends UserAndFriendRequest {
+        public CancelOutgoingFriendRequestRequest(String userId, String friendId) {
+            super(userId, friendId);
+        }
+    }
+
+    public static class DeclineFriendRequestRequest extends UserAndFriendRequest {
+        public DeclineFriendRequestRequest(String userId, String friendId) {
+            super(userId, friendId);
+        }
+    }
+
+    public static class DeleteFriendRequest extends UserAndFriendRequest {
+        public DeleteFriendRequest(String userId, String friendId) {
+            super(userId, friendId);
+        }
     }
 
     public static class FindUsersRequest {
-        @JsonProperty("match")
-        private String match;
+        private final String match;
+        private final Type type;
 
-        @JsonProperty("type")
-        private Type type;
+        FindUsersRequest(String match, Type type) {
+            this.match = match;
+            this.type = type;
+        }
 
         public String getMatch() {
             return match;

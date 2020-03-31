@@ -1,4 +1,4 @@
-name: Java CI
+name: Coopmo Test (JAVA CI + MYSQL)
 
 on: [push]
 

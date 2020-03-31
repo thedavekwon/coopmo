@@ -11,12 +11,17 @@ import java.util.Set;
 
 @Entity
 public class Cash extends Transaction {
+    @Column(updatable = false, nullable = false)
+    @OrderBy
+    protected Timestamp timestamp;
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
+
     @Column(updatable = false, nullable = false)
     private String id;
 
@@ -26,17 +31,14 @@ public class Cash extends Transaction {
     @Column(nullable = false)
     private long amount;
 
-    @Column(updatable = false, nullable = false)
-    protected Timestamp timestamp;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "user")
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference(value = "bankAccount")
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private BankAccount bankAccount;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -46,13 +48,13 @@ public class Cash extends Transaction {
     public Cash() {
     }
 
-    public Cash(User _user, BankAccount _bankAccount, long _amount, CashType _type) {
-        user = _user;
-        bankAccount = _bankAccount;
-        type = _type;
-        amount = _amount;
-        likes = new HashSet<>();
-        timestamp = new Timestamp(System.currentTimeMillis());
+    public Cash(User user, BankAccount bankAccount, long amount, CashType type) {
+        this.user = user;
+        this.bankAccount = bankAccount;
+        this.type = type;
+        this.amount = amount;
+        this.likes = new HashSet<>();
+        this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
     public long getAmount() {

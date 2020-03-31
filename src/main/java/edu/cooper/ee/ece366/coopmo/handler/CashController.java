@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.JsonObject;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.service.CashService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,50 +18,77 @@ public class CashController extends BaseController {
         this.cashService = cashService;
     }
 
-    @PostMapping("createCash")
+    @PostMapping(path = "/createCash", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createCash(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId,
-            @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") String type) {
-        JsonObject respBody = new JsonObject();
+            @RequestBody CreateCashRequest createCashRequest)
+            throws BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        String userId = createCashRequest.getUserId();
+        String bankAccountId = createCashRequest.getBankAccountId();
+        Long amount = createCashRequest.getAmount();
+        String type = createCashRequest.getType();
 
-        ResponseEntity<?> response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-        response = checkEmpty(bankAccountId, "bankAccountId", respBody);
-        if (response != null) return response;
-        response = checkPositive(amount, "amount", respBody);
-        if (response != null) return response;
+        Message respMessage = new Message();
+
+        checkEmpty(userId, "userId");
+        checkEmpty(bankAccountId, "bankAccountId");
+        checkPositive(amount, "amount");
 
         Cash.CashType cashType;
         try {
             cashType = Cash.CashType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            respBody.addProperty("message", "Invalid Cash Type");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.InValidFieldValueException("Invalid Cash Type");
         }
 
-        int ret = cashService.createCash(userId, bankAccountId, amount, cashType);
+        Cash newCash = cashService.createCash(userId, bankAccountId, amount, cashType);
 
-        switch (ret) {
-            case -1:
-                respBody.addProperty("message", "Invalid userId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -2:
-                respBody.addProperty("message", "Invalid bankAccountId");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-            case -3:
-                respBody.addProperty("message", "Invalid amount");
-                return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    public static class CreateCashRequest {
+        private String userId;
+        private String bankAccountId;
+        private Long amount;
+        private String type;
+
+        public CreateCashRequest(String userId, String bankAccountId, Long amount, String type) {
+            this.userId = userId;
+            this.bankAccountId = bankAccountId;
+            this.amount = amount;
+            this.type = type;
         }
 
-        respBody.addProperty("message", "CashOut request succeed");
-        if (cashType == Cash.CashType.OUT) {
-            respBody.addProperty("message", "CashOut request succeed");
-        } else {
-            respBody.addProperty("message", "CashIn request succeed");
+        public String getUserId() {
+            return userId;
         }
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getBankAccountId() {
+            return bankAccountId;
+        }
+
+        public void setBankAccountId(String bankAccountId) {
+            this.bankAccountId = bankAccountId;
+        }
+
+        public Long getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Long amount) {
+            this.amount = amount;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
     }
 }

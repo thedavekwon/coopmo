@@ -13,29 +13,26 @@ public class BankAccount {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long routingNumber;
 
     @Column(nullable = false)
     private long balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonManagedReference
-    @JsonIgnore
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private User user;
 
     public BankAccount() {
     }
 
-    public BankAccount(User _user, long _routingNumber, long _balance) {
-        user = _user;
-        routingNumber = _routingNumber;
-        balance = _balance;
+    public BankAccount(User user, long routingNumber, long balance) {
+        this.user = user;
+        this.routingNumber = routingNumber;
+        this.balance = balance;
     }
 
     public String getId() {
@@ -44,6 +41,10 @@ public class BankAccount {
 
     public long getRoutingNumber() {
         return routingNumber;
+    }
+
+    public void setRoutingNumber(long routingNumber) {
+        this.routingNumber = routingNumber;
     }
 
     public long getBalance() {
@@ -60,5 +61,10 @@ public class BankAccount {
 
     public void decrementBalance(long amount) {
         balance = balance - amount;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
     }
 }

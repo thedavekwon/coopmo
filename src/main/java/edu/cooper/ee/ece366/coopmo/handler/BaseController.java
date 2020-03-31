@@ -1,24 +1,16 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.JsonObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 // TODO (migrate to BaseExceptionHandler)
 public class BaseController {
-    protected ResponseEntity<?> checkEmpty(String input, String field, JsonObject respBody) {
+    protected void checkEmpty(String input, String field) throws BaseExceptionHandler.EmptyFieldException {
         if (input.equals("")) {
-            respBody.addProperty("message", "Empty " + field);
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.EmptyFieldException("Empty " + field);
         }
-        return null;
     }
 
-    protected ResponseEntity<?> checkPositive(Long input, String field, JsonObject respBody) {
+    protected void checkPositive(Long input, String field) throws BaseExceptionHandler.InValidFieldValueException {
         if (input <= 0) {
-            respBody.addProperty("message", "Empty " + field);
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.InValidFieldValueException("Non-positive " + field + " entered");
         }
-        return null;
     }
 }

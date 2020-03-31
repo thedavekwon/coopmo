@@ -1,8 +1,8 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,38 +21,53 @@ public class BankAccountController extends BaseController {
     }
 
     @PostMapping("createBankAccount")
-    public ResponseEntity<?> createBankAccount(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
-            @RequestParam(value = "routingNumber", defaultValue = "") long routingNumber,
-            @RequestParam(value = "balance", defaultValue = "") long balance) throws InValidFieldValueException, EmptyFieldException {
-        if (!checkValidRoutingNumberByDigit(routingNumber))
+    public ResponseEntity<?> createBankAccount(@RequestBody CreateBankAccountRequest bankAccountRequest) throws InValidFieldValueException, EmptyFieldException {
+        if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
 
-        if (userId.isEmpty() || balance < 0)
+        if (bankAccountRequest.getUserId().isEmpty() || bankAccountRequest.getBalance() < 0)
             throw new EmptyFieldException("Empty Field");
 
-        BankAccount newBankAccount = bankAccountService.createBankAccount(userId, routingNumber, balance);
-        return new ResponseEntity<>(newBankAccount, HttpStatus.OK);
+        Message respMessage = new Message();
+        BankAccount bankAccount = bankAccountService.createBankAccount(bankAccountRequest);
+        respMessage.setData(bankAccount);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    @GetMapping("getBalance")
-    public ResponseEntity<?> getBalance(
-            @RequestParam(value = "bankAccountId", defaultValue = "") String bankAccountId) {
-        JsonObject respBody = new JsonObject();
-        ResponseEntity<?> response = checkEmpty(bankAccountId, "userId", respBody);
-        if (response != null) return null;
-
-        long ret = bankAccountService.getBalance(bankAccountId);
-        if (ret == -1) {
-            respBody.addProperty("message", "Invalid bankAccountId");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
-        }
-        respBody.addProperty("message", "Bankaccount getBalance request succeed");
-        respBody.addProperty("balance", ret);
-        return new ResponseEntity<>(respBody.toString(), HttpStatus.OK);
+    @PostMapping("getBankAccountBalance")
+    public ResponseEntity<?> getBankAccountBalance(@RequestBody String bankAccountId) throws EmptyFieldException, InValidFieldValueException {
+        if (bankAccountId.isEmpty())
+            throw new EmptyFieldException("Empty Bank Account Id");
+        Message respMessage = new Message();
+        respMessage.setData(bankAccountService.getBankAccountBalance(bankAccountId));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
         return (routingNumber / 1000000000) < 1;
+    }
+
+    public static class CreateBankAccountRequest {
+        private final String userId;
+        private final Long routingNumber;
+        private final Long balance;
+
+        public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {
+            this.userId = userId;
+            this.routingNumber = routingNumber;
+            this.balance = balance;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public Long getRoutingNumber() {
+            return routingNumber;
+        }
+
+        public Long getBalance() {
+            return balance;
+        }
     }
 }

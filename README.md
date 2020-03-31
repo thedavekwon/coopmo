@@ -13,5 +13,8 @@ mvn -jar target/coopmo-0.0.1-SNAPSHOT.jar
 
 # run the test (demo)
 mvn test
+
+# to set uo database
+mysql < createdb.sh
 ```
 

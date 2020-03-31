@@ -3,10 +3,9 @@ package edu.cooper.ee.ece366.coopmo;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import edu.cooper.ee.ece366.coopmo.handler.BankAccountController;
+import edu.cooper.ee.ece366.coopmo.handler.CashController;
+import edu.cooper.ee.ece366.coopmo.handler.PaymentController;
 import edu.cooper.ee.ece366.coopmo.handler.UserController;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
@@ -265,7 +264,7 @@ public class CoopmoTest {
 
         // Adding cash to first BankAccount
         System.out.println("Test for adding cash to first bank account:\n----------------------------");
-        ret = createCash(user1, user1BankAccount, "9000", "IN");
+        ret = createCash(user1, user1BankAccount, (long) 9000, "IN");
         if (!ret) return;
 
         // Check to see created Cash has been globally updated in relevant fields
@@ -274,7 +273,7 @@ public class CoopmoTest {
         // Test: creating public Payment between two users
         System.out.println("Test for sending a payment:\n----------------------------");
         System.out.println("Sending a public payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "PUBLIC");
+        ret = createPayment(user1, user2, (long) 3000, "PUBLIC");
         if (!ret) return;
 
         // Check to see if public Payment has updated relevant fields
@@ -290,7 +289,7 @@ public class CoopmoTest {
         // Test: creating private Payment between two users
         System.out.println("Test for creating Private payment between users:\n----------------------------");
         System.out.println("Sending a private payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "PRIVATE");
+        ret = createPayment(user1, user2, (long) 3000, "PRIVATE");
         if (!ret) return;
 
         // Check to see if private Payment has updated relevant fields
@@ -303,10 +302,10 @@ public class CoopmoTest {
         // Test: creating friend Payment between two users
         System.out.println("Test for creating a Friend payment of 3000 between two users:\n----------------------------");
         System.out.println("Sending a friend payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, "3000", "FRIEND");
+        ret = createPayment(user1, user2, (long) 3000, "FRIEND");
         if (!ret) return;
         System.out.println("Sending a friend payment of 3000 from user 2 to user 4");
-        ret = createPayment(user2, user4, "3000", "FRIEND");
+        ret = createPayment(user2, user4, (long) 3000, "FRIEND");
         if (!ret) return;
         System.out.println("Expected friendPaymentList");
         System.out.println("user1: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
@@ -321,7 +320,7 @@ public class CoopmoTest {
         if (getAllFriendPaymentList(user1, user2, user3, user4, user5)) return;
 
         System.out.println("Test for Cashing Out:\n----------------------------");
-        ret = createCash(user2, user2BankAccount, "6000", "OUT");
+        ret = createCash(user2, user2BankAccount, (long) 6000, "OUT");
         if (!ret) return;
 
         if (getAllUserBalance(user1, user2, user3, user4, user5)) return;
@@ -631,43 +630,56 @@ public class CoopmoTest {
         return Obj.writeValueAsString(message.getData());
     }
 
-    public static boolean createCash(String userId, BankAccount bankAccount, String amount, String type) throws IOException, InterruptedException {
+    public static boolean createCash(String userId, BankAccount bankAccount, Long amount, String type) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("cash/createCash")
-                .addParameter("userId", userId)
-                .addParameter("bankAccountId", bankAccount.getId())
-                .addParameter("amount", amount)
-                .addParameter("type", type)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(userId, bankAccount.getId(), amount, type);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createCashRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        System.out.println(jsonObject.get("message").getAsString());
-        return response.statusCode() == 200;
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return false;
+        } else
+            return true;
     }
 
-    public static boolean createPayment(String fromUserId, String toUserId, String amount, String type) throws IOException, InterruptedException {
+    public static boolean createPayment(String fromUserId, String toUserId, Long amount, String type) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("pay/createPayment")
-                .addParameter("fromUserId", fromUserId)
-                .addParameter("toUserId", toUserId)
-                .addParameter("amount", amount)
-                .addParameter("type", type)
                 .toUri();
-        HttpRequest request = HttpRequest.newBuilder(uri).POST(HttpRequest.BodyPublishers.ofString("")).build();
+
+        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(fromUserId, toUserId, amount, type);
+
+        HttpRequest request = HttpRequest.newBuilder(uri)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createPaymentRequest)))
+                .header("Content-Type", "application/json")
+                .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonParser jsonParser = new JsonParser();
-        JsonElement jsonTree = jsonParser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
-        return response.statusCode() == 200;
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return false;
+        } else
+            return true;
     }
 
     public static Long getUserBalance(String userId) throws IOException, InterruptedException {
@@ -817,7 +829,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static String getLatestPrivatePayment(String userId, String n) throws IOException, InterruptedException {
@@ -831,19 +851,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        JsonParser jsonParser = new JsonParser();
-//        JsonElement jsonTree = jsonParser.parse(response.body());
-//        if (jsonTree.isJsonObject()) {
-//            JsonObject jsonObject = jsonTree.getAsJsonObject();
-//            JsonElement messagePayload = jsonObject.get("messagePayload");
-//            System.out.println(jsonObject.get("message").getAsString());
-//            if (messagePayload.isJsonObject()) {
-//                JsonElement privatePaymentList = messagePayload.getAsJsonObject().get("LatestPrivatePayment");
-//                System.out.println("size: " + privatePaymentList.getAsJsonArray().size());
-//                return privatePaymentList.getAsJsonArray().toString();
-//            }
-//        }
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static String getLatestFriendPayment(String userId, String n) throws IOException, InterruptedException {
@@ -857,7 +873,15 @@ public class CoopmoTest {
                 .toUri();
         HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+
+        ObjectMapper Obj = new ObjectMapper();
+        Message message = mapper.readValue(response.body(), Message.class);
+
+        if (response.statusCode() != 200) {
+            System.out.println(message.getError().getMessage());
+            return null;
+        } else
+            return Obj.writeValueAsString(message.getData());
     }
 
     public static void checkDoubleAddFails(String user1ID, String user2ID) throws IOException, InterruptedException {

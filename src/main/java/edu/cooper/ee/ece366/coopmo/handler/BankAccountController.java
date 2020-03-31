@@ -2,6 +2,7 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,19 @@ public class BankAccountController extends BaseController {
         if (bankAccountRequest.getUserId().isEmpty() || bankAccountRequest.getBalance() < 0)
             throw new EmptyFieldException("Empty Field");
 
+        Message respMessage = new Message();
         BankAccount bankAccount = bankAccountService.createBankAccount(bankAccountRequest);
-        return new ResponseEntity<>(bankAccount, HttpStatus.OK);
+        respMessage.setData(bankAccount);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @PostMapping("getBankAccountBalance")
     public ResponseEntity<?> getBankAccountBalance(@RequestBody String bankAccountId) throws EmptyFieldException, InValidFieldValueException {
         if (bankAccountId.isEmpty())
             throw new EmptyFieldException("Empty Bank Account Id");
-        long ret = bankAccountService.getBankAccountBalance(bankAccountId);
-        return new ResponseEntity<>(ret, HttpStatus.OK);
+        Message respMessage = new Message();
+        respMessage.setData(bankAccountService.getBankAccountBalance(bankAccountId));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
@@ -44,9 +48,9 @@ public class BankAccountController extends BaseController {
     }
 
     public static class CreateBankAccountRequest {
-        private String userId;
-        private Long routingNumber;
-        private Long balance;
+        private final String userId;
+        private final Long routingNumber;
+        private final Long balance;
 
         public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {
             this.userId = userId;

@@ -1,7 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import com.google.gson.JsonObject;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.service.PaymentService;
 import edu.cooper.ee.ece366.coopmo.service.TransactionService;
@@ -22,39 +22,40 @@ public class PaymentController extends BaseController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping(path = "/createPayment")
+    @PostMapping(path = "/createPayment", consumes = "application/json")
     public ResponseEntity<?> createPayment(
-            @RequestParam(value = "fromUserId", defaultValue = "") String fromUserId,
-            @RequestParam(value = "toUserId", defaultValue = "") String toUserId,
-            @RequestParam(value = "amount", defaultValue = "") Long amount,
-            @RequestParam(value = "type", defaultValue = "") String type) throws InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
-        JsonObject respBody = new JsonObject();
-        ResponseEntity<?> response = checkEmpty(fromUserId, "fromUserId", respBody);
-        if (response != null) return response;
-        response = checkEmpty(toUserId, "toUserId", respBody);
-        if (response != null) return response;
-        response = checkPositive(amount, "amount", respBody);
-        if (response != null) return response;
+            @RequestBody CreatePaymentRequest createPaymentRequest) throws InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.EmptyFieldException, BaseExceptionHandler.InValidFieldTypeException {
+        String fromUserId = createPaymentRequest.getFromUserId();
+        String toUserId = createPaymentRequest.getToUserId();
+        Long amount = createPaymentRequest.getAmount();
+        String type = createPaymentRequest.getType();
+
+        Message respMessage = new Message();
+
+        checkEmpty(fromUserId, "fromUserId");
+        checkEmpty(toUserId, "toUserId");
+        checkPositive(amount, "amount");
+
+
         Payment.PaymentType paymentType;
         try {
             paymentType = Payment.PaymentType.valueOf(type);
         } catch (IllegalArgumentException e) {
-            respBody.addProperty("message", "Invalid Payment Type");
-            return new ResponseEntity<>(respBody.toString(), HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.InValidFieldTypeException("Invalid Payment Type");
         }
 
         Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
-        return new ResponseEntity<>(newPayment, HttpStatus.OK);
+        respMessage.setData(newPayment);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestPublicPayment")
     @ResponseBody
-    public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") int n) {
-        JsonObject respBody = new JsonObject();
-        JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
-        if (response != null) return response;
-        return new ResponseEntity<>(paymentService.getLatestPublicPayment(n), HttpStatus.OK);
+    public ResponseEntity<?> getLatestPublicPayment(@RequestParam(value = "n", defaultValue = "") int n) throws InValidFieldValueException {
+        Message respMessage = new Message();
+        checkPositive((long) n, "n");
+        respMessage.setData(paymentService.getLatestPublicPayment(n));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestPrivatePayment")
@@ -62,14 +63,12 @@ public class PaymentController extends BaseController {
     public ResponseEntity<?> getLatestPrivatePayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
-    ) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
-        JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
-        if (response != null) return response;
-        response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-        return new ResponseEntity<>(transactionService.getLatestTransaction(userId, n), HttpStatus.OK);
+    ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Message respMessage = new Message();
+        checkPositive((long) n, "n");
+        checkEmpty(userId, "userId");
+        respMessage.setData(transactionService.getLatestTransaction(userId, n));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getLatestFriendPayment")
@@ -77,13 +76,59 @@ public class PaymentController extends BaseController {
     public ResponseEntity<?> getLatestFriendPayment(
             @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "n", defaultValue = "") int n
-    ) throws InValidFieldValueException {
-        JsonObject respBody = new JsonObject();
-        JsonObject friend_json = new JsonObject();
-        ResponseEntity<?> response = checkPositive((long) n, "n", respBody);
-        if (response != null) return response;
-        response = checkEmpty(userId, "userId", respBody);
-        if (response != null) return response;
-        return new ResponseEntity<>(paymentService.getLatestFriendPayment(userId, n), HttpStatus.OK);
+    ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Message respMessage = new Message();
+        checkPositive((long) n, "n");
+        checkEmpty(userId, "userId");
+
+        respMessage.setData(paymentService.getLatestFriendPayment(userId, n));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
+
+    public static class CreatePaymentRequest {
+        private String fromUserId;
+        private String toUserId;
+        private Long amount;
+        private String type;
+
+        public CreatePaymentRequest(String fromUserId, String toUserId, Long amount, String type) {
+            this.fromUserId = fromUserId;
+            this.toUserId = toUserId;
+            this.amount = amount;
+            this.type = type;
+        }
+
+        public String getFromUserId() {
+            return fromUserId;
+        }
+
+        public void setFromUserId(String fromUserId) {
+            this.fromUserId = fromUserId;
+        }
+
+        public String getToUserId() {
+            return toUserId;
+        }
+
+        public void setToUserId(String toUserId) {
+            this.toUserId = toUserId;
+        }
+
+        public Long getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Long amount) {
+            this.amount = amount;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+    }
+
 }

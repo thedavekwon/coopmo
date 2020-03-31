@@ -3,6 +3,7 @@ package edu.cooper.ee.ece366.coopmo.handler;
 
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldTypeException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Transaction;
 import edu.cooper.ee.ece366.coopmo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping(path = "/transaction", consumes = "application/json", produces = "application/json")
-public class TransactionController {
+public class TransactionController extends BaseController {
     private final TransactionService transactionService;
 
     @Autowired
@@ -26,11 +25,56 @@ public class TransactionController {
     }
 
     @PostMapping("/likeTransaction")
-    public ResponseEntity<?> likePayment(@RequestBody Map<String, String> request) throws InValidFieldTypeException, InValidFieldValueException, IllegalArgumentException {
-        if (!request.containsKey("userId") || !request.containsKey("transactionId") || !request.containsKey("transactionType"))
-            throw new InValidFieldTypeException("Invalid Request Field");
-        Transaction.TransactionType transactionType = Transaction.TransactionType.valueOf(request.get("transactionType"));
-        Transaction curTransaction = transactionService.likePayment(request.get("userId"), request.get("transactionId"), transactionType);
-        return new ResponseEntity<>(curTransaction, HttpStatus.OK);
+    public ResponseEntity<?> likePayment(@RequestBody LikePaymentRequest likePaymentRequest) throws InValidFieldTypeException, InValidFieldValueException, IllegalArgumentException, BaseExceptionHandler.EmptyFieldException {
+        String userId = likePaymentRequest.getUserId();
+        String transactionId = likePaymentRequest.getTransactionId();
+        String transactionType = likePaymentRequest.getTransactionType();
+
+        Message respMessage = new Message();
+
+        checkEmpty(userId, "userId");
+        checkEmpty(transactionId, "transactionId");
+        checkEmpty(transactionType, "transactionType");
+
+        Transaction.TransactionType transactionType1 = Transaction.TransactionType.valueOf(transactionType);
+        Transaction curTransaction = transactionService.likePayment(userId, transactionId, transactionType1);
+        respMessage.setData(curTransaction);
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    public class LikePaymentRequest {
+        private String userId;
+        private String transactionId;
+        private String transactionType;
+
+        public LikePaymentRequest(String userId, String transactionId, String transactionType) {
+            this.userId = userId;
+            this.transactionId = transactionId;
+            this.transactionType = transactionType;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        public void setTransactionId(String transactionId) {
+            this.transactionId = transactionId;
+        }
+
+        public String getTransactionType() {
+            return transactionType;
+        }
+
+        public void setTransactionType(String transactionType) {
+            this.transactionType = transactionType;
+        }
     }
 }

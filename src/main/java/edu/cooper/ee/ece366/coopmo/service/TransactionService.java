@@ -10,6 +10,7 @@ import edu.cooper.ee.ece366.coopmo.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,19 +51,32 @@ public class TransactionService {
         }
     }
 
-    // TODO(use heap)
-    public Set<Transaction> getLatestTransaction(String userId, int n) throws InValidFieldValueException {
+    public Set<Transaction> getLatestTransaction(String userId) throws InValidFieldValueException {
         TreeSet<Transaction> transactions = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
-        transactions.addAll(curUser.getFromPaymentSet());
-        transactions.addAll(curUser.getToPaymentSet());
-        transactions.addAll(curUser.getCashSet());
-        if (transactions.size() < n) return transactions.descendingSet();
+        transactions.addAll(paymentRepository.getLatestPrivatePayment(curUser.getId()));
+        transactions.addAll(cashRepository.getLatestCash(curUser.getId()));
+        if (transactions.size() < Transaction.AMOUNT) return transactions.descendingSet();
         Set<Transaction> ret = new TreeSet<>();
         Iterator<Transaction> it = transactions.descendingIterator();
         while (it.hasNext()) {
             ret.add(it.next());
-            if (ret.size() >= n) break;
+            if (ret.size() >= Transaction.AMOUNT) break;
+        }
+        return ret;
+    }
+
+    public Set<Transaction> getLatestTransactionFrom(String userId, Timestamp timestamp) throws InValidFieldValueException {
+        TreeSet<Transaction> transactions = new TreeSet<>();
+        User curUser = userService.checkValidUserId(userId);
+        transactions.addAll(paymentRepository.getLatestPrivatePaymentFrom(curUser.getId(), timestamp));
+        transactions.addAll(cashRepository.getLatestCashFrom(curUser.getId(), timestamp));
+        if (transactions.size() < Transaction.AMOUNT) return transactions.descendingSet();
+        Set<Transaction> ret = new TreeSet<>();
+        Iterator<Transaction> it = transactions.descendingIterator();
+        while (it.hasNext()) {
+            ret.add(it.next());
+            if (ret.size() >= Transaction.AMOUNT) break;
         }
         return ret;
     }

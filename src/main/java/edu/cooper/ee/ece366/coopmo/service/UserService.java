@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.service;
 
+import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.handler.UserController;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
@@ -24,8 +25,9 @@ public class UserService {
     }
 
     @Transactional
-    public void addUser(User user) {
+    public User addUser(User user) {
         userRepository.save(user);
+        return user;
     }
 
     public void check_if_taken(String username, String email, String handle) throws InValidFieldValueException {
@@ -104,20 +106,18 @@ public class UserService {
         return 0;
     }
 
-    // -1 if user not found
     @Transactional
-    public int acceptIncomingRequest(String userId, String friendId) throws InValidFieldValueException {
+    public int acceptIncomingRequest(String userId, String friendId) throws InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException {
         User user = checkValidUserId(userId);
         User friend = checkValidUserId(friendId, "Friend Id");
-        if (!acceptIncomingFriendRequest(user, friend)) return -2;
+        if (!acceptIncomingFriendRequest(user, friend))
+            throw new BaseExceptionHandler.FriendRequestDoesNotExistException(userId + " " + friendId);
         acceptedOutgoingFriendRequest(friend, user);
         userRepository.save(user);
         userRepository.save(friend);
         return 0;
     }
 
-    // -1 if users not found
-    // -2 if friend request already sent
     @Transactional
     public int sendOutRequest(String userId, String friendId) throws InValidFieldValueException {
         User user = checkValidUserId(userId);

@@ -230,7 +230,7 @@ public class UserController {
 
     @PostMapping(path = "/acceptIncomingRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> acceptIncomingRequest(
-            @RequestBody AcceptIncomingRequestRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException {
+            @RequestBody AcceptIncomingRequestRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.FriendRequestDoesNotExistException {
 
         String userId = acceptIncomingRequestRequest.getUserId();
         String friendId = acceptIncomingRequestRequest.getFriendId();

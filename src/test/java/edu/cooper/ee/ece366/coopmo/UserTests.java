@@ -22,8 +22,9 @@ public class UserTests {
     @Autowired
     private UserService userService;
 
+    // scenario
     @Test
-    public void testFriends() throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException {
+    public void testFriends() throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         // Test: Creating two users
         User user1 = userService.addUser(new User("name1", "username1", "password1", "email1@gmail.com", "handle1"));
         Assert.assertEquals(user1.getName(), "name1");
@@ -43,7 +44,6 @@ public class UserTests {
 
         // Test: sending Friend Request
         userService.sendOutRequest(user1.getId(), user2.getId());
-        // Check to see if sent Friend Request has been globally updated in relevant fields
         Assert.assertEquals(new ArrayList<>(userService.getOutgoingFriendRequestSet(user1.getId())).get(0).getId(), user2.getId());
         Assert.assertEquals(new ArrayList<>(userService.getIncomingFriendRequestSet(user2.getId())).get(0).getId(), user1.getId());
 
@@ -101,19 +101,5 @@ public class UserTests {
         userService.sendOutRequest(user4.getId(), user3.getId());
         Assert.assertEquals(new ArrayList<>(userService.getUserFriendSet(user3.getId())).get(0).getId(), user4.getId());
         Assert.assertEquals(new ArrayList<>(userService.getUserFriendSet(user4.getId())).get(0).getId(), user3.getId());
-
-        // Test: Creating duplicate user
-//        assertThrows(DataIntegrityViolationException.class, () -> userService.addUser(new User("name2", "username2", "password2", "email2@gmail.com", "handle2")));
-
-        // Test username
-//        assertThrows(DataIntegrityViolationException.class, () -> userService.addUser(new User("name2", "username3", "password3", "email3@gmail.com", "handle3")));
-
-        // Test email
-//        User dup3 = userService.addUser(new User("name3", "username2", "password3", "email3@gmail.com", "handle3"));
-//        Assert.assertNull(dup3);
-
-        // Test handle
-//        User dup4 = userService.addUser(new User("name3", "username3", "password3", "email3@gmail.com", "handle2"));
-//        Assert.assertNull(dup4);
     }
 }

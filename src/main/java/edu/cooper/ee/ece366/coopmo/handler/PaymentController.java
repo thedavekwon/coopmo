@@ -31,6 +31,7 @@ public class PaymentController extends BaseController {
         String toUserId = createPaymentRequest.getToUserId();
         Long amount = createPaymentRequest.getAmount();
         String type = createPaymentRequest.getType();
+        String comment = createPaymentRequest.getComment();
 
         Message respMessage = new Message();
 
@@ -46,7 +47,7 @@ public class PaymentController extends BaseController {
             throw new BaseExceptionHandler.InValidFieldTypeException("Invalid Payment Type");
         }
 
-        Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
+        Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType, comment);
         respMessage.setData(newPayment);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
@@ -118,48 +119,38 @@ public class PaymentController extends BaseController {
     }
 
     public static class CreatePaymentRequest {
-        private String fromUserId;
-        private String toUserId;
-        private Long amount;
-        private String type;
+        private final String fromUserId;
+        private final String toUserId;
+        private final Long amount;
+        private final String type;
+        private final String comment;
 
-        public CreatePaymentRequest(String fromUserId, String toUserId, Long amount, String type) {
+        public CreatePaymentRequest(String fromUserId, String toUserId, Long amount, String type, String comment) {
             this.fromUserId = fromUserId;
             this.toUserId = toUserId;
             this.amount = amount;
             this.type = type;
+            this.comment = comment;
         }
 
         public String getFromUserId() {
             return fromUserId;
         }
 
-        public void setFromUserId(String fromUserId) {
-            this.fromUserId = fromUserId;
-        }
-
         public String getToUserId() {
             return toUserId;
-        }
-
-        public void setToUserId(String toUserId) {
-            this.toUserId = toUserId;
         }
 
         public Long getAmount() {
             return amount;
         }
 
-        public void setAmount(Long amount) {
-            this.amount = amount;
-        }
-
         public String getType() {
             return type;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        public String getComment() {
+            return comment;
         }
     }
 

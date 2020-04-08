@@ -21,10 +21,13 @@ public class Payment extends Transaction {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long amount;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
+    private String comment;
+
+    @Column(updatable = false, nullable = false)
     private PaymentType type;
 
     @Column(updatable = false, nullable = false)
@@ -49,11 +52,12 @@ public class Payment extends Transaction {
     public Payment() {
     }
 
-    public Payment(User fromUser, User toUser, long amount, PaymentType type) {
+    public Payment(User fromUser, User toUser, long amount, PaymentType type, String comment) {
         this.fromUser = fromUser;
         this.toUser = toUser;
         this.amount = amount;
         this.type = type;
+        this.comment = comment;
         timestamp = new Timestamp(System.currentTimeMillis());
         likes = new HashSet<>();
     }
@@ -68,6 +72,10 @@ public class Payment extends Transaction {
 
     public PaymentType getType() {
         return type;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public Timestamp getTimestamp() {

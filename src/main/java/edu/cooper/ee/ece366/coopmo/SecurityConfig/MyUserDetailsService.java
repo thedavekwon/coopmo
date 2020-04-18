@@ -25,21 +25,9 @@ public class MyUserDetailsService implements UserDetailsService {
     UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username, String password) throws UsernameNotFoundException {
-        userRepository.findByUsernameStartsWith(username);
-        Optional<User> user = getUserwithUsername(username, password);
-        return new MyUserDetails(user);
+    public MyUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsername(username);
+        user.orElseThrow(() -> new UsernameNotFoundException("Not Found: " + username));
+        return new MyUserDetails(user.get());
     }
-
-    public User getUserWithUsername(String username, String password) throws BaseExceptionHandler.InValidFieldValueException {
-        String userId = userRepository.getIdfromUsername(username);
-        if (userId == null) throw new BaseExceptionHandler.InValidFieldValueException("Invalid Username");
-
-        User curUser = checkValidUserId(userId);
-        if (!curUser.getPassword().equals(password)) {
-            throw new BaseExceptionHandler.InValidFieldValueException("Invalid Password");
-        }
-        return curUser;
-    }
-
 }

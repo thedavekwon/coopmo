@@ -77,4 +77,10 @@ public class BaseExceptionHandler {
             super("Friend request does not exist: " + message);
         }
     }
+
+    public static class FriendRequestAlreadyExistException extends Exception {
+        public FriendRequestAlreadyExistException(String message) {
+            super("Friend request already exists: " + message);
+        }
+    }
 }

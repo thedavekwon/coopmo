@@ -25,18 +25,19 @@ public class UserService {
     }
 
     @Transactional
-    public User addUser(User user) {
+    public User addUser(User user) throws InValidFieldValueException {
+        check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
         userRepository.save(user);
         return user;
     }
 
     public void check_if_taken(String username, String email, String handle) throws InValidFieldValueException {
         if (userRepository.containsUsername(username))
-            throw new InValidFieldValueException("Invalid Username");
+            throw new InValidFieldValueException("Username");
         if (userRepository.containsEmail(email))
-            throw new InValidFieldValueException("Invalid Email");
+            throw new InValidFieldValueException("Email");
         if (userRepository.containsHandle(handle))
-            throw new InValidFieldValueException("Invalid handle");
+            throw new InValidFieldValueException("Handle");
     }
 
     @Transactional
@@ -94,7 +95,6 @@ public class UserService {
         return errors;
     }
 
-    // 0 if success
     @Transactional
     public int cancelOutgoingFriendRequest(String userId, String friendId) throws InValidFieldValueException {
         User user = checkValidUserId(userId);
@@ -110,8 +110,7 @@ public class UserService {
     public int acceptIncomingRequest(String userId, String friendId) throws InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException {
         User user = checkValidUserId(userId);
         User friend = checkValidUserId(friendId, "Friend Id");
-        if (!acceptIncomingFriendRequest(user, friend))
-            throw new BaseExceptionHandler.FriendRequestDoesNotExistException(userId + " " + friendId);
+        acceptIncomingFriendRequest(user, friend);
         acceptedOutgoingFriendRequest(friend, user);
         userRepository.save(user);
         userRepository.save(friend);
@@ -119,10 +118,11 @@ public class UserService {
     }
 
     @Transactional
-    public int sendOutRequest(String userId, String friendId) throws InValidFieldValueException {
+    public int sendOutRequest(String userId, String friendId) throws InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         User user = checkValidUserId(userId);
         User friend = checkValidUserId(friendId, "Friend Id");
-        if (user.isOutgoingFriend(friend) || user.isFriend(friend)) return -2;
+        if (user.isOutgoingFriend(friend) || user.isFriend(friend))
+            throw new BaseExceptionHandler.FriendRequestAlreadyExistException("from " + userId + " to " + friendId);
         sendOutgoingFriendRequest(user, friend);
         receivedIncomingFriendRequest(friend, user);
         userRepository.save(user);
@@ -142,12 +142,12 @@ public class UserService {
     }
 
     @Transactional
-    public boolean acceptIncomingFriendRequest(User user, User friend) {
+    public boolean acceptIncomingFriendRequest(User user, User friend) throws BaseExceptionHandler.FriendRequestDoesNotExistException {
         if (user.removeIncomingFriendRequest(friend)) {
             addFriend(user, friend);
             return true;
         }
-        return false;
+        throw new BaseExceptionHandler.FriendRequestDoesNotExistException(user.getId() + " " + friend.getId());
     }
 
     @Transactional
@@ -169,7 +169,7 @@ public class UserService {
     }
 
     @Transactional
-    public void sendOutgoingFriendRequest(User user, User friend) {
+    public void sendOutgoingFriendRequest(User user, User friend) throws BaseExceptionHandler.FriendRequestDoesNotExistException {
         if (user.isFriend(friend)) {
         } else if (user.isIncomingFriend(friend)) {
             acceptIncomingFriendRequest(user, friend);
@@ -179,7 +179,7 @@ public class UserService {
     }
 
     @Transactional
-    public int sendOutRequestWithUsername(String username, String friendUsername) throws InValidFieldValueException {
+    public int sendOutRequestWithUsername(String username, String friendUsername) throws InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         String userId = userRepository.getIdfromUsername(username);
         String friendId = userRepository.getIdfromUsername(friendUsername);
         if (userId == null || friendId == null) {
@@ -250,7 +250,7 @@ public class UserService {
         else if (findUsersRequest.isUsername())
             return userRepository.findByUsernameStartsWith(findUsersRequest.getMatch());
         else if (findUsersRequest.isEmail())
-            return userRepository.findByUsernameStartsWith(findUsersRequest.getMatch());
+            return userRepository.findByEmailStartsWith(findUsersRequest.getMatch());
         return null;
     }
 

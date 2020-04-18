@@ -1,5 +1,5 @@
 # coopmo
-![Java CI](https://github.com/thedavekwon/coopmo/workflows/Java%20CI/badge.svg)
+![Coopmo Test (JAVA CI + MYSQL)](https://github.com/thedavekwon/coopmo/workflows/Coopmo%20Test%20(JAVA%20CI%20+%20MYSQL)/badge.svg)
 ## USAGE
 ```
 git clone https://github.com/thedavekwon/coopmo.git

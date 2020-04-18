@@ -27,4 +27,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, String>
     Set<User> findByUsernameStartsWith(String username_match);
 
     Set<User> findByHandleStartsWith(String handle_match);
+
+    Set<User> findByEmailStartsWith(String handle_match);
 }

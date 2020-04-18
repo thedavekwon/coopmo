@@ -250,7 +250,7 @@ public class UserController {
 
     @PostMapping(path = "/sendOutRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> sendOutRequest(
-            @RequestBody SendOutRequestRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException {
+            @RequestBody SendOutRequestRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         String userId = sendOutRequestRequest.getUserId();
         String friendId = sendOutRequestRequest.getFriendId();
 
@@ -273,7 +273,7 @@ public class UserController {
 
     @PostMapping(path = "/sendOutRequestWithUsername", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> sendOutRequestWithUsername(
-            @RequestBody SendOutRequestWithUsernameRequest sendOutRequestWithUsernameRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.AlreadyFriendsException {
+            @RequestBody SendOutRequestWithUsernameRequest sendOutRequestWithUsernameRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.AlreadyFriendsException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         String username = sendOutRequestWithUsernameRequest.getUsername();
         String friendUsername = sendOutRequestWithUsernameRequest.getFriendUsername();
 
@@ -617,7 +617,7 @@ public class UserController {
         private final String match;
         private final Type type;
 
-        FindUsersRequest(String match, Type type) {
+        public FindUsersRequest(String match, Type type) {
             this.match = match;
             this.type = type;
         }
@@ -638,7 +638,7 @@ public class UserController {
             return type == Type.HANDLE;
         }
 
-        private enum Type {
+        public enum Type {
             HANDLE, USERNAME, EMAIL
         }
     }

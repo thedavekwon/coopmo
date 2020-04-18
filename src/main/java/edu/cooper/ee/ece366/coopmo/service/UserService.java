@@ -76,7 +76,7 @@ public class UserService {
     // -3 Email already exists
     // -4 Handle already exists
     public ArrayList<Integer> editProfile(String userId, String newName, String newUsername, String newPassword,
-                                          String newEmail, String newHandle) throws InValidFieldValueException {
+                                          String newEmail, String newHandle) {
         ArrayList<Integer> errors = new ArrayList<>();
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
@@ -85,12 +85,24 @@ public class UserService {
             user.get().setName(newName);
             user.get().setPassword(newPassword);
             userRepository.save(user.get());
-            if (!editUsername(userId, newUsername))
+            try {
+                if (!editUsername(userId, newUsername))
+                    errors.add(-2);
+            } catch (Exception e) {
                 errors.add(-2);
-            if (!editEmail(userId, newEmail))
+            }
+            try {
+                if (!editEmail(userId, newEmail))
+                    errors.add(-3);
+            } catch (Exception e) {
                 errors.add(-3);
-            if (!editHandle(userId, newHandle))
+            }
+            try {
+                if (!editHandle(userId, newHandle))
+                    errors.add(-4);
+            } catch (Exception e) {
                 errors.add(-4);
+            }
         }
         return errors;
     }
@@ -178,39 +190,29 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public int sendOutRequestWithUsername(String username, String friendUsername) throws InValidFieldValueException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
-        String userId = userRepository.getIdfromUsername(username);
-        String friendId = userRepository.getIdfromUsername(friendUsername);
-        if (userId == null || friendId == null) {
-            return -1;
-        }
-        return sendOutRequest(userId, friendId);
+    public Long getUserBalance(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getBalance();
     }
 
-    public Long getUserBalance(String userId) {
-        Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getBalance).orElse(null);
+    public Set<User> getUserFriendSet(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getFriendSet();
     }
 
-    public Set<User> getUserFriendSet(String userId) {
-        Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getFriendSet).orElse(null);
+    public Set<User> getOutgoingFriendRequestSet(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getOutgoingFriendRequestSet();
     }
 
-    public Set<User> getOutgoingFriendRequestSet(String userId) {
-        Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getOutgoingFriendRequestSet).orElse(null);
+    public Set<User> getIncomingFriendRequestSet(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getIncomingFriendRequestSet();
     }
 
-    public Set<User> getIncomingFriendRequestSet(String userId) {
-        Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getIncomingFriendRequestSet).orElse(null);
-    }
-
-    public Set<BankAccount> getBankAccountSet(String userId) {
-        Optional<User> curUser = userRepository.findById(userId);
-        return curUser.map(User::getBankAccountSet).orElse(null);
+    public Set<BankAccount> getBankAccountSet(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getBankAccountSet();
     }
 
     // -1 is if either user not found

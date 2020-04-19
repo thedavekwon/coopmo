@@ -11,14 +11,7 @@ import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import io.mikael.urlbuilder.UrlBuilder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -29,31 +22,6 @@ import java.util.Set;
 public class CoopmoTest {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
-
-
-    public static void testSecurity() throws IOException, InterruptedException{
-        AuthenticationManager authenticationManager;
-        // Test: Checking Login
-        System.out.println("Creating One User");
-        String user1 = createUser("name1", "username1", "password1", "email1@gmail.com", "handle1");
-        if (user1 == null)
-            System.out.println("Creating a new User failed");
-        System.out.println("User1 ID: " + user1 + "\n");
-
-        String username = "username1";
-        String password = "password1";
-
-        try{
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            if(authentication.isAuthenticated()){
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("Successful Authentication");
-            }
-        }
-        catch (AuthenticationException e) {
-            System.out.println("Authentication Failed");
-        }
-    }
 
     public static void testFriends() throws IOException, InterruptedException {
         // Test: Creating two users
@@ -496,7 +464,7 @@ public class CoopmoTest {
                 .withPath("user/sendOutRequest")
                 .toUri();
 
-        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(userId, friendId);
+        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
@@ -570,7 +538,7 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("user/acceptIncomingRequest")
                 .toUri();
-        UserController.AcceptIncomingRequestRequest acceptIncomingRequestRequest = new UserController.AcceptIncomingRequestRequest(userId, friendId);
+        UserController.AcceptIncomingRequestRequest acceptIncomingRequestRequest = new UserController.AcceptIncomingRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(acceptIncomingRequestRequest)))
@@ -745,7 +713,7 @@ public class CoopmoTest {
                 .withPath("user/editProfile")
                 .toUri();
 
-        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(userId, newName, newUsername, newPassword, newEmail, newHandle);
+        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(newName, newUsername, newPassword, newEmail, newHandle);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(editProfileRequest)))
@@ -808,7 +776,7 @@ public class CoopmoTest {
                 .withPath("user/deleteFriend")
                 .toUri();
 
-        UserController.DeleteFriendRequest deleteFriendRequest = new UserController.DeleteFriendRequest(userId, friendId);
+        UserController.DeleteFriendRequest deleteFriendRequest = new UserController.DeleteFriendRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(deleteFriendRequest)))
@@ -834,7 +802,7 @@ public class CoopmoTest {
                 .addParameter("friendId", friendId)
                 .toUri();
 
-        UserController.CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest = new UserController.CancelOutgoingFriendRequestRequest(userId, friendId);
+        UserController.CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest = new UserController.CancelOutgoingFriendRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(cancelOutgoingFriendRequestRequest)))

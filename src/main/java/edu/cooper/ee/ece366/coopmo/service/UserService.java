@@ -7,6 +7,7 @@ import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -27,6 +31,7 @@ public class UserService {
     @Transactional
     public User addUser(User user) throws InValidFieldValueException {
         check_if_taken(user.getUsername(), user.getEmail(), user.getHandle());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
     }

@@ -143,7 +143,7 @@ public class UserService {
     }
 
     public User getUserWithUsername(String username, String password) throws InValidFieldValueException {
-        String userId = userRepository.getIdfromUsername(username);
+        String userId = userRepository.getIdFromUsername(username);
         if (userId == null) throw new InValidFieldValueException("Invalid Username");
 
         User curUser = checkValidUserId(userId);

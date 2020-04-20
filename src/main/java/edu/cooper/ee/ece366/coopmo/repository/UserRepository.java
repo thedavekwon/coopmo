@@ -11,7 +11,7 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<User, String> {
     @Query("SELECT u.id FROM User u WHERE u.username = :username")
-    String getIdfromUsername(String username);
+    String getIdFromUsername(String username);
 
     @Query("SELECT CASE WHEN count(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email AND u.deleted = FALSE")
     boolean containsEmail(String email);

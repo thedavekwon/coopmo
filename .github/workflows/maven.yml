@@ -14,12 +14,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Set up MySQL
-      uses: mirromutth/mysql-action@master
-      with:
-        mysql database: coopmo_db
-        mysql user: coopmo
-        mysql password: coopmopass
-
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Run Script
+      run: bash ./create.sh

@@ -1,6 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,13 +34,11 @@ public class Payment extends Transaction {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "fromUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "toUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User toUser;
 
@@ -80,6 +77,14 @@ public class Payment extends Transaction {
 
     public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    public User getFromUser() {
+        return fromUser;
+    }
+
+    public User getToUser() {
+        return toUser;
     }
 
     @JsonIgnore

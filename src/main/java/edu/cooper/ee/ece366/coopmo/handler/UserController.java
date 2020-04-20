@@ -40,6 +40,17 @@ public class UserController {
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
     }
 
+    @GetMapping("/yum")
+    public String home() {
+        return ("<h1>Welcome User</h1>");
+    }
+
+    @GetMapping("/")
+    public String role_user() {
+        return ("<h1>Welcome All</h1>");
+    }
+
+
     @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {

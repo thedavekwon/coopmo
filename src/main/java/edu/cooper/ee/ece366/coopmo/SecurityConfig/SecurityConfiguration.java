@@ -32,21 +32,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/user/**").authenticated()
+                .antMatchers("/transaction/**").authenticated()
+                .antMatchers("/pay/**").authenticated()
+                .antMatchers("/cash/**").authenticated()
+                .antMatchers("/bank/**").authenticated()
+                .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .defaultSuccessUrl("/user/yum")
                 .and()
                 .logout()
                 .deleteCookies("JSESSIONID");
+        http.sessionManagement().maximumSessions(1)
+                .and()
+                .sessionFixation().migrateSession();
 
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web
-                .ignoring()
-                .antMatchers("/user/createUser");
+        web.ignoring().antMatchers("/user/createUser");
     }
 
     @Bean

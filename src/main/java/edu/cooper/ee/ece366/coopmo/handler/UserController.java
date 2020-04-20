@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 
-
 // TODO (set all handler produce json and consumes json after converting)
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
@@ -62,9 +61,9 @@ public class UserController {
 
     @GetMapping(path = "/getUserFriendList")
     @ResponseBody
-    public ResponseEntity<?> getUserFriendList() {
+    public ResponseEntity<?> getUserFriendList() throws InValidFieldValueException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {
@@ -80,9 +79,9 @@ public class UserController {
 
     @GetMapping(path = "/getUserBankAccountList")
     @ResponseBody
-    public ResponseEntity<?> getUserBankAccountList() {
+    public ResponseEntity<?> getUserBankAccountList() throws InValidFieldValueException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {
@@ -99,9 +98,9 @@ public class UserController {
 
     @GetMapping(path = "/getUserIncomingFriendRequest")
     @ResponseBody
-    public ResponseEntity<?> getUserIncomingFriendRequest() {
+    public ResponseEntity<?> getUserIncomingFriendRequest() throws InValidFieldValueException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {
@@ -117,9 +116,9 @@ public class UserController {
 
     @GetMapping(path = "/getUserOutgoingFriendRequest")
     @ResponseBody
-    public ResponseEntity<?> getUserOutgoingFriendRequest() {
+    public ResponseEntity<?> getUserOutgoingFriendRequest() throws InValidFieldValueException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {
@@ -142,7 +141,7 @@ public class UserController {
     @GetMapping(path = "/getUserWithId")
     public User getUserWithId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -155,9 +154,9 @@ public class UserController {
 
     @GetMapping(path = "/getUserBalance")
     @ResponseBody
-    public ResponseEntity<?> getUserBalance() {
+    public ResponseEntity<?> getUserBalance() throws InValidFieldValueException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -175,9 +174,9 @@ public class UserController {
     @PostMapping(path = "/editProfile", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> editProfile(
             @RequestBody EditProfileRequest editProfileRequest
-    ) throws EmptyFieldException, InValidFieldValueException {
+    ) throws EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -217,41 +216,12 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/requestCashOut", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> requestCashOut(
-            @RequestBody RequestCashOutRequest requestCashOutRequest
-    ) throws EmptyFieldException, InValidFieldValueException {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
-
-        if (principal instanceof MyUserDetails) {
-            userId = ((MyUserDetails) principal).getId();
-        } else {
-            userId = principal.toString();
-        }
-
-        String bankId = requestCashOutRequest.getBankId();
-        long amount = requestCashOutRequest.getAmount();
-
-        Message respMessage = new Message();
-
-        if (bankId.equals("")) {
-            throw new EmptyFieldException("userId or bankId is empty");
-        }
-
-        if (amount < 0) {
-            throw new InValidFieldValueException("Can't request a negative value for cashOut");
-        }
-
-        return new ResponseEntity<>(respMessage, HttpStatus.OK);
-    }
-
 
     @PostMapping(path = "/acceptIncomingRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> acceptIncomingRequest(
             @RequestBody AcceptIncomingRequestRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.FriendRequestDoesNotExistException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -278,7 +248,7 @@ public class UserController {
     public ResponseEntity<?> sendOutRequest(
             @RequestBody SendOutRequestRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -308,7 +278,7 @@ public class UserController {
     public ResponseEntity<?> cancelOutgoingFriendRequest(
             @RequestBody CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -338,7 +308,7 @@ public class UserController {
     public ResponseEntity<?> declineFriendRequest(
             @RequestBody DeclineFriendRequestRequest declineFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
@@ -369,7 +339,7 @@ public class UserController {
     public ResponseEntity<?> deleteFriend(
             @RequestBody DeleteFriendRequest deleteFriendRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.UsersAreNotFriendsException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = "";
+        String userId;
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();

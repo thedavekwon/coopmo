@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -18,23 +19,25 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
+    private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private UserService userService;
 
     @BeforeEach
     void setup() {
+        passwordEncoder = mock(PasswordEncoder.class);
         userRepository = mock(UserRepository.class);
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, passwordEncoder);
     }
 
     @Test
     void addUser() throws BaseExceptionHandler.InValidFieldValueException {
         User user = new User("name1", "username1", "password1", "email1@gmail.com", "handle1");
         given(userService.addUser(user)).willReturn(user);
+        given(passwordEncoder.encode(user.getPassword())).willReturn(user.getPassword());
         User new_user = userService.addUser(user);
         Assert.assertEquals(new_user.getName(), "name1");
         Assert.assertEquals(new_user.getUsername(), "username1");
-        Assert.assertEquals(new_user.getPassword(), "password1");
         Assert.assertEquals(new_user.getEmail(), "email1@gmail.com");
         Assert.assertEquals(new_user.getHandle(), "handle1");
     }

@@ -66,3 +66,15 @@ a {
   font-family: 'Muli';
   src: url('.\\fonts\\Muli\\static\\Muli-Regular.ttf');
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(102, 0, 153, 1);
+}

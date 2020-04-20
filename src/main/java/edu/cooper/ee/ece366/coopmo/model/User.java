@@ -42,12 +42,12 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> fromPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "toUser", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;

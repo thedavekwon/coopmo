@@ -30,13 +30,11 @@ public class Payment extends Transaction {
     @OrderBy
     protected Timestamp timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference(value = "fromUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference(value = "toUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User toUser;
 
@@ -59,6 +57,10 @@ public class Payment extends Transaction {
     public long getAmount() {
         return amount;
     }
+
+    public User getFromUser() { return fromUser; }
+
+    public User getToUser() { return toUser; }
 
     public String getId() {
         return id;

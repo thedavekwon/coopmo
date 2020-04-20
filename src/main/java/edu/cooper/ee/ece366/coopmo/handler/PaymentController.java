@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;

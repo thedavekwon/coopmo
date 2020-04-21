@@ -83,14 +83,6 @@ public class Payment extends Transaction {
         return timestamp;
     }
 
-    public User getFromUser() {
-        return fromUser;
-    }
-
-    public User getToUser() {
-        return toUser;
-    }
-
     @JsonIgnore
     public Set<User> getLikes() {
         return likes;

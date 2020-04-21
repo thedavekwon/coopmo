@@ -10,7 +10,18 @@ export default class CDropdown extends PureComponent {
   };
   render() {
     let dropdown;
+    let content;
+
     if (this.props.dropType == "bank") {
+      if (this.props.bankAcctList != null) {
+        content = this.props.bankAcctList.map((e, key) => {
+          return (
+            <option value={e.id} key={key}>
+              {e.routingNumber}
+            </option>
+          );
+        });
+      }
       dropdown = (
         <select
           id="Bank Account"
@@ -18,16 +29,20 @@ export default class CDropdown extends PureComponent {
           onChange={this.handleChange}
           style={{ width: "100%", border: "none", outline: "none" }}
         >
-          {this.props.bankAcctList.map((e, key) => {
-            return (
-              <option value={e.id} key={key}>
-                {e.routingNumber}
-              </option>
-            );
-          })}
+          {content}
         </select>
       );
     } else if (this.props.dropType == "payment") {
+      if (this.props.paymentTypes != null) {
+        content = this.props.paymentTypes.map((e, key) => {
+          return (
+            <option value={e.val} key={key}>
+              {e.name}
+            </option>
+          );
+        });
+      }
+
       dropdown = (
         <select
           id="Payment type"
@@ -35,13 +50,7 @@ export default class CDropdown extends PureComponent {
           onChange={this.handleChange}
           style={{ width: "100%", border: "none", outline: "none" }}
         >
-          {this.props.paymentTypes.map((e, key) => {
-            return (
-              <option value={e.val} key={key}>
-                {e.name}
-              </option>
-            );
-          })}
+          {content}
         </select>
       );
     }

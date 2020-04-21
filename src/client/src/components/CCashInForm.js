@@ -72,7 +72,7 @@ export default class CCashInForm extends PureComponent {
             this.setState((state) => ({
               bankAcctList: result.data,
             }));
-            if (result.data.length != 0) {
+            if (result.data != null && result.data.length != 0) {
               var newRequest = this.state.request;
               newRequest.bankAccountId = result.data[0].id;
               this.setState((state) => ({

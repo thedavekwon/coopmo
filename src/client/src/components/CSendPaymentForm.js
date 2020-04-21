@@ -4,7 +4,7 @@ import CSingleButton from "./CSingleButton.js";
 import CInputwithanIcon from "./CInputwithanIcon.js";
 import CDropdown from "./CDropdown.js";
 
-export default class CSendPaymentForm extends PureComponent {
+export default class CSendPaymentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,7 +19,21 @@ export default class CSendPaymentForm extends PureComponent {
         type: "USERNAME",
       },
       users: [],
+
+      respMessage: {
+        messageType: "NONE",
+        message: "",
+      },
     };
+  }
+
+  setMessage(message, messageType) {
+    var newRespMessage = this.state.respMessage;
+    newRespMessage.message = message;
+    newRespMessage.messageType = messageType;
+    this.setState((state) => ({
+      respMessage: newRespMessage,
+    }));
   }
 
   handleInputChange = (key, value) => {
@@ -37,8 +51,9 @@ export default class CSendPaymentForm extends PureComponent {
       .then((res) => res.json())
       .then(
         (result) => {
+          console.log(result);
           if (result.error != null) {
-            console.log(result.error);
+            this.setMessage(result.error.message, "ERROR");
           } else {
             this.setState((state) => ({
               users: result.data,
@@ -46,12 +61,9 @@ export default class CSendPaymentForm extends PureComponent {
           }
         },
         (error) => {
-          console.log("error sending request");
+          this.setMessage("ERROR sending request", "ERROR");
         }
-      )
-      .then(() => {
-        console.log(this.state.users);
-      });
+      );
   };
 
   handleChange = (paymentType) => {
@@ -72,7 +84,12 @@ export default class CSendPaymentForm extends PureComponent {
 
   sendRequest = () => {
     var newRequest = this.state.request;
-    newRequest.toUserId = this.state.users[0].id;
+    if (this.state.users.length != 0)
+      newRequest.toUserId = this.state.users[0].id;
+    else {
+      this.setMessage("No User starting with that username found", "ERROR");
+      return;
+    }
     this.setState((state) => ({
       request: newRequest,
     }));
@@ -89,10 +106,13 @@ export default class CSendPaymentForm extends PureComponent {
         (result) => {
           if (result.error != null) {
             console.log(result.error);
+            this.setMessage(result.error.message, "ERROR");
+          } else {
+            this.setMessage("Successfully sent payment!", "SUCCESS");
           }
         },
         (error) => {
-          console.log("error sending request");
+          this.setMessage("ERROR sending request", "ERROR");
         }
       );
   };
@@ -192,6 +212,8 @@ export default class CSendPaymentForm extends PureComponent {
                 text="Submit"
                 onSub={this.sendRequest}
                 nodeId="35:320"
+                messageType={this.state.respMessage.messageType}
+                message={this.state.respMessage.message}
               />
             </div>
           </div>

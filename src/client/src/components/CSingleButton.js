@@ -1,19 +1,87 @@
 import React, { PureComponent } from "react";
 
-export default class CSingleButton extends PureComponent {
+export default class CSingleButton extends React.Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(event) {
+    console.log(this.state);
     this.props.onSub();
   }
 
   render() {
+    let message;
+    if (this.props.messageType == "ERROR") {
+      message = (
+        <div
+          style={{ zIndex: 3, alignItems: "center" }}
+          className="outerDiv centerer"
+        >
+          <div
+            id="I35:320;35:317"
+            style={{
+              width: "50%",
+              marginLeft: "5%",
+              height: 19,
+              color: "rgba(237, 75, 75, 1)",
+              fontSize: 16,
+              fontWeight: 600,
+              fontFamily: "Muli",
+              textAlign: "CENTER",
+              fontStyle: "normal",
+              lineHeight: "125%",
+              letterSpacing: "0px",
+            }}
+            className="innerDiv"
+            onClick={this.handleClick}
+          >
+            <div>
+              <span style={{}} key="end">
+                {this.props.message}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    } else if (this.props.messageType == "SUCCESS") {
+      message = (
+        <div
+          style={{ zIndex: 3, alignItems: "center" }}
+          className="outerDiv centerer"
+        >
+          <div
+            id="I35:320;35:317"
+            style={{
+              width: "50%",
+              marginLeft: "5%",
+              height: 19,
+              color: "rgba(255, 255, 255, 1)",
+              fontSize: 16,
+              fontWeight: 600,
+              fontFamily: "Muli",
+              textAlign: "CENTER",
+              fontStyle: "normal",
+              lineHeight: "125%",
+              letterSpacing: "0px",
+            }}
+            className="innerDiv"
+          >
+            <div>
+              <span style={{}} key="end">
+                {this.props.message}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="master" style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}>
         <div>
+          {message}
           <div style={{ alignItems: "center" }} className="outerDiv centerer">
             <div
               id="I35:320;35:315"

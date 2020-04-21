@@ -8,7 +8,7 @@ export default class CMainPage extends React.Component {
     super(props);
     this.state = {
       feedTab: "Me",
-      userId: "f784419d-c8de-4c29-bae2-c3a0d2abda3b",
+      userId: "0cf8d8f2-c631-4568-99b5-0773d93a6e78",
       balance: 0,
     };
     this.getBalance();

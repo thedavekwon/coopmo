@@ -31,7 +31,8 @@ export default class CFeed extends PureComponent {
                 height: "48px",
                 backgroundColor: "rgba(0, 0, 0, 0)",
               }}
-              className="innerDiv">
+              className="innerDiv"
+            >
               <div>
                 <div style={{}} className="outerDiv centerer">
                   <div
@@ -90,11 +91,16 @@ export default class CFeed extends PureComponent {
               </div>
             </div>
           </div>
-          <div style={{
-            position: "relative",
-            marginTop: 75
-          }}>
-            <CFeedList feedTab={this.state.feedTab} />
+          <div
+            style={{
+              position: "relative",
+              marginTop: 75,
+            }}
+          >
+            <CFeedList
+              feedTab={this.state.feedTab}
+              userId={this.props.userId}
+            />
           </div>
         </div>
       </div>

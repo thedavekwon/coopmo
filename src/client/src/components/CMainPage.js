@@ -64,11 +64,12 @@ export default class CMainPage extends React.Component {
               }}
               className="innerDiv"
             >
+              {/*
               <CFeed
                 {...this.props}
                 userId={this.state.userId}
                 nodeId="38:1057"
-              />
+              />*/}
             </div>
           </div>
           <div
@@ -234,7 +235,7 @@ export default class CMainPage extends React.Component {
                       }}
                       key="4"
                     >
-                      Balance : ${this.state.balance.toFixed(2) / 100}
+                      Balance : ${this.state.balance.toFixed(2) / 100.0}
                     </span>
                   </div>
                 </div>

@@ -1,7 +1,6 @@
 import React from "react";
 import CMenuButton from "./CMenuButton.js";
 import CFriendsList from "./CFriendsList.js";
-import CFeed from "./CFeed.js";
 
 export default class CMainPage extends React.Component {
   constructor(props) {
@@ -10,6 +9,7 @@ export default class CMainPage extends React.Component {
       feedTab: "Me",
       userId: "0cf8d8f2-c631-4568-99b5-0773d93a6e78",
       balance: 0,
+      domainName: this.props.domainName,
     };
     this.getBalance();
   }

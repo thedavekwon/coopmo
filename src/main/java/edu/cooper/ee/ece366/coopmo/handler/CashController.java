@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/cash", produces = "application/json")
 public class CashController extends BaseController {
     private final CashService cashService;

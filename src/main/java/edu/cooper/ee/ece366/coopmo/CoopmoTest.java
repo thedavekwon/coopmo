@@ -182,6 +182,14 @@ public class CoopmoTest {
         checkAcceptRequest(user5, user6);
     }
 
+    public static void sendRequests() throws IOException, InterruptedException {
+        String masterUser = createUser("m1", "m1", "m1", "m1@gmail.com", "m1");
+        for (int i = 2; i < 12; i++) {
+            String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
+            sendOutRequest(user, masterUser);
+        }
+    }
+
     public static void testPayment() throws IOException, InterruptedException {
         System.out.println("\nTest for different type of payment:\n----------------------------");
         System.out.println("user1, user2, user3, user4, and user5");
@@ -714,7 +722,7 @@ public class CoopmoTest {
                 .toUri();
 
         UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(userId, newName, newUsername, newPassword, newEmail, newHandle);
-
+        System.out.println(mapper.writeValueAsString(editProfileRequest));
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(editProfileRequest)))
                 .header("Content-Type", "application/json")

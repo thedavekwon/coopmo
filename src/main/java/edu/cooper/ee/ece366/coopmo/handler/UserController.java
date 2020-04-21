@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 
 // TODO (set all handler produce json and consumes json after converting)
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {

@@ -11,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/bank", produces = "application/json")
+@CrossOrigin
+@RequestMapping(path = "/bank", consumes = "application/json", produces = "application/json")
 public class BankAccountController extends BaseController {
     private final BankAccountService bankAccountService;
 

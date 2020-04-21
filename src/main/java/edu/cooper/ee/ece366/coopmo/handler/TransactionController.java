@@ -1,7 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 
-import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldTypeException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Transaction;
@@ -23,7 +22,7 @@ public class TransactionController extends BaseController {
     }
 
     @PostMapping("/likeTransaction")
-    public ResponseEntity<?> likePayment(@RequestBody LikePaymentRequest likePaymentRequest) throws InValidFieldTypeException, InValidFieldValueException, IllegalArgumentException, BaseExceptionHandler.EmptyFieldException {
+    public ResponseEntity<?> likePayment(@RequestBody LikePaymentRequest likePaymentRequest) throws InValidFieldValueException, IllegalArgumentException, BaseExceptionHandler.EmptyFieldException {
         String userId = likePaymentRequest.getUserId();
         String transactionId = likePaymentRequest.getTransactionId();
         String transactionType = likePaymentRequest.getTransactionType();
@@ -40,7 +39,7 @@ public class TransactionController extends BaseController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    public class LikePaymentRequest {
+    public static class LikePaymentRequest {
         private String userId;
         private String transactionId;
         private String transactionType;

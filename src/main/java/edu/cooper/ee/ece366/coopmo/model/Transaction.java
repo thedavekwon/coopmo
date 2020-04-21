@@ -10,4 +10,6 @@ public abstract class Transaction implements Comparable<Transaction> {
     public enum TransactionType {
         CASH, PAY
     }
+
+    public static final int AMOUNT = 20;
 }

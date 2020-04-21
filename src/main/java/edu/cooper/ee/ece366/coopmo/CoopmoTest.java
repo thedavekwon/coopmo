@@ -721,8 +721,8 @@ public class CoopmoTest {
                 .withPath("user/editProfile")
                 .toUri();
 
-        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(userId, newName, newUsername, newPassword, newEmail, newHandle);
-        System.out.println(mapper.writeValueAsString(editProfileRequest));
+        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(newName, newUsername, newPassword, newEmail, newHandle);
+
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(editProfileRequest)))
                 .header("Content-Type", "application/json")

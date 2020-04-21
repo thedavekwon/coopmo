@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 public class Cash extends Transaction {
     @Column(updatable = false, nullable = false)
     @OrderBy
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
     @Id
@@ -25,23 +27,23 @@ public class Cash extends Transaction {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private CashType type;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long amount;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "user")
     @JoinColumn
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference(value = "bankAccount")
     @JoinColumn
     private BankAccount bankAccount;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Set<User> likes;
 

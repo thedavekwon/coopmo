@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,14 +20,18 @@ public class Payment extends Transaction {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long amount;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
+    private String comment;
+
+    @Column(updatable = false, nullable = false)
     private PaymentType type;
 
     @Column(updatable = false, nullable = false)
     @OrderBy
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -38,18 +42,19 @@ public class Payment extends Transaction {
     @JoinColumn
     private User toUser;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Set<User> likes;
 
     public Payment() {
     }
 
-    public Payment(User fromUser, User toUser, long amount, PaymentType type) {
+    public Payment(User fromUser, User toUser, long amount, PaymentType type, String comment) {
         this.fromUser = fromUser;
         this.toUser = toUser;
         this.amount = amount;
         this.type = type;
+        this.comment = comment;
         timestamp = new Timestamp(System.currentTimeMillis());
         likes = new HashSet<>();
     }
@@ -70,8 +75,20 @@ public class Payment extends Transaction {
         return type;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
     public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    public User getFromUser() {
+        return fromUser;
+    }
+
+    public User getToUser() {
+        return toUser;
     }
 
     @JsonIgnore

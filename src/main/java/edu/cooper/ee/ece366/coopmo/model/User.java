@@ -52,27 +52,27 @@ public class User {
     @OrderBy("timestamp DESC")
     private Set<Payment> toPaymentSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
     private Set<Cash> cashSet;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     @JsonIgnore
     private Set<BankAccount> bankAccountSet;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> friendSet;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> outgoingFriendRequestSet;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable
     private Set<User> incomingFriendRequestSet;

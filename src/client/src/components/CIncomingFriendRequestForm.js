@@ -2,106 +2,105 @@ import React, { PureComponent } from "react";
 import { CFriendRequest } from "./CFriendRequest";
 
 export default class CMenuIncomingFriendRequests extends PureComponent {
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+      request: {},
+      incomingRequests: [],
+    };
+    this.getIncomingRequests();
+  }
+
+  getIncomingRequests = () => {
+    const path =
+      "http://localhost:8080/user/getUserIncomingFriendRequest?userId=" +
+      this.props.userId;
+    fetch(path, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          if (result.error != null) {
+            console.log(result.error);
+          } else {
+            this.setState((state) => ({
+              incomingRequests: result.data,
+            }));
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      )
+      .then(() => {
+        console.log(this.state.incomingRequests);
+      });
+  };
 
   render() {
-    return (
-      <form>
-        <div style={{ overflow: "auto" }}>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="35:300"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "19.53125%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Minh-Thai Nguyen"></CFriendRequest>
-            </div>
-          </div>
-          <div style={{ zIndex: 2 }} className="outerDiv centerer">
-            <div
-              id="35:280"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "31.25%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Shyam" />
-            </div>
-          </div>
-          <div style={{ zIndex: 3 }} className="outerDiv centerer">
-            <div
-              id="35:285"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "42.96875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Shyam" />
-            </div>
-          </div>
-          <div style={{ zIndex: 4 }} className="outerDiv centerer">
-            <div
-              id="35:290"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "54.6875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Shyam" />
-            </div>
-          </div>
-          <div style={{ zIndex: 5 }} className="outerDiv centerer">
-            <div
-              id="35:295"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "66.40625%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Shyam" />
-            </div>
-          </div>
+    let friendRequests;
+    if (this.state.incomingRequests != null) {
+      friendRequests = (
+        <form>
+          {this.state.incomingRequests.map((e, key) => {
+            return (
+              <div
+                style={{
+                  zIndex: key + 1,
+                }}
+                className="outerDiv centerer"
+              >
+                <div
+                  id="35:300"
+                  style={{
+                    width: "100%",
 
-          <div style={{ zIndex: 7 }} className="outerDiv centerer">
-            <div
-              id="35:320"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "78.1251%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-                overflow: "hidden",
-              }}
-              className="innerDiv"
-            >
-              <CFriendRequest name="Shyam" />
-            </div>
-          </div>
+                    height: (1 / 6) * 100 + "%",
+                    top: (key / 6) * 100 + "%",
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                  }}
+                  className="innerDiv"
+                >
+                  <CFriendRequest
+                    name={e.name}
+                    friendId={e.id}
+                    key={key}
+                    userId={this.props.userId}
+                  >
+                    {" "}
+                  </CFriendRequest>
+                </div>
+              </div>
+            );
+          })}
+        </form>
+      );
+    }
+    return (
+      <div
+        class="outerDiv centerer"
+        style={{
+          marginLeft: "37.986111111111114%",
+          width: "47.22222222222222%",
+          height: 11.71875 * 6 + "%",
+          top: "19.53125%",
+          zIndex: 9,
+        }}
+      >
+        <div
+          class="innerDiv centerer"
+          style={{
+            height: "100%",
+            width: "100%",
+            overflowY: "scroll",
+            scrollbarColor: "rgba(102, 0, 153, 1)",
+          }}
+        >
+          {friendRequests}
         </div>
-      </form>
+      </div>
     );
   }
 }

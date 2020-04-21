@@ -1,21 +1,54 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import CMenuButton from "./CMenuButton.js";
 import CFriendsList from "./CFriendsList.js";
-import AutoScale from "react-auto-scale";
 import CFeed from "./CFeed.js";
 
 export default class CMainPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { feedTab: "Me" };
+    this.state = {
+      feedTab: "Me",
+      userId: "f784419d-c8de-4c29-bae2-c3a0d2abda3b",
+      balance: 0,
+    };
+    this.getBalance();
   }
-  state = {};
+
+  getBalance = () => {
+    const path =
+      "http://localhost:8080/user/getUserBalance?userId=" + this.state.userId;
+    fetch(path, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          if (result.error != null) {
+            console.log(result.error);
+          } else {
+            this.setState((state) => ({
+              balance: result.data,
+            }));
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      );
+  };
+
+  componentDidMount() {
+    this.getBalance();
+  }
 
   render() {
     return (
       <div
         className="master"
-        style={{ backgroundColor: "rgba(255, 255, 255, 1)" }}
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 1)",
+        }}
       >
         <div>
           <div style={{}} className="outerDiv centerer">
@@ -31,10 +64,19 @@ export default class CMainPage extends React.Component {
               }}
               className="innerDiv"
             >
-              <CFeed {...this.props} nodeId="38:1057" />
+              <CFeed
+                {...this.props}
+                userId={this.state.userId}
+                nodeId="38:1057"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 1,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="38:1056"
               style={{
@@ -47,10 +89,19 @@ export default class CMainPage extends React.Component {
               }}
               className="innerDiv"
             >
-              <CFriendsList {...this.props} nodeId="38:1056" />
+              <CFriendsList
+                {...this.props}
+                userId={this.state.userId}
+                nodeId="38:1056"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 2 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 2,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="76:29"
               style={{
@@ -67,7 +118,6 @@ export default class CMainPage extends React.Component {
                   <div
                     id="I76:29;4:3"
                     style={{
-                      marginLeft: 0,
                       marginRight: 0,
                       flexGrow: 1,
                       marginTop: 0,
@@ -76,18 +126,23 @@ export default class CMainPage extends React.Component {
                     }}
                     className="innerDiv"
                   >
-                    <div></div>
+                    <div> </div>
                   </div>
                 </div>
-                <div style={{ zIndex: 1 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    flexGrow: 1,
+                    width: "10%",
+                    top: "25%",
+                    height: "50%",
+                    marginLeft: "2%",
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I76:29;30:174"
                     style={{
-                      marginLeft: 28,
-                      marginRight: "90%",
                       flexGrow: 1,
-                      marginTop: 28,
-                      marginBottom: 28,
                       backgroundColor: "rgba(102, 0, 153, 1)",
                     }}
                     className="innerDiv"
@@ -100,15 +155,19 @@ export default class CMainPage extends React.Component {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 2 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 2,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I76:29;97:225"
                     style={{
                       marginLeft: "40%",
                       marginRight: "40%",
                       flexGrow: 1,
-                      marginTop: 14,
-                      marginBottom: 28,
+                      top: "2%",
                       color: "rgba(0, 0, 0, 1)",
                       fontSize: 73,
                       fontWeight: 700,
@@ -145,6 +204,38 @@ export default class CMainPage extends React.Component {
                         mo
                       </span>
                     </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    zIndex: 3,
+                    width: "10%",
+                    top: "37%",
+                    height: "50%",
+                    marginLeft: "85%",
+                  }}
+                  className="outerDiv centerer"
+                >
+                  <div
+                    id="I76:29;30:174"
+                    style={{
+                      flexGrow: 1,
+                      backgroundColor: "rgba(102, 0, 153, 1)",
+                    }}
+                    className="innerDiv"
+                  >
+                    <span
+                      style={{
+                        fontSize: 24,
+                        fontStyle: "normal",
+                        lineHeight: "NaN%",
+                        letterSpacing: "undefinedpx",
+                        color: "rgba(255, 255, 255, 1)",
+                      }}
+                      key="4"
+                    >
+                      Balance : ${this.state.balance.toFixed(2) / 100}
+                    </span>
                   </div>
                 </div>
               </div>

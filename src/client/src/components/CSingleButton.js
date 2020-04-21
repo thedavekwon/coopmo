@@ -3,6 +3,11 @@ import React, { PureComponent } from "react";
 export default class CSingleButton extends PureComponent {
   constructor(props) {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(event) {
+    this.props.onSub();
   }
 
   render() {
@@ -34,6 +39,7 @@ export default class CSingleButton extends PureComponent {
                       borderRadius: "8px 8px 8px 8px",
                     }}
                     className="innerDiv"
+                    onClick={this.handleClick}
                   >
                     <div></div>
                   </div>
@@ -61,6 +67,7 @@ export default class CSingleButton extends PureComponent {
                 letterSpacing: "0px",
               }}
               className="innerDiv"
+              onClick={this.handleClick}
             >
               <div>
                 <span style={{}} key="end">
@@ -81,6 +88,7 @@ export default class CSingleButton extends PureComponent {
               id="I35:320;35:318"
               style={{ width: 16, marginLeft: "45%", height: 16, marginTop: 0 }}
               className="innerDiv"
+              onClick={this.handleClick}
             >
               <div
                 className="vector"

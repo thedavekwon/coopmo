@@ -10,7 +10,9 @@
     "react": "^16.13.1",
     "react-auto-scale": "^1.0.4",
     "react-dom": "^16.13.1",
+    "react-number-format": "^4.4.1",
     "react-scripts": "3.4.1",
+    "react-scroll-box": "^0.3.5",
     "reactstrap": "^8.4.1"
   },
   "scripts": {

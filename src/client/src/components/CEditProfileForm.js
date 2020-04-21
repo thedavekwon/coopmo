@@ -3,12 +3,53 @@ import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 
 export default class CEditProfileForm extends PureComponent {
-  state = {};
+  constructor(props) {
+    super(props);
+    //Test using a user id rn
+    this.state = {
+      userId: "2b905676-e74d-4747-81c6-9013f2ecb43e",
+      newName: "",
+      newUsername: "",
+      newPassword: "",
+      newEmail: "",
+      newHandle: "",
+    };
+  }
+
+  handleChange = (key, value) => {
+    this.setState((state) => ({ [key]: value }));
+  };
+
+  sendRequest = () => {
+    const path = "http://localhost:8080/user/editProfile";
+    fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state),
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          if (result.error != null) {
+            console.log(result.error);
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      );
+  };
+
   render() {
     return (
       <form>
         <div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 1,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:300"
               style={{
@@ -20,10 +61,21 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSimpleInput {...this.props} name="Name" nodeId="35:300" />
+              <CSimpleInput
+                {...this.props}
+                name="Name"
+                valKey="newName"
+                onInput={this.handleChange}
+                nodeId="35:300"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 2 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 2,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:280"
               style={{
@@ -35,10 +87,21 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSimpleInput {...this.props} name="Username" nodeId="35:280" />
+              <CSimpleInput
+                {...this.props}
+                name="Username"
+                valKey="newUsername"
+                onInput={this.handleChange}
+                nodeId="35:280"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 3 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 3,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:285"
               style={{
@@ -50,10 +113,21 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSimpleInput {...this.props} name="Password" nodeId="35:285" />
+              <CSimpleInput
+                {...this.props}
+                name="Password"
+                valKey="newPassword"
+                onInput={this.handleChange}
+                nodeId="35:285"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 4 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 4,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:290"
               style={{
@@ -65,10 +139,21 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSimpleInput {...this.props} name="Email" nodeId="35:290" />
+              <CSimpleInput
+                {...this.props}
+                name="Email"
+                valKey="newEmail"
+                onInput={this.handleChange}
+                nodeId="35:290"
+              />
             </div>
           </div>
-          <div style={{ zIndex: 5 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 5,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:295"
               style={{
@@ -80,11 +165,22 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSimpleInput {...this.props} name="Handle" nodeId="35:295" />
+              <CSimpleInput
+                {...this.props}
+                name="Handle"
+                valKey="newHandle"
+                onInput={this.handleChange}
+                nodeId="35:295"
+              />
             </div>
           </div>
 
-          <div style={{ zIndex: 7 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 7,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="35:320"
               style={{
@@ -97,7 +193,12 @@ export default class CEditProfileForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSingleButton {...this.props} text="Submit" nodeId="35:320" />
+              <CSingleButton
+                {...this.props}
+                text="Submit"
+                onSub={this.sendRequest}
+                nodeId="35:320"
+              />
             </div>
           </div>
         </div>

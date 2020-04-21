@@ -7,7 +7,85 @@ import CDropdown from "./CDropdown.js";
 export default class CCashInForm extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      bankAcctList: [],
+      request: {
+        userId: this.props.userId,
+        bankAccountId: "",
+        amount: 0,
+        type: "IN",
+      },
+    };
+    this.getBankAccounts();
   }
+
+  handleBankChange = (bankId) => {
+    var newRequest = this.state.request;
+    newRequest.bankAccountId = bankId;
+    this.setState((state) => ({
+      request: newRequest,
+    }));
+  };
+
+  handleAmtChange = (amount) => {
+    var newRequest = this.state.request;
+    newRequest.amount = parseInt(amount);
+    this.setState((state) => ({
+      request: newRequest,
+    }));
+  };
+  sendRequest = () => {
+    const path = "http://localhost:8080/cash/createCash";
+    console.log(this.state.request);
+    fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state.request),
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          if (result.error != null) {
+            console.log(result.error);
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      );
+  };
+
+  getBankAccounts = () => {
+    const path =
+      "http://localhost:8080/user/getUserBankAccountList?userId=" +
+      this.props.userId;
+    fetch(path, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          if (result.error != null) {
+            console.log(result.error);
+          } else {
+            this.setState((state) => ({
+              bankAcctList: result.data,
+            }));
+            if (result.data.length != 0) {
+              var newRequest = this.state.request;
+              newRequest.bankAccountId = result.data[0].id;
+              this.setState((state) => ({
+                request: newRequest,
+              }));
+            }
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      );
+  };
 
   render() {
     return (
@@ -27,9 +105,10 @@ export default class CCashInForm extends PureComponent {
             >
               <CDropdown
                 name="Bank Account to Withdraw From"
-                bankAcct1="bankAcct1"
-                bankAcct2="bankAcct2"
-                bankAcct3="bankAcct3"
+                bankAcctList={this.state.bankAcctList}
+                handleChange={this.handleBankChange}
+                dropType="bank"
+                request={this.state.request}
               />
             </div>
           </div>
@@ -45,7 +124,7 @@ export default class CCashInForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CInputwithanIcon name="Amount to Withdraw" />
+              <CInputwithanIcon onInput name="Amount to Withdraw" />
             </div>
           </div>
           <div style={{ zIndex: 3 }} className="outerDiv centerer">
@@ -60,7 +139,12 @@ export default class CCashInForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSingleButton {...this.props} text="Submit" nodeId="35:320" />
+              <CSingleButton
+                {...this.props}
+                text="Submit"
+                onSub={this.sendRequest}
+                nodeId="35:320"
+              />
             </div>
           </div>
         </div>

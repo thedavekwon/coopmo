@@ -3,6 +3,11 @@ import React, { PureComponent } from "react";
 export default class CInputwithanIcon extends PureComponent {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    this.props.onInput(this.props.valKey, event.target.value);
   }
   render() {
     return (
@@ -12,11 +17,11 @@ export default class CInputwithanIcon extends PureComponent {
             <div
               id="I35:280;35:276"
               style={{
-                marginLeft: 32,
-                marginRight: 32,
+                marginLeft: "3%",
+                width: "94%",
                 flexGrow: 1,
-                marginTop: 48,
-                marginBottom: 24,
+                height: "40%",
+                top: "40%",
                 backgroundColor: "rgba(0, 0, 0, 0)",
               }}
               className="innerDiv"
@@ -45,11 +50,10 @@ export default class CInputwithanIcon extends PureComponent {
             <div
               id="I35:280;35:278"
               style={{
-                marginLeft: 32,
-                marginRight: 32,
-                flexGrow: 1,
-                marginTop: 20,
-                marginBottom: 77,
+                marginLeft: "3%",
+                width: "100%",
+                height: 22,
+                top: "16%",
                 color: "rgba(38, 38, 38, 1)",
                 fontSize: 18,
                 fontWeight: 700,
@@ -73,18 +77,19 @@ export default class CInputwithanIcon extends PureComponent {
           <div
             id="I35:280;35:275"
             style={{
-              marginLeft: 64,
-              marginRight: 44,
+              marginLeft: "7%",
+              marginRight: "3%",
               flexGrow: 1,
-              marginTop: 58,
-              marginBottom: 34,
+              height: "33%",
+              top: "50%",
+              width: "100%",
               color: "rgba(38, 38, 38, 1)",
               fontSize: 16,
               fontWeight: 400,
               fontFamily: "Muli",
               textAlign: "LEFT",
               fontStyle: "normal",
-              lineHeight: "181.43999099731445%",
+              lineHeight: "175%",
               letterSpacing: "0px",
             }}
             className="innerDiv"
@@ -96,6 +101,7 @@ export default class CInputwithanIcon extends PureComponent {
                   id={this.props.name}
                   name={this.props.name}
                   style={{ width: "100%" }}
+                  onChange={this.handleChange}
                 ></input>
               </span>
 
@@ -105,13 +111,17 @@ export default class CInputwithanIcon extends PureComponent {
           <div
             style={{
               zIndex: 2,
-              alignItems: "center",
             }}
             className="outerDiv centerer"
           >
             <div
               id="38:1035"
-              style={{ width: 16, marginLeft: 48, height: 16, marginTop: 26 }}
+              style={{
+                width: 16,
+                marginLeft: "5%",
+                height: 16,
+                top: "54%",
+              }}
               className="innerDiv"
             >
               <div

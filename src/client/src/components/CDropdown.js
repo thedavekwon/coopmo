@@ -4,40 +4,60 @@ export default class CDropdown extends PureComponent {
   constructor(props) {
     super(props);
   }
-  state = {};
 
+  handleChange = (event) => {
+    this.props.handleChange(event.target.value);
+  };
   render() {
-    let bankAcct1 = this.props.bankAcct1;
-    let bankAcct2 = this.props.bankAcct2;
-    let bankAcct3 = this.props.bankAcct3;
-
-    let dropdown = (
-      <select
-        id="Bank Account"
-        name="Bank Account"
-        style={{ width: "100%", border: "none", outline: "none" }}
-      >
-        <option value={bankAcct1}> {bankAcct1}</option>
-        <option value={bankAcct2}> {bankAcct2}</option>
-        <option value={bankAcct3}> {bankAcct3}</option>
-      </select>
-    );
+    let dropdown;
+    if (this.props.dropType == "bank") {
+      dropdown = (
+        <select
+          id="Bank Account"
+          name="Bank Account"
+          onChange={this.handleChange}
+          style={{ width: "100%", border: "none", outline: "none" }}
+        >
+          {this.props.bankAcctList.map((e, key) => {
+            return (
+              <option value={e.id} key={key}>
+                {e.routingNumber}
+              </option>
+            );
+          })}
+        </select>
+      );
+    } else if (this.props.dropType == "payment") {
+      dropdown = (
+        <select
+          id="Payment type"
+          name="Payment Type"
+          onChange={this.handleChange}
+          style={{ width: "100%", border: "none", outline: "none" }}
+        >
+          {this.props.paymentTypes.map((e, key) => {
+            return (
+              <option value={e.val} key={key}>
+                {e.name}
+              </option>
+            );
+          })}
+        </select>
+      );
+    }
 
     return (
       <div className="master" style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}>
         <div>
-          <div
-            style={{ alignItems: "center", zIndex: 4 }}
-            className="outerDiv centerer"
-          >
+          <div style={{ zIndex: 4 }} className="outerDiv centerer">
             <div
               id="38:1017"
               style={{
-                marginLeft: 48,
-                marginRight: 72,
+                marginLeft: "5%",
+                marginRight: "3%",
                 flexGrow: 1,
-                height: 28,
-                marginTop: 24,
+                height: "33%",
+                top: "50%",
                 width: "100%",
                 color: "rgba(38, 38, 38, 1)",
                 fontSize: 16,
@@ -57,26 +77,15 @@ export default class CDropdown extends PureComponent {
               </div>
             </div>
           </div>
-          <div
-            style={{
-              zIndex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            className="outerDiv centerer"
-          ></div>
-          <div
-            style={{ zIndex: 2, alignItems: "center" }}
-            className="outerDiv centerer"
-          >
+          <div style={{ zIndex: 2 }} className="outerDiv centerer">
             <div
               id="38:1020"
               style={{
-                marginLeft: 32,
-                marginRight: 32,
+                marginLeft: "3%",
+                width: "94%",
                 flexGrow: 1,
-                height: 48,
-                marginTop: 24,
+                height: "40%",
+                top: "40%",
                 backgroundColor: "rgba(0, 0, 0, 0)",
               }}
               className="innerDiv"
@@ -101,17 +110,14 @@ export default class CDropdown extends PureComponent {
               </div>
             </div>
           </div>
-          <div
-            style={{ zIndex: 3, alignItems: "center" }}
-            className="outerDiv centerer"
-          >
+          <div style={{ zIndex: 3 }} className="outerDiv centerer">
             <div
               id="38:1022"
               style={{
-                marginLeft: 32,
+                marginLeft: "3%",
                 width: "100%",
                 height: 22,
-                marginTop: -58,
+                top: "16%",
                 color: "rgba(38, 38, 38, 1)",
                 fontSize: 18,
                 fontWeight: 700,

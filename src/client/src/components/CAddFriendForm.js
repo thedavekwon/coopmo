@@ -5,7 +5,37 @@ import CSingleButton from "./CSingleButton.js";
 export default class CAddFriendForm extends PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      username: this.props.username,
+      friendUsername: "",
+    };
   }
+
+  handleChange = (key, value) => {
+    this.setState((state) => ({ [key]: value }));
+  };
+
+  sendRequest = () => {
+    console.log(this.state);
+    const path = "http://localhost:8080/user/sendOutRequestWithUsername";
+    fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state),
+    })
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          if (result.error != null) {
+            console.log(result.error);
+          }
+        },
+        (error) => {
+          console.log("error sending request");
+        }
+      );
+  };
+
   render() {
     return (
       <form>
@@ -25,6 +55,8 @@ export default class CAddFriendForm extends PureComponent {
               <CSimpleInput
                 {...this.props}
                 name="Friend's Username"
+                valKey="friendUsername"
+                onInput={this.handleChange}
                 nodeId="35:300"
               />
             </div>
@@ -41,7 +73,10 @@ export default class CAddFriendForm extends PureComponent {
               }}
               className="innerDiv"
             >
-              <CSingleButton text="Send Friend Request" />
+              <CSingleButton
+                text="Send Friend Request"
+                onSub={this.sendRequest}
+              />
             </div>
           </div>
         </div>

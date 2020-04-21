@@ -1,8 +1,6 @@
-import CSimpleInput from "./CSimpleInput.js";
+import React, { PureComponent } from "react";
 import CMenuButton from "./CMenuButton.js";
 import CMenuButtonDefault from "./CMenuButtonDefault.js";
-import CSingleButton from "./CSingleButton.js";
-import React, { PureComponent } from "react";
 import CEditProfileForm from "./CEditProfileForm.js";
 import CAddFriendForm from "./CAddFriendForm.js";
 import CIncomingFriendRequestForm from "./CIncomingFriendRequestForm.js";
@@ -13,7 +11,10 @@ import CSendPaymentForm from "./CSendPaymentForm.js";
 export default class CMenuPage extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = { activePage: "Edit Profile" };
+    this.state = {
+      activePage: "Edit Profile",
+      userId: "aef94233-897d-429e-ae12-3195e11d2e57",
+    };
     this.changePage = this.changePage.bind(this);
   }
 
@@ -28,19 +29,24 @@ export default class CMenuPage extends PureComponent {
     if (this.state.activePage == "Edit Profile")
       formPage = <CEditProfileForm />;
     else if (this.state.activePage == "Add Friend")
-      formPage = <CAddFriendForm />;
+      formPage = <CAddFriendForm username="asd" />;
     else if (this.state.activePage == "Incoming Friend Requests")
-      formPage = <CIncomingFriendRequestForm />;
-    else if (this.state.activePage == "Change Bank Accounts")
-      formPage = <CChangeBankAccounts />;
-    else if (this.state.activePage == "Cash In") formPage = <CCashInForm />;
+      formPage = (
+        <CIncomingFriendRequestForm userId="df3f1afb-f80e-4bfb-9fa3-00932b71153c" />
+      );
+    else if (this.state.activePage == "Add a Bank Account")
+      formPage = <CChangeBankAccounts userId={this.state.userId} />;
+    else if (this.state.activePage == "Cash In")
+      formPage = <CCashInForm userId={this.state.userId} />;
     else if (this.state.activePage == "Send Payment")
-      formPage = <CSendPaymentForm />;
+      formPage = <CSendPaymentForm userId={this.state.userId} />;
     else formPage = <CEditProfileForm />;
     return (
       <div
         className="master"
-        style={{ backgroundColor: "rgba(255, 255, 255, 1)" }}
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 1)",
+        }}
       >
         <div>
           <div style={{}} className="outerDiv centerer">
@@ -60,7 +66,6 @@ export default class CMenuPage extends PureComponent {
                   <div
                     id="I254:861;30:387"
                     style={{
-                      marginLeft: 0,
                       marginRight: 0,
                       flexGrow: 1,
                       marginTop: 0,
@@ -77,11 +82,15 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 1 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 1,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:389"
                     style={{
-                      marginLeft: 0,
                       marginRight: 0,
                       flexGrow: 1,
                       top: "14.2857%",
@@ -99,7 +108,12 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 2 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 2,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:391"
                     style={{
@@ -121,7 +135,12 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 3 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 3,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:393"
                     style={{
@@ -133,17 +152,22 @@ export default class CMenuPage extends PureComponent {
                       backgroundColor: "rgba(0, 0, 0, 0)",
                     }}
                     className="innerDiv"
-                    onClick={() => this.changePage("Change Bank Accounts")}
+                    onClick={() => this.changePage("Add a Bank Account")}
                   >
                     <CMenuButtonDefault
                       {...this.props}
-                      name="Change Bank Accounts"
+                      name="Add a Bank Account"
                       nodeId="I254:861;30:393"
                       active={this.state.activePage}
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 4 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 4,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:395"
                     style={{
@@ -165,7 +189,12 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 5 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 5,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:397"
                     style={{
@@ -187,7 +216,12 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 6 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 6,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I254:861;30:399"
                     style={{
@@ -212,7 +246,12 @@ export default class CMenuPage extends PureComponent {
               </div>
             </div>
           </div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 1,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="30:446"
               style={{
@@ -224,11 +263,16 @@ export default class CMenuPage extends PureComponent {
               }}
               className="innerDiv"
             >
-              <div></div>
+              <div> </div>
             </div>
           </div>
           {formPage}
-          <div style={{ zIndex: 8 }} className="outerDiv centerer">
+          <div
+            style={{
+              zIndex: 8,
+            }}
+            className="outerDiv centerer"
+          >
             <div
               id="76:47"
               style={{
@@ -254,18 +298,23 @@ export default class CMenuPage extends PureComponent {
                     }}
                     className="innerDiv"
                   >
-                    <div></div>
+                    <div> </div>
                   </div>
                 </div>
-                <div style={{ zIndex: 1 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    flexGrow: 1,
+                    width: "10%",
+                    top: "25%",
+                    height: "50%",
+                    marginLeft: "2%",
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I76:47;76:21"
                     style={{
-                      marginLeft: 28,
-                      marginRight: "90%",
                       flexGrow: 1,
-                      marginTop: 28,
-                      marginBottom: 28,
                       backgroundColor: "rgba(0, 0, 0, 1)",
                     }}
                     className="innerDiv"
@@ -278,15 +327,19 @@ export default class CMenuPage extends PureComponent {
                     />
                   </div>
                 </div>
-                <div style={{ zIndex: 2 }} className="outerDiv centerer">
+                <div
+                  style={{
+                    zIndex: 2,
+                  }}
+                  className="outerDiv centerer"
+                >
                   <div
                     id="I76:29;97:225"
                     style={{
                       marginLeft: "40%",
                       marginRight: "40%",
                       flexGrow: 1,
-                      marginTop: 14,
-                      marginBottom: 28,
+                      top: "2%",
                       color: "rgba(0, 0, 0, 1)",
                       fontSize: 73,
                       fontWeight: 700,

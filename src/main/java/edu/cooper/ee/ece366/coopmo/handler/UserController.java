@@ -60,6 +60,7 @@ public class UserController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
+
     @GetMapping(path = "/getUserFriendList")
     @ResponseBody
     public ResponseEntity<?> getUserFriendList() throws InValidFieldValueException {
@@ -594,3 +595,5 @@ public class UserController {
         }
     }
 }
+
+

@@ -67,8 +67,13 @@ public class BankAccountController extends BaseController {
         private final Long routingNumber;
         private final Long balance;
 
-        public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {
-            this.userId = userId;
+        public CreateBankAccountRequest(Long routingNumber, Long balance) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof MyUserDetails) {
+                userId = ((MyUserDetails) principal).getId();
+            } else {
+                userId = principal.toString();
+            }
             this.routingNumber = routingNumber;
             this.balance = balance;
         }

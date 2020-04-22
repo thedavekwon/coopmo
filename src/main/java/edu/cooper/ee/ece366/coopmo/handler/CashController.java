@@ -28,13 +28,11 @@ public class CashController extends BaseController {
             throws BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
-
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {
             userId = principal.toString();
         }
-
         String bankAccountId = createCashRequest.getBankAccountId();
         Long amount = createCashRequest.getAmount();
         String type = createCashRequest.getType();
@@ -58,24 +56,14 @@ public class CashController extends BaseController {
     }
 
     public static class CreateCashRequest {
-        private String userId;
         private String bankAccountId;
         private Long amount;
         private String type;
 
-        public CreateCashRequest(String userId, String bankAccountId, Long amount, String type) {
-            this.userId = userId;
+        public CreateCashRequest(String bankAccountId, Long amount, String type) {
             this.bankAccountId = bankAccountId;
             this.amount = amount;
             this.type = type;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
         }
 
         public String getBankAccountId() {

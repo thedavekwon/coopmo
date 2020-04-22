@@ -597,7 +597,7 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("bank/createBankAccount")
                 .toUri();
-        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(userId, routingNumber, balance);
+        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(routingNumber, balance);
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createBankAccountRequest)))
                 .header("Content-Type", "application/json")
@@ -647,7 +647,7 @@ public class CoopmoTest {
                 .withPath("cash/createCash")
                 .toUri();
 
-        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(userId, bankAccount.getId(), amount, type);
+        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(bankAccount.getId(), amount, type);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createCashRequest)))
@@ -673,7 +673,7 @@ public class CoopmoTest {
                 .withPath("pay/createPayment")
                 .toUri();
 
-        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(fromUserId, toUserId, amount, type, comment);
+        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(toUserId, amount, type, comment);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createPaymentRequest)))

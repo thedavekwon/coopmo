@@ -40,7 +40,12 @@ export default class CEditProfileForm extends React.Component {
         const path = this.props.domainName + "/user/editProfile";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())

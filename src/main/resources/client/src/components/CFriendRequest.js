@@ -17,7 +17,12 @@ export class CFriendRequest extends React.Component {
         const path = this.props.domainName + "/user/acceptIncomingRequest";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())
@@ -41,9 +46,10 @@ export class CFriendRequest extends React.Component {
   declineRequest = () => {
       const path = this.props.domainName + "/user/declineFriendRequest";
     fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state.request),
+        method: "POST",
+        headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
+        credentials: 'include',
+        body: JSON.stringify(this.state.request),
     })
       .then((res) => res.json())
       .then(

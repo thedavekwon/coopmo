@@ -1,6 +1,8 @@
 import React, {PureComponent} from "react";
+import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
+import CMainPage from "./CMainPage.js";
 
 export default class CLoginPage extends PureComponent {
     constructor(props) {
@@ -51,7 +53,7 @@ export default class CLoginPage extends PureComponent {
             })
             .then(
                 (result) => {
-                    console.log(result);
+                    ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.body);
                 },
                 (error) => {
                     console.log(error)

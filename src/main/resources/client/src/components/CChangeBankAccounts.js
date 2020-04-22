@@ -7,7 +7,6 @@ export default class CChangeBankAccounts extends React.Component {
         super(props);
         this.state = {
             request: {
-                userId: this.props.userId,
                 routingNumber: 0,
                 balance: 1000,
             },
@@ -37,7 +36,12 @@ export default class CChangeBankAccounts extends React.Component {
         const path = this.props.domainName + "/bank/createBankAccount";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())

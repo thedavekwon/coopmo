@@ -34,7 +34,7 @@ export default class CDropdown extends React.Component {
                                 letterSpacing: "0px",
                                 overflowY: "visible",
                             }}
-                            className="dropdown"
+                            className="innerDiv"
                         >
                             <div>
                 <span style={{}} key="end">

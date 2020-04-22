@@ -7,7 +7,6 @@ export default class CAddFriendForm extends React.Component {
         super(props);
         this.state = {
             request: {
-                userId: this.props.userId,
                 friendId: "",
             },
             findUserRequest: {
@@ -23,6 +22,7 @@ export default class CAddFriendForm extends React.Component {
     }
 
     handleInputChange = (value) => {
+
         var newRequest = this.state.findUserRequest;
         newRequest.match = value;
         this.setState((state) => ({
@@ -31,7 +31,12 @@ export default class CAddFriendForm extends React.Component {
         const findUserPath = this.props.domainName + "/user/findUsers";
         fetch(findUserPath, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
             body: JSON.stringify(this.state.findUserRequest),
         })
             .then((res) => res.json())
@@ -73,7 +78,12 @@ export default class CAddFriendForm extends React.Component {
         const path = this.props.domainName + "/user/sendOutRequest";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())

@@ -9,9 +9,8 @@ export default class CCashInForm extends React.Component {
         this.state = {
             bankAcctList: [],
             request: {
-                userId: this.props.userId,
                 bankAccountId: "",
-                amount: 0,
+                amount: "",
                 type: "IN",
             },
             respMessage: {
@@ -39,9 +38,9 @@ export default class CCashInForm extends React.Component {
         }));
     };
 
-    handleAmtChange = (amount) => {
+    handleAmtChange = (key, amount) => {
         var newRequest = this.state.request;
-        newRequest.amount = parseInt(amount);
+        newRequest.amount = amount;
         this.setState((state) => ({
             request: newRequest,
         }));
@@ -50,9 +49,10 @@ export default class CCashInForm extends React.Component {
         const path = this.props.domainName + "/cash/createCash";
     console.log(this.state.request);
     fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state.request),
+        method: "POST",
+        headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
+        credentials: 'include',
+        body: JSON.stringify(this.state.request),
     })
       .then((res) => res.json())
       .then(
@@ -72,10 +72,11 @@ export default class CCashInForm extends React.Component {
 
   getBankAccounts = () => {
       const path =
-          this.props.domainName + "/user/getUserBankAccountList?userId=" +
-          this.props.userId;
+          this.props.domainName + "/user/getUserBankAccountList"
     fetch(path, {
-      method: "GET",
+        method: "GET",
+        headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+        credentials: 'include'
     })
       .then((res) => res.json())
       .then(
@@ -141,7 +142,7 @@ export default class CCashInForm extends React.Component {
               }}
               className="innerDiv"
             >
-              <CInputwithanIcon onInput name="Amount to Withdraw" />
+                <CInputwithanIcon onInput={this.handleAmtChange} valKey="amount" name="Amount to Withdraw"/>
             </div>
           </div>
           <div style={{ zIndex: 3 }} className="outerDiv centerer">

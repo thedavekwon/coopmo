@@ -11,10 +11,11 @@ export default class CFriendsList extends React.Component {
 
     getFriendsList = () => {
         const path =
-            this.props.domainName + "/user/getUserFriendList?userId=" +
-            this.props.userId;
+            this.props.domainName + "/user/getUserFriendList"
         fetch(path, {
             method: "GET",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
         })
             .then((res) => res.json())
             .then(

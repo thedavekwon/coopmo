@@ -13,7 +13,6 @@ export default class CMenuPage extends PureComponent {
     super(props);
     this.state = {
       activePage: "Edit Profile",
-      userId: "aef94233-897d-429e-ae12-3195e11d2e57",
     };
     this.changePage = this.changePage.bind(this);
   }
@@ -29,17 +28,17 @@ export default class CMenuPage extends PureComponent {
     if (this.state.activePage == "Edit Profile")
       formPage = <CEditProfileForm domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Add Friend")
-        formPage = <CAddFriendForm username="asd" domainName={this.props.domainName}/>;
+        formPage = <CAddFriendForm domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Incoming Friend Requests")
       formPage = (
-          <CIncomingFriendRequestForm userId="df3f1afb-f80e-4bfb-9fa3-00932b71153c" domainName={this.props.domainName}/>
+          <CIncomingFriendRequestForm domainName={this.props.domainName}/>
       );
     else if (this.state.activePage == "Add a Bank Account")
-        formPage = <CChangeBankAccounts userId={this.state.userId} domainName={this.props.domainName}/>;
+        formPage = <CChangeBankAccounts domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Cash In")
-        formPage = <CCashInForm userId={this.state.userId} domainName={this.props.domainName}/>;
+        formPage = <CCashInForm domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Send Payment")
-        formPage = <CSendPaymentForm userId={this.state.userId} domainName={this.props.domainName}/>;
+        formPage = <CSendPaymentForm domainName={this.props.domainName}/>;
     else formPage = <CEditProfileForm />;
     return (
       <div

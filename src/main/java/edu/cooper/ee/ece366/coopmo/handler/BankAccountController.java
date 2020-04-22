@@ -21,12 +21,13 @@ public class BankAccountController extends BaseController {
         this.bankAccountService = bankAccountService;
     }
 
-    @PostMapping("createBankAccount")
+    @PostMapping("/createBankAccount")
     public ResponseEntity<?> createBankAccount(@RequestBody CreateBankAccountRequest bankAccountRequest) throws InValidFieldValueException, EmptyFieldException {
         if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
-
-        if (bankAccountRequest.getUserId().isEmpty() || bankAccountRequest.getBalance() < 0)
+        if (bankAccountRequest.getUserId().isEmpty())
+            throw new EmptyFieldException("Empty Field");
+        if (bankAccountRequest.getBalance() == null)
             throw new EmptyFieldException("Empty Field");
 
         Message respMessage = new Message();
@@ -35,7 +36,7 @@ public class BankAccountController extends BaseController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    @PostMapping("getBankAccountBalance")
+    @PostMapping("/getBankAccountBalance")
     public ResponseEntity<?> getBankAccountBalance(@RequestBody String bankAccountId) throws EmptyFieldException, InValidFieldValueException {
         if (bankAccountId.isEmpty())
             throw new EmptyFieldException("Empty Bank Account Id");

@@ -14,10 +14,11 @@ export default class CMenuIncomingFriendRequests extends React.Component {
 
     getIncomingRequests = () => {
         const path =
-            this.props.domainName + "/user/getUserIncomingFriendRequest?userId=" +
-            this.props.userId;
+            this.props.domainName + "/user/getUserIncomingFriendRequest"
         fetch(path, {
             method: "GET",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
         })
             .then((res) => res.json())
             .then(

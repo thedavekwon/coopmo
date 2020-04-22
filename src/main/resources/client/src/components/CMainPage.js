@@ -1,23 +1,24 @@
 import React from "react";
 import CMenuButton from "./CMenuButton.js";
 import CFriendsList from "./CFriendsList.js";
+import CFeed from "./CFeed.js"
 
 export default class CMainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       feedTab: "Me",
-      userId: "0cf8d8f2-c631-4568-99b5-0773d93a6e78",
       balance: 0,
     };
-    this.getBalance();
   }
 
   getBalance = () => {
-    const path =
-        this.props.domainName + "/user/getUserBalance?userId=" + this.state.userId;
+      const path =
+          this.props.domainName + "/user/getUserBalance";
     fetch(path, {
-      method: "GET",
+        method: "GET",
+        headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+        credentials: 'include'
     })
       .then((res) => res.json())
       .then(
@@ -54,22 +55,21 @@ export default class CMainPage extends React.Component {
             <div
               id="38:1057"
               style={{
-                width: "55.208333333333336%",
-                marginLeft: "7.692311604817708%",
-                marginTop: 197.284423828125,
-                marginBottom: 11.715576171875,
-                backgroundColor: "rgba(0, 0, 0, 0)",
-                overflow: "hidden",
+                  width: "55.208333333333336%",
+                  marginLeft: "7.692311604817708%",
+                  height: "71.2890625%",
+                  top: "20.99609375%",
+                  backgroundColor: "rgba(0, 0, 0, 0)",
+                  overflow: "hidden",
               }}
               className="innerDiv"
             >
-              {/*
-              <CFeed
-                {...this.props}
-                userId={this.state.userId}
-                nodeId="38:1057"
-                domainName = {this.props.domainName}
-              />*/}
+                {
+                    <CFeed
+                        {...this.props}
+                        nodeId="38:1057"
+                        domainName={this.props.domainName}
+                    />}
             </div>
           </div>
           <div
@@ -92,7 +92,6 @@ export default class CMainPage extends React.Component {
             >
                 <CFriendsList
                     {...this.props}
-                    userId={this.state.userId}
                     nodeId="38:1056"
                     domainName={this.props.domainName}
                 />

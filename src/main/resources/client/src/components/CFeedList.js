@@ -8,7 +8,7 @@ export default class CFeedList extends React.Component {
     this.state = {
       num_items: 30,
       feedItemDatas: [],
-      userId: this.props.userId,
+
     };
   }
 
@@ -29,7 +29,7 @@ export default class CFeedList extends React.Component {
         fetch_type = "Public";
         break;
     }
-    fetchFeed(this.state.userId, num_items, fetch_type)
+    fetchFeed(this.props.domainName, num_items, fetch_type)
       .then((response) => response.json())
       .then((response) => {
         console.log(response);

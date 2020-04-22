@@ -9,7 +9,6 @@ export default class CSendPaymentForm extends React.Component {
     super(props);
     this.state = {
       request: {
-        fromUserId: this.props.userId,
         toUserId: "",
         amount: 0,
         type: "PRIVATE",
@@ -45,7 +44,8 @@ export default class CSendPaymentForm extends React.Component {
     const findUserPath = this.props.domainName + "/user/findUsers";
     fetch(findUserPath, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
+      credentials: 'include',
       body: JSON.stringify(this.state.findUserRequest),
     })
       .then((res) => res.json())
@@ -98,7 +98,8 @@ export default class CSendPaymentForm extends React.Component {
     const path = this.props.domainName + "/pay/createPayment";
     fetch(path, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
+      credentials: 'include',
       body: JSON.stringify(this.state.request),
     })
       .then((res) => res.json())

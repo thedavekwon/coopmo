@@ -1,22 +1,15 @@
-export function fetchFeed(userId, num_latest, fetch_type) {
-    const requestEndpoint = ''.concat(this.props.domainName + "/pay/getLatest",
+export function fetchFeed(domainName, num_latest, fetch_type) {
+    const requestEndpoint = ''.concat(domainName + "/pay/getLatest",
         fetch_type,
         "Payment",
-        "?userId=",
-        userId,
-        "&n=",
+        "?n=",
         num_latest.toString()
     );
-    const headers = new Headers({
-        'Access-Control-Allow-Origin': '*'
-    });
     console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {
-        method: "GET",
-        headers: headers,
-        mode: 'cors',
-        cache: 'default',
-        
+            method: "GET",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
         }
     );
 

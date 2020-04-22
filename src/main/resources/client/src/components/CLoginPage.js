@@ -1,11 +1,11 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 import CMainPage from "./CMainPage.js";
 import CCreateUserPage from "./CCreateUserPage.js";
 
-export default class CLoginPage extends PureComponent {
+export default class CLoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -53,16 +53,17 @@ export default class CLoginPage extends PureComponent {
             credentials: 'include'
         })
             .then((res) => {
-                console.log(res.body);
-                res.json()
+                console.log(res);
+                return res.json();
             })
             .then(
                 (result) => {
+                    console.log(result);
                     ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.body);
                 },
                 (error) => {
-                    console.log(error)
-                    this.setMessage("ERROR sending request", "ERROR");
+                    // alert("failed to login");
+                    this.setMessage("failed to login", "ERROR");
                 }
             );
     };

@@ -46,13 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .defaultSuccessUrl("http://localhost:8080/login");
-//                .defaultSuccessUrl("http://localhost:3000");
-//                .successHandler(new RefererRedirectionAuthenticationSuccessHandler());
-//        http.sessionManagement().maximumSessions(1)
-//                .and()
-//                .sessionFixation().migrateSession();
+                .formLogin();
     }
 
     @Override

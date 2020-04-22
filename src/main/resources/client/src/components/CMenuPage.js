@@ -1,4 +1,6 @@
 import React, {PureComponent} from "react";
+import ReactDOM from "react-dom";
+import CLoginPage from "./CLoginPage";
 import CMenuButton from "./CMenuButton.js";
 import CMenuButtonDefault from "./CMenuButtonDefault.js";
 import CEditProfileForm from "./CEditProfileForm.js";
@@ -31,19 +33,10 @@ export default class CMenuPage extends PureComponent {
             credentials: 'include'
         })
             .then((res) => {
-                console.log(res.body);
-                res.json()
-            })
-            .then(
-                (result) => {
-                    console.log(result);
-                    //ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.body);
-                },
-                (error) => {
-                    console.log(error)
-                    this.setMessage("ERROR sending request", "ERROR");
+                if (res.status == 200) {
+                    ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.body);
                 }
-            );
+            });
     }
 
     render() {

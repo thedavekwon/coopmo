@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 import CMainPage from "./CMainPage.js";
+import CCreateUserPage from "./CCreateUserPage.js";
 
 export default class CLoginPage extends PureComponent {
     constructor(props) {
@@ -17,6 +18,10 @@ export default class CLoginPage extends PureComponent {
                 message: "",
             },
         };
+    }
+
+    renderCreate = () => {
+        ReactDOM.render(<CCreateUserPage domainName={this.props.domainName}></CCreateUserPage>, document.body);
     }
 
     handleChange = (key, value) => {
@@ -148,14 +153,95 @@ export default class CLoginPage extends PureComponent {
                             messageType={this.state.respMessage.messageType}
                             message={this.state.respMessage.message}
                         />
-
                     </div>
-                    <CSingleButton
-                        text="getBalance"
-                        onSub={this.sendRequestBalance}
-                        messageType={this.state.respMessage.messageType}
-                        message={this.state.respMessage.message}
-                    />
+                    <div style={{zIndex: 1}} className="outerDiv centerer">
+                        <div
+                            id="35:300"
+                            style={{
+                                marginLeft: "26.3889%",
+                                width: "47.22222222222222%",
+                                height: "5%",
+                                top: 44.1406 + 2 * 11.71875 + "%",
+                                backgroundColor: "rgba(0, 0, 0, 0)",
+                                color: "rgba(0, 0, 0, 1)",
+                                fontSize: 73,
+                                fontWeight: 700,
+                                fontFamily: "Muli",
+                                textAlign: "CENTER",
+                                fontStyle: "normal",
+                                lineHeight: "125%",
+                                letterSpacing: "0px",
+                            }}
+                            className="innerDiv"
+
+                        >
+                            <div>
+                            <span
+                                style={{
+                                    fontSize: 16,
+                                    fontStyle: "normal",
+                                    lineHeight: "NaN%",
+                                    letterSpacing: "undefinedpx",
+                                    color: "rgba(102, 0, 153, 1)",
+                                }}
+                                onClick={this.renderCreate}>
+                                Click Here to Make a New Account
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            zIndex: 2,
+                        }}
+                        className="outerDiv centerer"
+                    >
+                        <div
+                            id="I76:29;97:225"
+                            style={{
+                                marginLeft: "40%",
+                                marginRight: "40%",
+                                flexGrow: 1,
+                                top: "25%",
+                                height: 73,
+                                color: "rgba(0, 0, 0, 1)",
+                                fontSize: 73,
+                                fontWeight: 700,
+                                fontFamily: "Muli",
+                                textAlign: "CENTER",
+                                fontStyle: "normal",
+                                lineHeight: "125%",
+                                letterSpacing: "0px",
+                            }}
+                            className="innerDiv"
+                        >
+                            <div>
+                      <span
+                          style={{
+                              fontSize: 73,
+                              fontStyle: "normal",
+                              lineHeight: "NaN%",
+                              letterSpacing: "undefinedpx",
+                              color: "rgba(102, 0, 153, 1)",
+                          }}
+                          key="4"
+                      >
+                        Coop
+                      </span>
+                                <span
+                                    style={{
+                                        fontSize: 73,
+                                        fontStyle: "normal",
+                                        lineHeight: "NaN%",
+                                        letterSpacing: "undefinedpx",
+                                    }}
+                                    key="end"
+                                >
+                        mo
+                      </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         );

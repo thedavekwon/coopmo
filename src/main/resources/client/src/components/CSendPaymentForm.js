@@ -1,8 +1,8 @@
 import React from "react";
-import CSimpleInput from "./CSimpleInput";
 import CSingleButton from "./CSingleButton.js";
 import CInputwithanIcon from "./CInputwithanIcon.js";
 import CDropdown from "./CDropdown.js";
+import CTypableDropdown from "./CTypableDropdown.js";
 
 export default class CSendPaymentForm extends React.Component {
   constructor(props) {
@@ -12,59 +12,83 @@ export default class CSendPaymentForm extends React.Component {
         toUserId: "",
         amount: 0,
         type: "PRIVATE",
+          comment: "YEEE"
       },
-      findUserRequest: {
-        match: "",
-        type: "USERNAME",
-      },
-      users: [],
+        findUserRequest: {
+            match: "",
+            type: "USERNAME",
+        },
+        users: [],
 
-      respMessage: {
-        messageType: "NONE",
-        message: "",
-      },
+        respMessage: {
+            messageType: "NONE",
+            message: "",
+        },
+        userListDrop: [],
     };
   }
 
-  setMessage(message, messageType) {
-    var newRespMessage = this.state.respMessage;
-    newRespMessage.message = message;
-    newRespMessage.messageType = messageType;
-    this.setState((state) => ({
-      respMessage: newRespMessage,
-    }));
-  }
+    setMessage(message, messageType) {
+        var newRespMessage = this.state.respMessage;
+        newRespMessage.message = message;
+        newRespMessage.messageType = messageType;
+        this.setState((state) => ({
+            respMessage: newRespMessage,
+        }));
+    }
 
-  handleInputChange = (key, value) => {
-    var newRequest = this.state.findUserRequest;
-    newRequest.match = value;
-    this.setState((state) => ({
-      findUserRequest: newRequest,
-    }));
-    const findUserPath = this.props.domainName + "/user/findUsers";
-    fetch(findUserPath, {
-      method: "POST",
-      headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
-      credentials: 'include',
-      body: JSON.stringify(this.state.findUserRequest),
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          if (result.error != null) {
-            this.setMessage(result.error.message, "ERROR");
-          } else {
-            this.setState((state) => ({
-              users: result.data,
-            }));
-          }
-        },
-        (error) => {
-          this.setMessage("ERROR sending request", "ERROR");
-        }
-      );
-  };
+    handleInputChange = (value) => {
+        if (value == "")
+            return;
+        var newRequest = this.state.findUserRequest;
+        newRequest.match = value;
+        this.setState((state) => ({
+            findUserRequest: newRequest,
+        }));
+
+        const findUserPath = this.props.domainName + "/user/findUsers";
+        fetch(findUserPath, {
+            method: "POST",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify(this.state.findUserRequest),
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    if (result.error != null) {
+                        this.setMessage(result.error.message, "ERROR");
+                    } else {
+                        this.setState((state) => ({
+                            users: result.data,
+                        }));
+
+                        if (result.data != null) {
+                            var userList = []
+                            for (var i = 0; i < result.data.length; i++) {
+                                userList = [...userList, {
+                                    value: result.data[i].name,
+                                    label: result.data[i].name
+                                }]
+                            }
+
+                            this.setState((state) => ({
+                                userListDrop: userList
+                            }))
+                        }
+                    }
+                },
+                (error) => {
+                    this.setMessage("ERROR sending request", "ERROR");
+                }
+            );
+    };
+
 
   handleChange = (paymentType) => {
     var newRequest = this.state.request;
@@ -83,16 +107,18 @@ export default class CSendPaymentForm extends React.Component {
   };
 
   sendRequest = () => {
-    var newRequest = this.state.request;
-    if (this.state.users.length != 0)
-      newRequest.toUserId = this.state.users[0].id;
-    else {
-      this.setMessage("No User starting with that username found", "ERROR");
-      return;
-    }
-    this.setState((state) => ({
-      request: newRequest,
-    }));
+      var newRequest = this.state.request;
+      if (this.state.users != null) {
+          if (this.state.users.length != 0)
+              newRequest.toUserId = this.state.users[0].id;
+          else {
+              this.setMessage("No User starting with that username found", "ERROR");
+              return;
+          }
+      }
+      this.setState((state) => ({
+          request: newRequest,
+      }));
 
     console.log(this.state.request);
     const path = this.props.domainName + "/pay/createPayment";
@@ -149,11 +175,13 @@ export default class CSendPaymentForm extends React.Component {
               }}
               className="innerDiv"
             >
-              <CSimpleInput
-                name="To Who"
-                valKey="textInput"
-                onInput={this.handleInputChange}
-              />
+                <CTypableDropdown
+                    name="To Who"
+                    valKey="textInput"
+                    list={this.state.userListDrop}
+                    handleChange={this.handleInputChange}
+                    value={this.state.request.match}
+                />
             </div>
           </div>
           <div style={{ zIndex: 2 }} className="outerDiv centerer">

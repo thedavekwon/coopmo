@@ -14,25 +14,48 @@ export default class CMenuPage extends PureComponent {
     this.state = {
       activePage: "Edit Profile",
     };
-    this.changePage = this.changePage.bind(this);
+      this.changePage = this.changePage.bind(this);
   }
 
-  changePage(newPage) {
-    this.setState((state) => ({
-      activePage: newPage,
-    }));
-  }
+    changePage(newPage) {
+        this.setState((state) => ({
+            activePage: newPage,
+        }));
+    }
 
-  render() {
-    let formPage;
-    if (this.state.activePage == "Edit Profile")
-      formPage = <CEditProfileForm domainName={this.props.domainName}/>;
-    else if (this.state.activePage == "Add Friend")
-        formPage = <CAddFriendForm domainName={this.props.domainName}/>;
-    else if (this.state.activePage == "Incoming Friend Requests")
-      formPage = (
-          <CIncomingFriendRequestForm domainName={this.props.domainName}/>
-      );
+    signOut = () => {
+        var path = this.props.domainName + "/logout"
+        fetch(path, {
+            method: "GET",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
+        })
+            .then((res) => {
+                console.log(res.body);
+                res.json()
+            })
+            .then(
+                (result) => {
+                    console.log(result);
+                    //ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.body);
+                },
+                (error) => {
+                    console.log(error)
+                    this.setMessage("ERROR sending request", "ERROR");
+                }
+            );
+    }
+
+    render() {
+        let formPage;
+        if (this.state.activePage == "Edit Profile")
+            formPage = <CEditProfileForm domainName={this.props.domainName}/>;
+        else if (this.state.activePage == "Add Friend")
+            formPage = <CAddFriendForm domainName={this.props.domainName}/>;
+        else if (this.state.activePage == "Incoming Friend Requests")
+            formPage = (
+                <CIncomingFriendRequestForm domainName={this.props.domainName}/>
+            );
     else if (this.state.activePage == "Add a Bank Account")
         formPage = <CChangeBankAccounts domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Cash In")
@@ -222,8 +245,8 @@ export default class CMenuPage extends PureComponent {
                   className="outerDiv centerer"
                 >
                   <div
-                    id="I254:861;30:399"
-                    style={{
+                      id="I254:861;30:399"
+                      style={{
                       marginLeft: 0,
                       marginRight: 0,
                       flexGrow: 1,
@@ -231,8 +254,8 @@ export default class CMenuPage extends PureComponent {
                       height: "14.2857%",
                       backgroundColor: "rgba(0, 0, 0, 0)",
                     }}
-                    className="innerDiv"
-                    onClick={() => this.changePage("Sign Out")}
+                      className="innerDiv"
+                      onClick={this.signOut}
                   >
                     <CMenuButtonDefault
                       {...this.props}

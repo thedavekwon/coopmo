@@ -63,6 +63,10 @@ public class Payment extends Transaction {
         return amount;
     }
 
+    public User getFromUser() { return fromUser; }
+
+    public User getToUser() { return toUser; }
+
     public String getId() {
         return id;
     }
@@ -77,14 +81,6 @@ public class Payment extends Transaction {
 
     public Timestamp getTimestamp() {
         return timestamp;
-    }
-
-    public User getFromUser() {
-        return fromUser;
-    }
-
-    public User getToUser() {
-        return toUser;
     }
 
     @JsonIgnore

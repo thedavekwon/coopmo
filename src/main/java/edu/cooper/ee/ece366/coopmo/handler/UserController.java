@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 
 // TODO (set all handler produce json and consumes json after converting)
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
@@ -58,6 +59,7 @@ public class UserController {
         respMessage.setData(user);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
+
 
     @GetMapping(path = "/getUserFriendList")
     @ResponseBody
@@ -219,7 +221,7 @@ public class UserController {
 
     @PostMapping(path = "/acceptIncomingRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> acceptIncomingRequest(
-            @RequestBody AcceptIncomingRequestRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.FriendRequestDoesNotExistException {
+            @RequestBody UserAndFriendRequest acceptIncomingRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.FriendRequestDoesNotExistException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -246,7 +248,7 @@ public class UserController {
 
     @PostMapping(path = "/sendOutRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> sendOutRequest(
-            @RequestBody SendOutRequestRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
+            @RequestBody UserAndFriendRequest sendOutRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.DuplicateFriendRequestException, BaseExceptionHandler.NoUserFoundException, BaseExceptionHandler.FriendRequestDoesNotExistException, BaseExceptionHandler.FriendRequestAlreadyExistException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -257,7 +259,8 @@ public class UserController {
         }
 
         String friendId = sendOutRequestRequest.getFriendId();
-
+        System.out.println(userId);
+        System.out.println(friendId);
         Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {
@@ -306,7 +309,7 @@ public class UserController {
 
     @PostMapping(path = "/declineFriendRequest", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> declineFriendRequest(
-            @RequestBody DeclineFriendRequestRequest declineFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
+            @RequestBody UserAndFriendRequest declineFriendRequestRequest) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.NoUserFoundException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -520,6 +523,10 @@ public class UserController {
     public static class UserAndFriendRequest {
         private String friendId;
 
+        public UserAndFriendRequest() {
+            super();
+        }
+
         public UserAndFriendRequest(String friendId) {
             this.friendId = friendId;
         }
@@ -593,3 +600,5 @@ public class UserController {
         }
     }
 }
+
+

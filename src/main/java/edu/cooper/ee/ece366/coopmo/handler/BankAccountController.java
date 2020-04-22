@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
@@ -8,6 +9,7 @@ import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,8 +56,13 @@ public class BankAccountController extends BaseController {
         private final Long routingNumber;
         private final Long balance;
 
-        public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {
-            this.userId = userId;
+        public CreateBankAccountRequest(Long routingNumber, Long balance) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof MyUserDetails) {
+                userId = ((MyUserDetails) principal).getId();
+            } else {
+                userId = principal.toString();
+            }
             this.routingNumber = routingNumber;
             this.balance = balance;
         }

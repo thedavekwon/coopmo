@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
@@ -8,6 +9,7 @@ import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,10 +25,21 @@ public class BankAccountController extends BaseController {
 
     @PostMapping("/createBankAccount")
     public ResponseEntity<?> createBankAccount(@RequestBody CreateBankAccountRequest bankAccountRequest) throws InValidFieldValueException, EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
+        /*
         if (bankAccountRequest.getUserId().isEmpty())
             throw new EmptyFieldException("Empty Field");
+
+         */
+        bankAccountRequest.setUserId(userId);
         if (bankAccountRequest.getBalance() == null)
             throw new EmptyFieldException("Empty Field");
 
@@ -50,7 +63,7 @@ public class BankAccountController extends BaseController {
     }
 
     public static class CreateBankAccountRequest {
-        private final String userId;
+        private String userId;
         private final Long routingNumber;
         private final Long balance;
 
@@ -62,6 +75,10 @@ public class BankAccountController extends BaseController {
 
         public String getUserId() {
             return userId;
+        }
+
+        public void setUserId(String newUserId) {
+            userId = newUserId;
         }
 
         public Long getRoutingNumber() {

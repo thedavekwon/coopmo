@@ -1,11 +1,13 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.service.CashService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,7 +26,15 @@ public class CashController extends BaseController {
     public ResponseEntity<?> createCash(
             @RequestBody CreateCashRequest createCashRequest)
             throws BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
-        String userId = createCashRequest.getUserId();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
+
         String bankAccountId = createCashRequest.getBankAccountId();
         Long amount = createCashRequest.getAmount();
         String type = createCashRequest.getType();

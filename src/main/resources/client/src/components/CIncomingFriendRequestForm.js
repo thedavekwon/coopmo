@@ -66,10 +66,11 @@ export default class CMenuIncomingFriendRequests extends React.Component {
                   className="innerDiv"
                 >
                   <CFriendRequest
-                    name={e.name}
-                    friendId={e.id}
-                    key={key}
-                    userId={this.props.userId}
+                      name={e.name}
+                      friendId={e.id}
+                      key={key}
+                      userId={this.props.userId}
+                      domainName={this.props.domainName}
                   >
                   </CFriendRequest>
                 </div>

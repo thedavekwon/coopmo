@@ -7,7 +7,7 @@ export default class CDropdown extends React.Component {
     }
 
     handleChange = (event) => {
-        this.props.handleChange(event.value);
+        this.props.handleChange(event);
     };
 
     render() {
@@ -39,7 +39,8 @@ export default class CDropdown extends React.Component {
                             <div>
                 <span style={{}} key="end">
 
-                    <Select isSearchable={true} onChange={this.handleChange} options={this.props.list}
+                    <Select isSearchable={true} onInputChange={this.handleChange} onChange={this.handleChange}
+                            options={this.props.list}
                             placeholder='Search...'/>
                 </span>
                             </div>

@@ -5,7 +5,6 @@ export class CFriendRequest extends React.Component {
         super(props);
         this.state = {
             request: {
-                userId: this.props.userId,
                 friendId: this.props.friendId,
             },
             accepted: false,

@@ -18,16 +18,19 @@ export default class CAddFriendForm extends React.Component {
                 messageType: "NONE",
                 message: "",
             },
+            userListDrop: []
         };
     }
 
     handleInputChange = (value) => {
-
+        if (value == "")
+            return;
         var newRequest = this.state.findUserRequest;
         newRequest.match = value;
         this.setState((state) => ({
             findUserRequest: newRequest,
         }));
+
         const findUserPath = this.props.domainName + "/user/findUsers";
         fetch(findUserPath, {
             method: "POST",
@@ -49,6 +52,21 @@ export default class CAddFriendForm extends React.Component {
                         this.setState((state) => ({
                             users: result.data,
                         }));
+
+                        if (result.data != null) {
+                            var userList = []
+                            for (var i = 0; i < result.data.length; i++) {
+                                userList = [...userList, {
+                                    value: result.data[i].name,
+                                    label: result.data[i].name
+                                }]
+                            }
+
+                            this.setState((state) => ({
+                                userListDrop: userList
+                            }))
+                            console.log(this.state.userListDrop)
+                        }
                     }
                 },
                 (error) => {
@@ -122,13 +140,9 @@ export default class CAddFriendForm extends React.Component {
                             <CTypableDropdown
                                 name="Friend's Username"
                                 valKey="friendUsername"
-                                //list = {this.state.users}
-                                list={[
-                                    {value: 'chocolate', label: 'Chocolate'},
-                                    {value: 'strawberry', label: 'Strawberry'},
-                                    {value: 'vanilla', label: 'Vanilla'},
-                                ]}
+                                list={this.state.userListDrop}
                                 handleChange={this.handleInputChange}
+                                value={this.state.request.match}
                             />
                         </div>
           </div>

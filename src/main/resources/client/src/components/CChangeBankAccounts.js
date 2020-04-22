@@ -1,22 +1,22 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CSimpleInput from "./CSimpleInput";
 import CSingleButton from "./CSingleButton.js";
 //Need to test again
-export default class CChangeBankAccounts extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-        request: {
-            userId: this.props.userId,
-            routingNumber: 0,
-            balance: 1000,
-        },
-        respMessage: {
-            messageType: "NONE",
-            message: "",
-        },
-    };
-  }
+export default class CChangeBankAccounts extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {
+                userId: this.props.userId,
+                routingNumber: 0,
+                balance: 1000,
+            },
+            respMessage: {
+                messageType: "NONE",
+                message: "",
+            },
+        };
+    }
 
     handleChange = (key, value) => {
         var newRequest = this.state.request;

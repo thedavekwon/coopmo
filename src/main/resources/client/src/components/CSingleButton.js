@@ -7,7 +7,6 @@ export default class CSingleButton extends React.Component {
   }
 
   handleClick(event) {
-    console.log(this.state);
     this.props.onSub();
   }
 
@@ -54,17 +53,17 @@ export default class CSingleButton extends React.Component {
           <div
             id="I35:320;35:317"
             style={{
-              width: "50%",
-              marginLeft: "5%",
-              height: 19,
-              color: "rgba(255, 255, 255, 1)",
-              fontSize: 16,
-              fontWeight: 600,
-              fontFamily: "Muli",
-              textAlign: "CENTER",
-              fontStyle: "normal",
-              lineHeight: "125%",
-              letterSpacing: "0px",
+                width: "50%",
+                marginLeft: "5%",
+                height: 19,
+                color: "rgba(38, 38, 38, 1)",
+                fontSize: 16,
+                fontWeight: 600,
+                fontFamily: "Muli",
+                textAlign: "CENTER",
+                fontStyle: "normal",
+                lineHeight: "125%",
+                letterSpacing: "0px",
             }}
             className="innerDiv"
           >

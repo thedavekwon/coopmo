@@ -1,25 +1,25 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CSimpleInput extends PureComponent {
-  constructor(props) {
-    super(props);
+export default class CSimpleInput extends React.Component {
+    constructor(props) {
+        super(props);
 
-    this.handleChange = this.handleChange.bind(this);
-  }
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-  handleChange(event) {
-    this.props.onInput(this.props.valKey, event.target.value);
-  }
+    handleChange(event) {
+        this.props.onInput(this.props.valKey, event.target.value);
+    }
 
-  render() {
-    return (
-      <div className="master" style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}>
-        <div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="I35:280;35:276"
-              style={{
-                marginLeft: "3%",
+    render() {
+        return (
+            <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+                <div>
+                    <div style={{zIndex: 1}} className="outerDiv centerer">
+                        <div
+                            id="I35:280;35:276"
+                            style={{
+                                marginLeft: "3%",
                 width: "94%",
                 flexGrow: 1,
                 height: "40%",

@@ -1,8 +1,8 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CFeedItem from "./CFeedItem.js";
 import {fetchFeed} from "../functions/fetchFeed";
 
-export default class CFeedList extends PureComponent {
+export default class CFeedList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

@@ -1,7 +1,7 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import {CFriendRequest} from "./CFriendRequest";
 
-export default class CMenuIncomingFriendRequests extends PureComponent {
+export default class CMenuIncomingFriendRequests extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

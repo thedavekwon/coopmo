@@ -1,26 +1,26 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CFriendsList extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      friendsList: [],
-    };
-    this.getFriendsList();
-  }
+export default class CFriendsList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            friendsList: [],
+        };
+        this.getFriendsList();
+    }
 
-  getFriendsList = () => {
-    const path =
-        this.props.domainName + "/user/getUserFriendList?userId=" +
-        this.props.userId;
-    fetch(path, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          if (result.error != null) {
+    getFriendsList = () => {
+        const path =
+            this.props.domainName + "/user/getUserFriendList?userId=" +
+            this.props.userId;
+        fetch(path, {
+            method: "GET",
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    if (result.error != null) {
             console.log(result.error);
           } else {
             this.setState((state) => ({

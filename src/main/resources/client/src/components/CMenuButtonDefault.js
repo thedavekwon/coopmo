@@ -1,26 +1,27 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CMenuButtonDefault extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
-  state = {};
+export default class CMenuButtonDefault extends React.Component {
+    state = {};
 
-  render() {
-    let highlight;
-    if (this.props.active == this.props.name) {
-      highlight = (
-        <React.Fragment>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="30:386"
-              style={{
-                width: "33.333333333333336%",
-                marginLeft: "66.66666666666667%",
-                height: "100%",
-                top: "0%",
-                background:
-                  "linear-gradient(-1.5707962626652379rad, rgba(102, 0, 153, 1) 0%, rgba(102, 0, 153, 0.7289661169052124) 8%, rgba(102, 0, 153, 0) 100%)",
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let highlight;
+        if (this.props.active == this.props.name) {
+            highlight = (
+                <React.Fragment>
+                    <div style={{zIndex: 1}} className="outerDiv centerer">
+                        <div
+                            id="30:386"
+                            style={{
+                                width: "33.333333333333336%",
+                                marginLeft: "66.66666666666667%",
+                                height: "100%",
+                                top: "0%",
+                                background:
+                                    "linear-gradient(-1.5707962626652379rad, rgba(102, 0, 153, 1) 0%, rgba(102, 0, 153, 0.7289661169052124) 8%, rgba(102, 0, 153, 0) 100%)",
               }}
               className="innerDiv"
             >

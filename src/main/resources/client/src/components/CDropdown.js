@@ -1,26 +1,27 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CDropdown extends PureComponent {
-  constructor(props) {
-    super(props);
-  }
+export default class CDropdown extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
-  handleChange = (event) => {
-    this.props.handleChange(event.target.value);
-  };
-  render() {
-    let dropdown;
-    let content;
+    handleChange = (event) => {
+        this.props.handleChange(event.target.value);
+    };
 
-    if (this.props.dropType == "bank") {
-      if (this.props.bankAcctList != null) {
-        content = this.props.bankAcctList.map((e, key) => {
-          return (
-            <option value={e.id} key={key}>
-              {e.routingNumber}
-            </option>
-          );
-        });
+    render() {
+        let dropdown;
+        let content;
+
+        if (this.props.dropType == "bank") {
+            if (this.props.bankAcctList != null) {
+                content = this.props.bankAcctList.map((e, key) => {
+                    return (
+                        <option value={e.id} key={key}>
+                            {e.routingNumber}
+                        </option>
+                    );
+                });
       }
       dropdown = (
         <select

@@ -312,12 +312,12 @@ export default class CMenuPage extends PureComponent {
                   className="outerDiv centerer"
                 >
                   <div
-                    id="I76:47;76:21"
-                    style={{
-                      flexGrow: 1,
-                      backgroundColor: "rgba(0, 0, 0, 1)",
-                    }}
-                    className="innerDiv"
+                      id="I76:47;76:21"
+                      style={{
+                          flexGrow: 1,
+                          backgroundColor: "rgba(0, 0, 0, 1)",
+                      }}
+                      className="innerDiv"
                   >
                       <CMenuButton
                           {...this.props}

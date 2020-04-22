@@ -1,28 +1,29 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CFeedTab from "./CFeedTab.js";
 import CFeedList from "./CFeedList.js";
 
-export default class CFeed extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.state = { feedTab: "Me" };
-  }
-  handleClick(tab) {
-    console.log("in handle click");
-    this.setState((state) => ({
-      feedTab: tab,
-    }));
-  }
+export default class CFeed extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+        this.state = {feedTab: "Me"};
+    }
 
-  render() {
-    let purple = "rgba(102, 0, 153, 1)";
-    let white = "rgba(255, 255, 255, 1)";
+    handleClick(tab) {
+        console.log("in handle click");
+        this.setState((state) => ({
+            feedTab: tab,
+        }));
+    }
 
-    return (
-      <div className="master" style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}>
-        <div>
-          <div style={{}} className="outerDiv centerer">
+    render() {
+        let purple = "rgba(102, 0, 153, 1)";
+        let white = "rgba(255, 255, 255, 1)";
+
+        return (
+            <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+                <div>
+                    <div style={{}} className="outerDiv centerer">
             <div
               id="I38:1057;30:46"
               style={{

@@ -1,26 +1,26 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CSingleButton from "./CSingleButton.js";
 import CInputwithanIcon from "./CInputwithanIcon.js";
 import CDropdown from "./CDropdown.js";
 
-export default class CCashInForm extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-        bankAcctList: [],
-        request: {
-            userId: this.props.userId,
-            bankAccountId: "",
-            amount: 0,
-            type: "IN",
-        },
-        respMessage: {
-            messageType: "NONE",
-            message: "",
-        },
-    };
-      this.getBankAccounts();
-  }
+export default class CCashInForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            bankAcctList: [],
+            request: {
+                userId: this.props.userId,
+                bankAccountId: "",
+                amount: 0,
+                type: "IN",
+            },
+            respMessage: {
+                messageType: "NONE",
+                message: "",
+            },
+        };
+        this.getBankAccounts();
+    }
 
     setMessage(message, messageType) {
         var newRespMessage = this.state.respMessage;

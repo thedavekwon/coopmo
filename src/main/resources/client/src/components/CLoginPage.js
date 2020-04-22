@@ -1,8 +1,8 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 
-export default class CLoginPage extends PureComponent {
+export default class CLoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -35,10 +35,11 @@ export default class CLoginPage extends PureComponent {
 
 
     sendRequest = () => {
+
         const path = this.props.domainName + "/login";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {"Content-Type": " form-data"},
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())
@@ -70,7 +71,7 @@ export default class CLoginPage extends PureComponent {
         const path = this.props.domainName + "/user/createUser";
         fetch(path, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: {"Content-Type": " form-data"},
             body: JSON.stringify(testRequest),
         })
             .then((res) => res.json())

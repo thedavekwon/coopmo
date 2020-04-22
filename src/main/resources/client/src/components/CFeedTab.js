@@ -1,26 +1,28 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CFeedTab extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
-  handleClick() {
-    console.log("in Feed Tab");
-  }
-  render() {
-    let active = false;
-    if (this.props.feedTab == this.props.name) active = true;
-    let purple = "rgba(102, 0, 153, 1)";
-    let white = "rgba(255, 255, 255, 1)";
-    let barBottom;
+export default class CFeedTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
 
-    if (!active) {
-      barBottom = (
-        <div style={{ zIndex: 2 }} className="outerDiv centerer">
-          <div
-            id="I38:1057;30:46;30:9;30:5"
-            style={{
+    handleClick() {
+        console.log("in Feed Tab");
+    }
+
+    render() {
+        let active = false;
+        if (this.props.feedTab == this.props.name) active = true;
+        let purple = "rgba(102, 0, 153, 1)";
+        let white = "rgba(255, 255, 255, 1)";
+        let barBottom;
+
+        if (!active) {
+            barBottom = (
+                <div style={{zIndex: 2}} className="outerDiv centerer">
+                    <div
+                        id="I38:1057;30:46;30:9;30:5"
+                        style={{
               marginLeft: 0,
               marginRight: 0,
               flexGrow: 1,

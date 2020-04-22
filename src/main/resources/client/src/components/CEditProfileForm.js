@@ -1,8 +1,8 @@
-import React, {PureComponent} from "react";
+import React from "react";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 //need to test request updating again
-export default class CEditProfileForm extends PureComponent {
+export default class CEditProfileForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

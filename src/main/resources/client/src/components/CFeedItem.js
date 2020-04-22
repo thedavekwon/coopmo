@@ -1,6 +1,6 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CFeedItem extends PureComponent {
+export default class CFeedItem extends React.Component {
 
     constructor(props) {
         super(props);

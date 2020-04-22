@@ -11,6 +11,6 @@ public class CoopmoApplication {
         SpringApplication.run(CoopmoApplication.class, args);
         //CoopmoTest.testPayment();
         //CoopmoTest.testFriends();
-        //CoopmoTest.sendRequests();
+        CoopmoTest.sendRequests();
     }
 }

@@ -187,7 +187,7 @@ public class CoopmoTest {
 
         for (int i = 2; i < 12; i++) {
             String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
-            sendOutRequest(user, masterUser);
+            //sendOutRequest(user, masterUser);
         }
     }
 

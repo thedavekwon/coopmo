@@ -32,7 +32,7 @@ export default class CMainPage extends React.Component {
           }
         },
         (error) => {
-          console.log("error sending request");
+          console.log(error);
         }
       );
   };

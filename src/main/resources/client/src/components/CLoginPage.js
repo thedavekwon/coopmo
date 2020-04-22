@@ -38,7 +38,6 @@ export default class CLoginPage extends PureComponent {
         const path = this.props.domainName + "/login";
         fetch(path, {
             method: "POST",
-            mode: "cors",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(this.state.request),
         })

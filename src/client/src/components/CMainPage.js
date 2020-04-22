@@ -1,13 +1,14 @@
 import React from "react";
 import CMenuButton from "./CMenuButton.js";
 import CFriendsList from "./CFriendsList.js";
+import { fetchBalance } from "../functions/api"
 
 export default class CMainPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       feedTab: "Me",
-      userId: "0cf8d8f2-c631-4568-99b5-0773d93a6e78",
+      userId: "87062c7c-1730-4343-9b36-5d824a9b15a0",
       balance: 0,
       domainName: this.props.domainName,
     };
@@ -15,11 +16,7 @@ export default class CMainPage extends React.Component {
   }
 
   getBalance = () => {
-    const path =
-      "http://localhost:8080/user/getUserBalance?userId=" + this.state.userId;
-    fetch(path, {
-      method: "GET",
-    })
+    fetchBalance(this.state.userId)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -33,7 +30,7 @@ export default class CMainPage extends React.Component {
           }
         },
         (error) => {
-          console.log("error sending request");
+          console.error(error);
         }
       );
   };

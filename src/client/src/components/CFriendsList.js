@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import { fetchFriendList } from "../functions/api"
 
 export default class CFriendsList extends PureComponent {
   constructor(props) {
@@ -10,12 +11,7 @@ export default class CFriendsList extends PureComponent {
   }
 
   getFriendsList = () => {
-    const path =
-      "http://localhost:8080/user/getUserFriendList?userId=" +
-      this.props.userId;
-    fetch(path, {
-      method: "GET",
-    })
+    fetchFriendList(this.props.userId)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -29,7 +25,7 @@ export default class CFriendsList extends PureComponent {
           }
         },
         (error) => {
-          console.log("error sending request");
+          console.error(error);
         }
       )
       .then(() => {

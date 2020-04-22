@@ -27,10 +27,10 @@ public class Cash extends Transaction {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private CashType type;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long amount;
 
     @ManyToOne(fetch = FetchType.LAZY)

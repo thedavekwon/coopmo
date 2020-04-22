@@ -27,14 +27,14 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type)
+    public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type, String comment)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         User fromUser = userService.checkValidUserId(fromUserId);
         User toUser = userService.checkValidUserId(toUserId);
         if (fromUser.getBalance() < amount)
             throw new BaseExceptionHandler.InvalidBalanceException("from User Balance is less than requested amount");
 
-        Payment newPayment = new Payment(fromUser, toUser, amount, type);
+        Payment newPayment = new Payment(fromUser, toUser, amount, type, comment);
         fromUser.decrementBalance(amount);
         toUser.incrementBalance(amount);
         paymentRepository.save(newPayment);

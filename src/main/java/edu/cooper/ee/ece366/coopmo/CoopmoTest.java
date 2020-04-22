@@ -182,6 +182,15 @@ public class CoopmoTest {
         checkAcceptRequest(user5, user6);
     }
 
+    public static void sendRequests() throws IOException, InterruptedException {
+        String masterUser = createUser("m1", "m1", "m1", "m1@gmail.com", "m1");
+
+        for (int i = 2; i < 12; i++) {
+            String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
+            //sendOutRequest(user, masterUser);
+        }
+    }
+
     public static void testPayment() throws IOException, InterruptedException {
         System.out.println("\nTest for different type of payment:\n----------------------------");
         System.out.println("user1, user2, user3, user4, and user5");
@@ -273,7 +282,7 @@ public class CoopmoTest {
         // Test: creating public Payment between two users
         System.out.println("Test for sending a payment:\n----------------------------");
         System.out.println("Sending a public payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, (long) 3000, "PUBLIC");
+        ret = createPayment(user1, user2, (long) 3000, "PUBLIC", "test comment 1");
         if (!ret) return;
 
         // Check to see if public Payment has updated relevant fields
@@ -289,7 +298,7 @@ public class CoopmoTest {
         // Test: creating private Payment between two users
         System.out.println("Test for creating Private payment between users:\n----------------------------");
         System.out.println("Sending a private payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, (long) 3000, "PRIVATE");
+        ret = createPayment(user1, user2, (long) 3000, "PRIVATE", "test comment 1");
         if (!ret) return;
 
         // Check to see if private Payment has updated relevant fields
@@ -302,14 +311,14 @@ public class CoopmoTest {
         // Test: creating friend Payment between two users
         System.out.println("Test for creating a Friend payment of 3000 between two users:\n----------------------------");
         System.out.println("Sending a friend payment of 3000 from user 1 to user 2");
-        ret = createPayment(user1, user2, (long) 3000, "FRIEND");
+        ret = createPayment(user1, user2, (long) 3000, "FRIEND", "test comment 1");
         if (!ret) return;
         System.out.println("Sending a friend payment of 3000 from user 2 to user 4");
-        ret = createPayment(user2, user4, (long) 3000, "FRIEND");
+        ret = createPayment(user2, user4, (long) 3000, "FRIEND", "test comment 1");
         if (!ret) return;
         System.out.println("Expected friendPaymentList");
-        System.out.println("user1: [PUBLIC user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
-        System.out.println("user2: [PUBLIC user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user1: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
+        System.out.println("user2: [PUBLIC user1->user2, PRIVATE user1->user2, FRIEND user1->user2, FRIEND user2->user4]");
         System.out.println("user3: [PUBLIC user1->user2, FRIEND user1->user2]");
         System.out.println("user4: [FRIEND user2->user4]");
         System.out.println("user5: [FRIEND user2->user4]");
@@ -464,7 +473,7 @@ public class CoopmoTest {
                 .withPath("user/sendOutRequest")
                 .toUri();
 
-        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(userId, friendId);
+        UserController.SendOutRequestRequest sendOutRequestRequest = new UserController.SendOutRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers
@@ -538,7 +547,7 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("user/acceptIncomingRequest")
                 .toUri();
-        UserController.AcceptIncomingRequestRequest acceptIncomingRequestRequest = new UserController.AcceptIncomingRequestRequest(userId, friendId);
+        UserController.AcceptIncomingRequestRequest acceptIncomingRequestRequest = new UserController.AcceptIncomingRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(acceptIncomingRequestRequest)))
@@ -588,7 +597,7 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("bank/createBankAccount")
                 .toUri();
-        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(userId, routingNumber, balance);
+        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(routingNumber, balance);
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createBankAccountRequest)))
                 .header("Content-Type", "application/json")
@@ -638,7 +647,7 @@ public class CoopmoTest {
                 .withPath("cash/createCash")
                 .toUri();
 
-        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(userId, bankAccount.getId(), amount, type);
+        CashController.CreateCashRequest createCashRequest = new CashController.CreateCashRequest(bankAccount.getId(), amount, type);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createCashRequest)))
@@ -656,7 +665,7 @@ public class CoopmoTest {
             return true;
     }
 
-    public static boolean createPayment(String fromUserId, String toUserId, Long amount, String type) throws IOException, InterruptedException {
+    public static boolean createPayment(String fromUserId, String toUserId, Long amount, String type, String comment) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
@@ -664,7 +673,7 @@ public class CoopmoTest {
                 .withPath("pay/createPayment")
                 .toUri();
 
-        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(fromUserId, toUserId, amount, type);
+        PaymentController.CreatePaymentRequest createPaymentRequest = new PaymentController.CreatePaymentRequest(toUserId, amount, type, comment);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createPaymentRequest)))
@@ -713,7 +722,7 @@ public class CoopmoTest {
                 .withPath("user/editProfile")
                 .toUri();
 
-        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(userId, newName, newUsername, newPassword, newEmail, newHandle);
+        UserController.EditProfileRequest editProfileRequest = new UserController.EditProfileRequest(newName, newUsername, newPassword, newEmail, newHandle);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(editProfileRequest)))
@@ -776,7 +785,7 @@ public class CoopmoTest {
                 .withPath("user/deleteFriend")
                 .toUri();
 
-        UserController.DeleteFriendRequest deleteFriendRequest = new UserController.DeleteFriendRequest(userId, friendId);
+        UserController.DeleteFriendRequest deleteFriendRequest = new UserController.DeleteFriendRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(deleteFriendRequest)))
@@ -802,7 +811,7 @@ public class CoopmoTest {
                 .addParameter("friendId", friendId)
                 .toUri();
 
-        UserController.CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest = new UserController.CancelOutgoingFriendRequestRequest(userId, friendId);
+        UserController.CancelOutgoingFriendRequestRequest cancelOutgoingFriendRequestRequest = new UserController.CancelOutgoingFriendRequestRequest(friendId);
 
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(cancelOutgoingFriendRequestRequest)))

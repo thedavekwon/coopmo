@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class BaseExceptionHandler {
     @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class,
-            InvalidBalanceException.class, AlreadyFriendsException.class, NoUserFoundException.class, DuplicateFriendRequestException.class, UsersAreNotFriendsException.class})
+            InvalidBalanceException.class, AlreadyFriendsException.class, NoUserFoundException.class,
+            DuplicateFriendRequestException.class, UsersAreNotFriendsException.class, FriendRequestDoesNotExistException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
         return handleAllInValidException(ex);
     }
@@ -68,6 +69,18 @@ public class BaseExceptionHandler {
     public static class UsersAreNotFriendsException extends Exception {
         public UsersAreNotFriendsException(String message) {
             super("Users Are Not Friends: " + message);
+        }
+    }
+
+    public static class FriendRequestDoesNotExistException extends Exception {
+        public FriendRequestDoesNotExistException(String message) {
+            super("Friend request does not exist: " + message);
+        }
+    }
+
+    public static class FriendRequestAlreadyExistException extends Exception {
+        public FriendRequestAlreadyExistException(String message) {
+            super("Friend request already exists: " + message);
         }
     }
 }

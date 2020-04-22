@@ -1,6 +1,7 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Transaction;
@@ -8,12 +9,11 @@ import edu.cooper.ee.ece366.coopmo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/transaction", consumes = "application/json", produces = "application/json")
 public class TransactionController extends BaseController {
     private final TransactionService transactionService;
@@ -25,13 +25,19 @@ public class TransactionController extends BaseController {
 
     @PostMapping("/likeTransaction")
     public ResponseEntity<?> likePayment(@RequestBody LikePaymentRequest likePaymentRequest) throws InValidFieldValueException, IllegalArgumentException, BaseExceptionHandler.EmptyFieldException {
-        String userId = likePaymentRequest.getUserId();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
+
         String transactionId = likePaymentRequest.getTransactionId();
         String transactionType = likePaymentRequest.getTransactionType();
 
         Message respMessage = new Message();
 
-        checkEmpty(userId, "userId");
         checkEmpty(transactionId, "transactionId");
         checkEmpty(transactionType, "transactionType");
 
@@ -42,23 +48,14 @@ public class TransactionController extends BaseController {
     }
 
     public static class LikePaymentRequest {
-        private String userId;
         private String transactionId;
         private String transactionType;
 
-        public LikePaymentRequest(String userId, String transactionId, String transactionType) {
-            this.userId = userId;
+        public LikePaymentRequest(String transactionId, String transactionType) {
             this.transactionId = transactionId;
             this.transactionType = transactionType;
         }
 
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
 
         public String getTransactionId() {
             return transactionId;

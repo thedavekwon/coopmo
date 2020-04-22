@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
@@ -8,11 +9,13 @@ import edu.cooper.ee.ece366.coopmo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;
@@ -27,10 +30,17 @@ public class PaymentController extends BaseController {
     @PostMapping(path = "/createPayment", consumes = "application/json")
     public ResponseEntity<?> createPayment(
             @RequestBody CreatePaymentRequest createPaymentRequest) throws InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException, BaseExceptionHandler.EmptyFieldException, BaseExceptionHandler.InValidFieldTypeException {
-        String fromUserId = createPaymentRequest.getFromUserId();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String fromUserId;
+        if (principal instanceof MyUserDetails) {
+            fromUserId = ((MyUserDetails) principal).getId();
+        } else {
+            fromUserId = principal.toString();
+        }
         String toUserId = createPaymentRequest.getToUserId();
         Long amount = createPaymentRequest.getAmount();
         String type = createPaymentRequest.getType();
+        String comment = createPaymentRequest.getComment();
 
         Message respMessage = new Message();
 
@@ -46,7 +56,7 @@ public class PaymentController extends BaseController {
             throw new BaseExceptionHandler.InValidFieldTypeException("Invalid Payment Type");
         }
 
-        Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType);
+        Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType, comment);
         respMessage.setData(newPayment);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
@@ -71,9 +81,14 @@ public class PaymentController extends BaseController {
 
     @GetMapping(path = "/getLatestPrivatePayment")
     @ResponseBody
-    public ResponseEntity<?> getLatestPrivatePayment(
-            @RequestParam(value = "userId", defaultValue = "") String userId
-    ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+    public ResponseEntity<?> getLatestPrivatePayment() throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         checkEmpty(userId, "userId");
         respMessage.setData(transactionService.getLatestTransaction(userId));
@@ -83,9 +98,15 @@ public class PaymentController extends BaseController {
     @GetMapping(path = "/getLatestPrivatePaymentFrom")
     @ResponseBody
     public ResponseEntity<?> getLatestPrivatePaymentFrom(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "timestamp", defaultValue = "") Timestamp timestamp
     ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         checkEmpty(userId, "userId");
         respMessage.setData(transactionService.getLatestTransactionFrom(userId, timestamp));
@@ -95,9 +116,15 @@ public class PaymentController extends BaseController {
     @GetMapping(path = "/getLatestFriendPaymentFrom")
     @ResponseBody
     public ResponseEntity<?> getLatestFriendPayment(
-            @RequestParam(value = "userId", defaultValue = "") String userId,
             @RequestParam(value = "timestamp", defaultValue = "") Timestamp timestamp
     ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         checkEmpty(userId, "userId");
 
@@ -107,9 +134,14 @@ public class PaymentController extends BaseController {
 
     @GetMapping(path = "/getLatestFriendPayment")
     @ResponseBody
-    public ResponseEntity<?> getLatestFriendPayment(
-            @RequestParam(value = "userId", defaultValue = "") String userId
-    ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+    public ResponseEntity<?> getLatestFriendPayment() throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         checkEmpty(userId, "userId");
 
@@ -118,48 +150,32 @@ public class PaymentController extends BaseController {
     }
 
     public static class CreatePaymentRequest {
-        private String fromUserId;
-        private String toUserId;
-        private Long amount;
-        private String type;
+        private final String toUserId;
+        private final Long amount;
+        private final String type;
+        private final String comment;
 
-        public CreatePaymentRequest(String fromUserId, String toUserId, Long amount, String type) {
-            this.fromUserId = fromUserId;
+        public CreatePaymentRequest(String toUserId, Long amount, String type, String comment) {
             this.toUserId = toUserId;
             this.amount = amount;
             this.type = type;
-        }
-
-        public String getFromUserId() {
-            return fromUserId;
-        }
-
-        public void setFromUserId(String fromUserId) {
-            this.fromUserId = fromUserId;
+            this.comment = comment;
         }
 
         public String getToUserId() {
             return toUserId;
         }
 
-        public void setToUserId(String toUserId) {
-            this.toUserId = toUserId;
-        }
-
         public Long getAmount() {
             return amount;
-        }
-
-        public void setAmount(Long amount) {
-            this.amount = amount;
         }
 
         public String getType() {
             return type;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        public String getComment() {
+            return comment;
         }
     }
 

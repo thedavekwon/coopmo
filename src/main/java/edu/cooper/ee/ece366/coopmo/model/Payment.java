@@ -1,6 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -21,10 +20,13 @@ public class Payment extends Transaction {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private long amount;
 
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
+    private String comment;
+
+    @Column(updatable = false, nullable = false)
     private PaymentType type;
 
     @Column(updatable = false, nullable = false)
@@ -32,13 +34,11 @@ public class Payment extends Transaction {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     protected Timestamp timestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "fromUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference(value = "toUser")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private User toUser;
 
@@ -49,11 +49,12 @@ public class Payment extends Transaction {
     public Payment() {
     }
 
-    public Payment(User fromUser, User toUser, long amount, PaymentType type) {
+    public Payment(User fromUser, User toUser, long amount, PaymentType type, String comment) {
         this.fromUser = fromUser;
         this.toUser = toUser;
         this.amount = amount;
         this.type = type;
+        this.comment = comment;
         timestamp = new Timestamp(System.currentTimeMillis());
         likes = new HashSet<>();
     }
@@ -62,12 +63,20 @@ public class Payment extends Transaction {
         return amount;
     }
 
+    public User getFromUser() { return fromUser; }
+
+    public User getToUser() { return toUser; }
+
     public String getId() {
         return id;
     }
 
     public PaymentType getType() {
         return type;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public Timestamp getTimestamp() {

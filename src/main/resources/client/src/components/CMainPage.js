@@ -15,7 +15,7 @@ export default class CMainPage extends React.Component {
 
   getBalance = () => {
     const path =
-      "http://localhost:8080/user/getUserBalance?userId=" + this.state.userId;
+        this.props.domainName + "/user/getUserBalance?userId=" + this.state.userId;
     fetch(path, {
       method: "GET",
     })
@@ -68,6 +68,7 @@ export default class CMainPage extends React.Component {
                 {...this.props}
                 userId={this.state.userId}
                 nodeId="38:1057"
+                domainName = {this.props.domainName}
               />*/}
             </div>
           </div>
@@ -89,11 +90,12 @@ export default class CMainPage extends React.Component {
               }}
               className="innerDiv"
             >
-              <CFriendsList
-                {...this.props}
-                userId={this.state.userId}
-                nodeId="38:1056"
-              />
+                <CFriendsList
+                    {...this.props}
+                    userId={this.state.userId}
+                    nodeId="38:1056"
+                    domainName={this.props.domainName}
+                />
             </div>
           </div>
           <div
@@ -147,12 +149,13 @@ export default class CMainPage extends React.Component {
                     }}
                     className="innerDiv"
                   >
-                    <CMenuButton
-                      {...this.props}
-                      textColor="rgba(255, 255, 255, 1)"
-                      page="main"
-                      nodeId="I76:29;30:174"
-                    />
+                      <CMenuButton
+                          {...this.props}
+                          textColor="rgba(255, 255, 255, 1)"
+                          page="main"
+                          nodeId="I76:29;30:174"
+                          domainName={this.props.domainName}
+                      />
                   </div>
                 </div>
                 <div

@@ -2,26 +2,27 @@ import React, {PureComponent} from "react";
 import {CFriendRequest} from "./CFriendRequest";
 
 export default class CMenuIncomingFriendRequests extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      request: {},
-      incomingRequests: [],
-    };
-    this.getIncomingRequests();
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {},
+            incomingRequests: [],
+        };
+        this.getIncomingRequests();
+    }
 
-  getIncomingRequests = () => {
-    const path =
-      "http://localhost:8080/user/getUserIncomingFriendRequest?userId=" +
-      this.props.userId;
-    fetch(path, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
+
+    getIncomingRequests = () => {
+        const path =
+            this.props.domainName + "/user/getUserIncomingFriendRequest?userId=" +
+            this.props.userId;
+        fetch(path, {
+            method: "GET",
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
           if (result.error != null) {
             console.log(result.error);
           } else {
@@ -69,7 +70,6 @@ export default class CMenuIncomingFriendRequests extends PureComponent {
                     key={key}
                     userId={this.props.userId}
                   >
-                    {" "}
                   </CFriendRequest>
                 </div>
               </div>

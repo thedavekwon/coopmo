@@ -1,5 +1,5 @@
 export function fetchFeed(userId, num_latest, fetch_type) {
-    const requestEndpoint = ''.concat("http://localhost:8080/pay/getLatest",
+    const requestEndpoint = ''.concat(this.props.domainName + "/pay/getLatest",
         fetch_type,
         "Payment",
         "?userId=",
@@ -8,7 +8,7 @@ export function fetchFeed(userId, num_latest, fetch_type) {
         num_latest.toString()
     );
     const headers = new Headers({
-        'Access-Control-Allow-Origin':'*'
+        'Access-Control-Allow-Origin': '*'
     });
     console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {

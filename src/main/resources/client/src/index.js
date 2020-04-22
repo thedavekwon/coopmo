@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import CMainPage from "./components/CMainPage.js";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
+import CLoginPage from "./components/CLoginPage";
 
 ReactDOM.render(
   <React.StrictMode>
     <div className="body">
-      <CMainPage />
+        <CLoginPage domainName="http://localhost:8080"/>
     </div>
   </React.StrictMode>,
   document.getElementById("root")

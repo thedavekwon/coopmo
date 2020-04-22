@@ -11,8 +11,8 @@ export default class CFriendsList extends PureComponent {
 
   getFriendsList = () => {
     const path =
-      "http://localhost:8080/user/getUserFriendList?userId=" +
-      this.props.userId;
+        this.props.domainName + "/user/getUserFriendList?userId=" +
+        this.props.userId;
     fetch(path, {
       method: "GET",
     })

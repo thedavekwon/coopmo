@@ -42,7 +42,7 @@ export default class CSendPaymentForm extends React.Component {
     this.setState((state) => ({
       findUserRequest: newRequest,
     }));
-    const findUserPath = "http://localhost:8080/user/findUsers";
+    const findUserPath = this.props.domainName + "/user/findUsers";
     fetch(findUserPath, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,7 +95,7 @@ export default class CSendPaymentForm extends React.Component {
     }));
 
     console.log(this.state.request);
-    const path = "http://localhost:8080/pay/createPayment";
+    const path = this.props.domainName + "/pay/createPayment";
     fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

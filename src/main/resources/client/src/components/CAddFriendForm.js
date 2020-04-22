@@ -6,44 +6,63 @@ export default class CAddFriendForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      username: this.props.username,
-      friendUsername: "",
+        request: {
+            username: this.props.username,
+            friendUsername: "",
+        },
+        respMessage: {
+            messageType: "NONE",
+            message: "",
+        },
     };
   }
 
-  handleChange = (key, value) => {
-    this.setState((state) => ({ [key]: value }));
-  };
+    handleChange = (key, value) => {
+        var newRequest = this.state.request;
+        newRequest[key] = value;
+        this.setState((state) => ({request: newRequest}));
+    };
 
-  sendRequest = () => {
-    console.log(this.state);
-    const path = "http://localhost:8080/user/sendOutRequestWithUsername";
-    fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state),
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      );
-  };
+    setMessage(message, messageType) {
+        var newRespMessage = this.state.respMessage;
+        newRespMessage.message = message;
+        newRespMessage.messageType = messageType;
+        this.setState((state) => ({
+            respMessage: newRespMessage,
+        }));
+    }
 
-  render() {
-    return (
-      <form>
-        <div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="35:300"
-              style={{
+    sendRequest = () => {
+        const path = this.props.domainName + "/user/sendOutRequestWithUsername";
+        fetch(path, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(this.state.request),
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    if (result.error != null) {
+                        console.log(result.error);
+                        this.setMessage(result.error.message, "ERROR");
+                    } else {
+                        this.setMessage("Successfully sent friend Request!", "SUCCESS");
+                    }
+                },
+                (error) => {
+                    this.setMessage("ERROR sending request", "ERROR");
+                }
+            );
+    };
+
+    render() {
+        return (
+            <form>
+                <div>
+                    <div style={{zIndex: 1}} className="outerDiv centerer">
+                        <div
+                            id="35:300"
+                            style={{
                 width: "47.22222222222222%",
                 marginLeft: "37.986111111111114%",
                 height: "11.71875%",
@@ -63,20 +82,22 @@ export default class CAddFriendForm extends PureComponent {
           </div>
           <div style={{ zIndex: 2 }} className="outerDiv centerer">
             <div
-              id="35:280"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "31.25%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
+                id="35:280"
+                style={{
+                    width: "47.22222222222222%",
+                    marginLeft: "37.986111111111114%",
+                    height: "11.71875%",
+                    top: "31.25%",
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                }}
+                className="innerDiv"
             >
-              <CSingleButton
-                text="Send Friend Request"
-                onSub={this.sendRequest}
-              />
+                <CSingleButton
+                    text="Send Friend Request"
+                    onSub={this.sendRequest}
+                    messageType={this.state.respMessage.messageType}
+                    message={this.state.respMessage.message}
+                />
             </div>
           </div>
         </div>

@@ -16,9 +16,9 @@ export default class CMenuButton extends React.Component {
     }));
     */
     if (this.props.page == "main") {
-      ReactDOM.render(<CMenuEditProfile></CMenuEditProfile>, document.body);
+      ReactDOM.render(<CMenuEditProfile domainName={this.props.domainName}></CMenuEditProfile>, document.body);
     } else {
-      ReactDOM.render(<CMainPage></CMainPage>, document.body);
+      ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.body);
     }
   }
 

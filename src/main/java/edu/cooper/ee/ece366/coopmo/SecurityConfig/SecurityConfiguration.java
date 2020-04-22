@@ -31,7 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.cors().and().authorizeRequests()
                 .antMatchers("/user/**").authenticated()
                 .antMatchers("/transaction/**").authenticated()
                 .antMatchers("/pay/**").authenticated()
@@ -48,6 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.sessionManagement().maximumSessions(1)
                 .and()
                 .sessionFixation().migrateSession();
+
 
     }
 
@@ -68,6 +69,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
 
 

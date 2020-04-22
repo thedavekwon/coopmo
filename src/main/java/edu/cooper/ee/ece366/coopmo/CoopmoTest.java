@@ -184,6 +184,7 @@ public class CoopmoTest {
 
     public static void sendRequests() throws IOException, InterruptedException {
         String masterUser = createUser("m1", "m1", "m1", "m1@gmail.com", "m1");
+
         for (int i = 2; i < 12; i++) {
             String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
             sendOutRequest(user, masterUser);

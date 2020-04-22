@@ -7,34 +7,47 @@ export default class CCashInForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      bankAcctList: [],
-      request: {
-        userId: this.props.userId,
-        bankAccountId: "",
-        amount: 0,
-        type: "IN",
-      },
+        bankAcctList: [],
+        request: {
+            userId: this.props.userId,
+            bankAccountId: "",
+            amount: 0,
+            type: "IN",
+        },
+        respMessage: {
+            messageType: "NONE",
+            message: "",
+        },
     };
-    this.getBankAccounts();
+      this.getBankAccounts();
   }
 
-  handleBankChange = (bankId) => {
-    var newRequest = this.state.request;
-    newRequest.bankAccountId = bankId;
-    this.setState((state) => ({
-      request: newRequest,
-    }));
-  };
+    setMessage(message, messageType) {
+        var newRespMessage = this.state.respMessage;
+        newRespMessage.message = message;
+        newRespMessage.messageType = messageType;
+        this.setState((state) => ({
+            respMessage: newRespMessage,
+        }));
+    }
 
-  handleAmtChange = (amount) => {
-    var newRequest = this.state.request;
-    newRequest.amount = parseInt(amount);
-    this.setState((state) => ({
-      request: newRequest,
-    }));
-  };
-  sendRequest = () => {
-    const path = "http://localhost:8080/cash/createCash";
+    handleBankChange = (bankId) => {
+        var newRequest = this.state.request;
+        newRequest.bankAccountId = bankId;
+        this.setState((state) => ({
+            request: newRequest,
+        }));
+    };
+
+    handleAmtChange = (amount) => {
+        var newRequest = this.state.request;
+        newRequest.amount = parseInt(amount);
+        this.setState((state) => ({
+            request: newRequest,
+        }));
+    };
+    sendRequest = () => {
+        const path = this.props.domainName + "/cash/createCash";
     console.log(this.state.request);
     fetch(path, {
       method: "POST",
@@ -43,31 +56,36 @@ export default class CCashInForm extends PureComponent {
     })
       .then((res) => res.json())
       .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
+          (result) => {
+              if (result.error != null) {
+                  console.log(result.error);
+                  this.setMessage(result.error.message, "ERROR");
+              } else {
+                  this.setMessage("Successfully Cashed In!", "SUCCESS");
+              }
+          },
+          (error) => {
+              this.setMessage("ERROR sending request", "ERROR");
           }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
       );
   };
 
   getBankAccounts = () => {
-    const path =
-      "http://localhost:8080/user/getUserBankAccountList?userId=" +
-      this.props.userId;
+      const path =
+          this.props.domainName + "/user/getUserBankAccountList?userId=" +
+          this.props.userId;
     fetch(path, {
       method: "GET",
     })
       .then((res) => res.json())
       .then(
         (result) => {
-          console.log(result);
+
           if (result.error != null) {
-            console.log(result.error);
+              console.log(result.error);
+              this.setMessage(result.error.message, "ERROR");
           } else {
+
             this.setState((state) => ({
               bankAcctList: result.data,
             }));
@@ -81,7 +99,7 @@ export default class CCashInForm extends PureComponent {
           }
         },
         (error) => {
-          console.log("error sending request");
+            this.setMessage("ERROR sending request", "ERROR");
         }
       );
   };
@@ -128,22 +146,24 @@ export default class CCashInForm extends PureComponent {
           </div>
           <div style={{ zIndex: 3 }} className="outerDiv centerer">
             <div
-              id="35:285"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "42.96875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
+                id="35:285"
+                style={{
+                    width: "47.22222222222222%",
+                    marginLeft: "37.986111111111114%",
+                    height: "11.71875%",
+                    top: "42.96875%",
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                }}
+                className="innerDiv"
             >
-              <CSingleButton
-                {...this.props}
-                text="Submit"
-                onSub={this.sendRequest}
-                nodeId="35:320"
-              />
+                <CSingleButton
+                    {...this.props}
+                    text="Submit"
+                    onSub={this.sendRequest}
+                    nodeId="35:320"
+                    messageType={this.state.respMessage.messageType}
+                    message={this.state.respMessage.message}
+                />
             </div>
           </div>
         </div>

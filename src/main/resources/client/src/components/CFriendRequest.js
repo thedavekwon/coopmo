@@ -14,7 +14,7 @@ export class CFriendRequest extends PureComponent {
   }
 
   acceptRequest = () => {
-    const path = "http://localhost:8080/user/acceptIncomingRequest";
+    const path = this.props.domainName + "/user/acceptIncomingRequest";
     fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,7 +39,7 @@ export class CFriendRequest extends PureComponent {
   };
 
   declineRequest = () => {
-    const path = "http://localhost:8080/user/declineFriendRequest";
+      const path = this.props.domainName + "/user/declineFriendRequest";
     fetch(path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

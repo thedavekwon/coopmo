@@ -27,19 +27,19 @@ export default class CMenuPage extends PureComponent {
   render() {
     let formPage;
     if (this.state.activePage == "Edit Profile")
-      formPage = <CEditProfileForm />;
+      formPage = <CEditProfileForm domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Add Friend")
-      formPage = <CAddFriendForm username="asd" />;
+        formPage = <CAddFriendForm username="asd" domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Incoming Friend Requests")
       formPage = (
-        <CIncomingFriendRequestForm userId="df3f1afb-f80e-4bfb-9fa3-00932b71153c" />
+          <CIncomingFriendRequestForm userId="df3f1afb-f80e-4bfb-9fa3-00932b71153c" domainName={this.props.domainName}/>
       );
     else if (this.state.activePage == "Add a Bank Account")
-      formPage = <CChangeBankAccounts userId={this.state.userId} />;
+        formPage = <CChangeBankAccounts userId={this.state.userId} domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Cash In")
-      formPage = <CCashInForm userId={this.state.userId} />;
+        formPage = <CCashInForm userId={this.state.userId} domainName={this.props.domainName}/>;
     else if (this.state.activePage == "Send Payment")
-      formPage = <CSendPaymentForm userId={this.state.userId} />;
+        formPage = <CSendPaymentForm userId={this.state.userId} domainName={this.props.domainName}/>;
     else formPage = <CEditProfileForm />;
     return (
       <div
@@ -319,12 +319,13 @@ export default class CMenuPage extends PureComponent {
                     }}
                     className="innerDiv"
                   >
-                    <CMenuButton
-                      {...this.props}
-                      backgroundColor="rgba(255, 255, 255, 1)"
-                      textColor="rgba(102, 0, 153, 1)"
-                      nodeId="I76:47;76:21"
-                    />
+                      <CMenuButton
+                          {...this.props}
+                          backgroundColor="rgba(255, 255, 255, 1)"
+                          textColor="rgba(102, 0, 153, 1)"
+                          nodeId="I76:47;76:21"
+                          domainName={this.props.domainName}
+                      />
                   </div>
                 </div>
                 <div

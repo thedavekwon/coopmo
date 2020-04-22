@@ -7,7 +7,6 @@ export default class CSingleButton extends React.Component {
   }
 
   handleClick(event) {
-    console.log(this.state);
     this.props.onSub();
   }
 

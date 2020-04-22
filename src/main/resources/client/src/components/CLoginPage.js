@@ -15,7 +15,6 @@ export default class CLoginPage extends PureComponent {
                 message: "",
             },
         };
-        this.createUserRequest();
     }
 
     handleChange = (key, value) => {
@@ -33,57 +32,45 @@ export default class CLoginPage extends PureComponent {
         }));
     }
 
-
     sendRequest = () => {
         const path = this.props.domainName + "/login";
+        const formData = new FormData();
+        formData.append("username", this.state.request["username"]);
+        formData.append("password", this.state.request["password"]);
+
         fetch(path, {
             method: "POST",
-            mode: "cors",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(this.state.request),
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            body: formData,
+            credentials: 'include'
         })
-            .then((res) => res.json())
+            .then((res) => {
+                console.log(res.body);
+                res.json()
+            })
             .then(
                 (result) => {
                     console.log(result);
-                    if (result.error != null) {
-                        console.log(result.error);
-                        this.setMessage(result.error.message, "ERROR");
-                    } else {
-                        this.setMessage("Successfully Logged In!", "SUCCESS");
-                    }
                 },
                 (error) => {
-                    console.log(error)
                     this.setMessage("ERROR sending request", "ERROR");
                 }
             );
     };
 
-    createUserRequest = () => {
-        const testRequest = {
-            name: "test",
-            username: "test",
-            password: "test",
-            email: "test@gmail.com",
-            handle: "test"
-        }
-        const path = this.props.domainName + "/user/createUser";
+    sendRequestBalance = () => {
+        const path = this.props.domainName + "/user/getUserWithId";
         fetch(path, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(testRequest),
+            method: "GET",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
         })
-            .then((res) => res.json())
+            .then((res) => {
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
-                    if (result.error != null) {
-                        console.log(result.error);
-                        this.setMessage(result.error.message, "ERROR");
-                    } else {
-                        this.setMessage("Successfully Logged In!", "SUCCESS");
-                    }
                 },
                 (error) => {
                     this.setMessage("ERROR sending request", "ERROR");
@@ -157,8 +144,13 @@ export default class CLoginPage extends PureComponent {
                             messageType={this.state.respMessage.messageType}
                             message={this.state.respMessage.message}
                         />
-
                     </div>
+                    <CSingleButton
+                        text="getBalance"
+                        onSub={this.sendRequestBalance}
+                        messageType={this.state.respMessage.messageType}
+                        message={this.state.respMessage.message}
+                    />
                 </div>
             </form>
         );

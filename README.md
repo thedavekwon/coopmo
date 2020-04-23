@@ -22,7 +22,14 @@ cd src/main/resources/client
 npm install
 npm start
 
+# TODO add environment to select host name
 # currently react server is not in docker
+# in src/main/resources/application.properties choose datasource.url accordingly
+# if you want docker
+# spring.datasource.url=jdbc:mysql://coopmoMysql:3306/coopmo_db?useSSL=false&allowPublicKeyRetrieval=true
+# if you want without docker
+# spring.datasource.url=jdbc:mysql://localhost:3306/coopmo_db?useSSL=false&allowPublicKeyRetrieval=true
+
 
 # docker setup
 ./create.sh

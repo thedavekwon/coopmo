@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "proxy": "http://backend:8080",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -19,7 +19,7 @@
     "react-dom": "^16.13.1",
     "react-dropdown-input": "^0.1.11",
     "react-number-format": "^4.4.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "3.4.0",
     "react-scroll-box": "^0.3.5",
     "react-select": "^3.1.0",
     "reactstrap": "^8.4.1",

@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mysql:
+    image: "mysql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: coopmopass
+      MYSQL_DATABASE: coopmo_db
+      MYSQL_USER: coopmo
+      MYSQL_PASSWORD: coopmopass
+    ports:
+      - 3306:3306
+
+  backend:
+    depends_on:
+      - mysql
+    links:
+      - "mysql"
+    restart: always
+    build: .
+    ports:
+      - 8080:8080
+
+  frontend:
+    depends_on:
+      - backend
+    links:
+      - "backend"
+    restart: always
+    stdin_open: true
+    build: client
+    ports:
+      - 3000:3000

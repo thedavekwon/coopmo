@@ -16,9 +16,10 @@ export default class CMenuButton extends React.Component {
     }));
     */
     if (this.props.page == "main") {
-      ReactDOM.render(<CMenuEditProfile domainName={this.props.domainName}></CMenuEditProfile>, document.body);
+      ReactDOM.render(<CMenuEditProfile
+          domainName={this.props.domainName}></CMenuEditProfile>, document.getElementById("root"));
     } else {
-      ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.body);
+      ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.getElementById("root"));
     }
   }
 
@@ -27,11 +28,7 @@ export default class CMenuButton extends React.Component {
       backgroundColor: this.props.backgroundColor,
     };
     const textStyle = {
-      marginLeft: 0,
-      marginRight: 0,
       flexGrow: 1,
-      marginTop: 11.899993896484375,
-      marginBottom: 11.900007247924805,
       color: this.props.textColor,
       fontSize: 24,
       fontWeight: 400,
@@ -45,7 +42,7 @@ export default class CMenuButton extends React.Component {
       <div className="master" style={bColorStyle}>
         <div>
           <div style={{}} className="outerDiv centerer">
-            <div id="I100:0;30:174;7:1" style={textStyle} className="innerDiv">
+            <div id="I100:0;30:174;7:1" style={textStyle} className="innerDiv vertCenterAndCut">
               <div onClick={this.handleClick}>
                 <span style={{}} key="end">
                   Menu

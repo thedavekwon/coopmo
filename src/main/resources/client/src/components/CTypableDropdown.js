@@ -1,5 +1,5 @@
 import React from "react";
-import Select from 'react-select';
+import Select from "react-select";
 
 export default class CDropdown extends React.Component {
     constructor(props) {
@@ -12,7 +12,9 @@ export default class CDropdown extends React.Component {
 
     render() {
         return (
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0)", overflowY: "visible"}}>
+            <div
+                style={{backgroundColor: "rgba(0, 0, 0, 0)", overflowY: "visible"}}
+            >
                 <div>
                     <div style={{zIndex: 9}} className="outerDiv centerer">
                         <div
@@ -38,10 +40,13 @@ export default class CDropdown extends React.Component {
                         >
                             <div>
                 <span style={{}} key="end">
-
-                    <Select isSearchable={true} onInputChange={this.handleChange} onChange={this.handleChange}
-                            options={this.props.list}
-                            placeholder='Search...'/>
+                  <Select
+                      isSearchable={true}
+                      onInputChange={this.handleChange}
+                      onChange={this.handleChange}
+                      options={this.props.list}
+                      placeholder="Search..."
+                  />
                 </span>
                             </div>
                         </div>

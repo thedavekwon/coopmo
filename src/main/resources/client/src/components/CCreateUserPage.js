@@ -24,7 +24,7 @@ export default class CCreateUserPage extends React.Component {
     }
 
     renderCreate = () => {
-        ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.body);
+        ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.getElementById("root"));
     }
 
     handleChange = (key, value) => {
@@ -96,7 +96,7 @@ export default class CCreateUserPage extends React.Component {
 
         let inputs = entries.map((e, key) => {
             return (
-                <div style={{zIndex: key + 1}} className="outerDiv centerer">
+                <div style={{zIndex: key + 1}} key={key} className="outerDiv centerer">
                     <div
                         id="35:300"
                         style={{
@@ -124,7 +124,7 @@ export default class CCreateUserPage extends React.Component {
         return (
             <form>
                 {inputs}
-                <div style={{zIndex: 3}} className="outerDiv centerer">
+                <div style={{zIndex: 6}} className="outerDiv centerer">
                     <div
                         id="35:300"
                         style={{
@@ -145,7 +145,7 @@ export default class CCreateUserPage extends React.Component {
                     </div>
                 </div>
 
-                <div style={{zIndex: 1}} className="outerDiv centerer">
+                <div style={{zIndex: 7}} className="outerDiv centerer">
                     <div
                         id="35:300"
                         style={{
@@ -184,7 +184,7 @@ export default class CCreateUserPage extends React.Component {
                 </div>
                 <div
                     style={{
-                        zIndex: 2,
+                        zIndex: 8,
                     }}
                     className="outerDiv centerer"
                 >

@@ -8,12 +8,12 @@ export default class CSendPaymentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      request: {
-        toUserId: "",
-        amount: 0,
-        type: "PRIVATE",
-          comment: "YEEE"
-      },
+        request: {
+            toUserId: "",
+            amount: 0,
+            type: "PRIVATE",
+            comment: "YEEE",
+        },
         findUserRequest: {
             match: "",
             type: "USERNAME",
@@ -38,8 +38,7 @@ export default class CSendPaymentForm extends React.Component {
     }
 
     handleInputChange = (value) => {
-        if (value == "")
-            return;
+        if (value == "") return;
         var newRequest = this.state.findUserRequest;
         newRequest.match = value;
         this.setState((state) => ({
@@ -52,9 +51,9 @@ export default class CSendPaymentForm extends React.Component {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Cache-Control": "no-cache",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(this.state.findUserRequest),
         })
             .then((res) => res.json())
@@ -69,17 +68,20 @@ export default class CSendPaymentForm extends React.Component {
                         }));
 
                         if (result.data != null) {
-                            var userList = []
+                            var userList = [];
                             for (var i = 0; i < result.data.length; i++) {
-                                userList = [...userList, {
-                                    value: result.data[i].name,
-                                    label: result.data[i].name
-                                }]
+                                userList = [
+                                    ...userList,
+                                    {
+                                        value: result.data[i].name,
+                                        label: result.data[i].name,
+                                    },
+                                ];
                             }
 
                             this.setState((state) => ({
-                                userListDrop: userList
-                            }))
+                                userListDrop: userList,
+                            }));
                         }
                     }
                 },
@@ -88,7 +90,6 @@ export default class CSendPaymentForm extends React.Component {
                 }
             );
     };
-
 
   handleChange = (paymentType) => {
     var newRequest = this.state.request;
@@ -120,24 +121,28 @@ export default class CSendPaymentForm extends React.Component {
           request: newRequest,
       }));
 
-    console.log(this.state.request);
-    const path = this.props.domainName + "/pay/createPayment";
-    fetch(path, {
-      method: "POST",
-      headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
-      credentials: 'include',
-      body: JSON.stringify(this.state.request),
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-            this.setMessage(result.error.message, "ERROR");
-          } else {
-            this.setMessage("Successfully sent payment!", "SUCCESS");
-          }
-        },
+      console.log(this.state.request);
+      const path = this.props.domainName + "/pay/createPayment";
+      fetch(path, {
+          method: "POST",
+          headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Cache-Control": "no-cache",
+              "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(this.state.request),
+      })
+          .then((res) => res.json())
+          .then(
+              (result) => {
+                  if (result.error != null) {
+                      console.log(result.error);
+                      this.setMessage(result.error.message, "ERROR");
+                  } else {
+                      this.setMessage("Successfully sent payment!", "SUCCESS");
+                  }
+              },
         (error) => {
           this.setMessage("ERROR sending request", "ERROR");
         }
@@ -163,88 +168,72 @@ export default class CSendPaymentForm extends React.Component {
     return (
       <form>
         <div style={{ overflow: "auto" }}>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="35:300"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "19.53125%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-                <CTypableDropdown
-                    name="To Who"
-                    valKey="textInput"
-                    list={this.state.userListDrop}
-                    handleChange={this.handleInputChange}
-                    value={this.state.request.match}
-                />
+            <div style={{zIndex: 1}} className="outerDiv centerer">
+                <div
+                    id="35:300"
+                    style={{
+                        top: "19.53125%",
+                    }}
+                    className="innerDiv blocksOnForm"
+                >
+                    <CTypableDropdown
+                        name="To Who"
+                        valKey="textInput"
+                        list={this.state.userListDrop}
+                        handleChange={this.handleInputChange}
+                        value={this.state.request.match}
+                    />
+                </div>
             </div>
-          </div>
-          <div style={{ zIndex: 2 }} className="outerDiv centerer">
-            <div
-              id="35:280"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "31.25%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CInputwithanIcon
-                onInput={this.handleAmtChange}
-                name="Payment Amount"
-              />
-            </div>
+            <div style={{zIndex: 2}} className="outerDiv centerer">
+                <div
+                    id="35:280"
+                    style={{
+                        top: "31.25%",
+                    }}
+                    className="innerDiv blocksOnForm"
+                >
+                    <CInputwithanIcon
+                        onInput={this.handleAmtChange}
+                        name="Payment Amount"
+                    />
+                </div>
           </div>
           <div style={{ zIndex: 3 }} className="outerDiv centerer">
-            <div
-              id="35:285"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "42.96875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CDropdown
-                {...this.props}
-                name="Type of Payment"
-                dropType="payment"
-                handleChange={this.handleChange}
-                paymentTypes={paymentTypes}
-                nodeId="35:320"
-              />
-            </div>
+              <div
+                  id="35:285"
+                  style={{
+                      top: "42.96875%",
+                  }}
+                  className="innerDiv blocksOnForm"
+              >
+                  <CDropdown
+                      {...this.props}
+                      name="Type of Payment"
+                      dropType="payment"
+                      handleChange={this.handleChange}
+                      paymentTypes={paymentTypes}
+                      nodeId="35:320"
+                  />
+              </div>
           </div>
           <div style={{ zIndex: 3 }} className="outerDiv centerer">
-            <div
-              id="35:285"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "54.6875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSingleButton
-                {...this.props}
-                text="Submit"
-                onSub={this.sendRequest}
-                nodeId="35:320"
-                messageType={this.state.respMessage.messageType}
-                message={this.state.respMessage.message}
-              />
-            </div>
+              <div
+                  id="35:285"
+                  style={{
+                      top: "54.6875%",
+                  }}
+                  className="innerDiv blocksOnForm"
+              >
+                  <CSingleButton
+                      {...this.props}
+                      text="Submit"
+                      onSub={this.sendRequest}
+                      nodeId="35:320"
+                      messageType={this.state.respMessage.messageType}
+                      message={this.state.respMessage.message}
+                  />
+              </div>
           </div>
         </div>
       </form>

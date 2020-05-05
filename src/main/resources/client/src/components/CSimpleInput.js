@@ -20,30 +20,28 @@ export default class CSimpleInput extends React.Component {
                             id="I35:280;35:276"
                             style={{
                                 marginLeft: "3%",
-                width: "94%",
-                flexGrow: 1,
-                height: "40%",
-                top: "40%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <div>
-                <div style={{}} className="outerDiv centerer">
-                  <div
-                    id="I35:280;35:277"
-                    style={{
-                      width: "100%",
-                      marginLeft: "0%",
-                      height: "100%",
-                      top: "0%",
-                      border: "1px solid rgba(38, 38, 38, 1)",
-                      borderRadius: "8px 8px 8px 8px",
-                    }}
-                    className="innerDiv"
-                  >
-                    <div></div>
-                  </div>
+                                width: "94%",
+                                flexGrow: 1,
+                                height: "40%",
+                                top: "40%",
+                                backgroundColor: "rgba(0, 0, 0, 0)",
+                            }}
+                            className="innerDiv"
+                        >
+                            <div>
+                                <div style={{}} className="outerDiv centerer">
+                                    <div
+                                        id="I35:280;35:277"
+                                        style={{
+                                            width: "100%",
+                                            marginLeft: "0%",
+                                            height: "100%",
+                                            top: "0%",
+                                            border: "1px solid rgba(38, 38, 38, 1)",
+                                            borderRadius: "8px 8px 8px 8px",
+                                        }}
+                                        className="innerDiv"
+                                    ></div>
                 </div>
               </div>
             </div>
@@ -79,36 +77,30 @@ export default class CSimpleInput extends React.Component {
           <div
             id="I35:280;35:275"
             style={{
-              marginLeft: "5%",
-              marginRight: "3%",
-              flexGrow: 1,
-              height: "33%",
-              top: "50%",
-              width: "100%",
-              color: "rgba(38, 38, 38, 1)",
-              fontSize: 16,
-              fontWeight: 400,
-              fontFamily: "Muli",
-              textAlign: "LEFT",
-              fontStyle: "normal",
-              lineHeight: "175%",
-              letterSpacing: "0px",
+                marginLeft: "5%",
+                marginRight: "3%",
+                flexGrow: 1,
+                height: "40%",
+                top: "40%",
+                width: "100%",
+                color: "rgba(38, 38, 38, 1)",
+                fontSize: 16,
+                fontWeight: 400,
+                fontFamily: "Muli",
+                textAlign: "LEFT",
+                fontStyle: "normal",
+                lineHeight: "175%",
+                letterSpacing: "0px",
             }}
             className="innerDiv"
           >
-            <div>
-              <span style={{}} key="end">
-                <input
+              <input
                   type="text"
                   id={this.props.valKey}
                   name={this.props.name}
                   onChange={this.handleChange}
-                  style={{ width: "100%" }}
-                ></input>
-              </span>
-
-              {/*<span style={{}} key="end">Placeholder</span>*/}
-            </div>
+                  style={{width: "100%", height: "100%"}}
+              ></input>
           </div>
         </div>
       </div>

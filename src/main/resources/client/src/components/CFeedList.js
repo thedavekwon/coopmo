@@ -8,7 +8,6 @@ export default class CFeedList extends React.Component {
     this.state = {
       num_items: 30,
       feedItemDatas: [],
-
     };
   }
 
@@ -55,15 +54,6 @@ export default class CFeedList extends React.Component {
       this.updateList(this.props.feedTab);
     }
   }
-
-  // window.onscroll = debounce(() => {
-  //     const updateList,
-  //     state: {
-  //         error,
-  //         isLoading,
-  //         hasMore,
-  //     },
-  // })
 
   render() {
     const payments = this.state.feedItemDatas;

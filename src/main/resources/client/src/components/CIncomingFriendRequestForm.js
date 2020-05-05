@@ -11,31 +11,32 @@ export default class CMenuIncomingFriendRequests extends React.Component {
         this.getIncomingRequests();
     }
 
-
     getIncomingRequests = () => {
-        const path =
-            this.props.domainName + "/user/getUserIncomingFriendRequest"
+        const path = this.props.domainName + "/user/getUserIncomingFriendRequest";
         fetch(path, {
             method: "GET",
-            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
-            credentials: 'include'
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
         })
             .then((res) => res.json())
             .then(
                 (result) => {
                     console.log(result);
-          if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              incomingRequests: result.data,
-            }));
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      )
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            incomingRequests: result.data,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log("error sending request");
+                }
+            )
       .then(() => {
         console.log(this.state.incomingRequests);
       });
@@ -55,24 +56,23 @@ export default class CMenuIncomingFriendRequests extends React.Component {
                 className="outerDiv centerer"
               >
                 <div
-                  id="35:300"
-                  style={{
-                    width: "100%",
+                    id="35:300"
+                    style={{
+                        width: "100%",
 
-                    height: (1 / 6) * 100 + "%",
-                    top: (key / 6) * 100 + "%",
-                    backgroundColor: "rgba(0, 0, 0, 0)",
-                  }}
-                  className="innerDiv"
+                        height: (1 / 6) * 100 + "%",
+                        top: (key / 6) * 100 + "%",
+                        backgroundColor: "rgba(0, 0, 0, 0)",
+                    }}
+                    className="innerDiv"
                 >
-                  <CFriendRequest
-                      name={e.name}
-                      friendId={e.id}
-                      key={key}
-                      userId={this.props.userId}
-                      domainName={this.props.domainName}
-                  >
-                  </CFriendRequest>
+                    <CFriendRequest
+                        name={e.name}
+                        friendId={e.id}
+                        key={key}
+                        userId={this.props.userId}
+                        domainName={this.props.domainName}
+                    ></CFriendRequest>
                 </div>
               </div>
             );

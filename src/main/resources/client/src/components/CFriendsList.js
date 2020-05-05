@@ -10,29 +10,31 @@ export default class CFriendsList extends React.Component {
     }
 
     getFriendsList = () => {
-        const path =
-            this.props.domainName + "/user/getUserFriendList"
+        const path = this.props.domainName + "/user/getUserFriendList";
         fetch(path, {
             method: "GET",
-            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
-            credentials: 'include'
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
         })
             .then((res) => res.json())
             .then(
                 (result) => {
                     console.log(result);
                     if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              friendsList: result.data,
-            }));
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      )
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            friendsList: result.data,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log("error sending request");
+                }
+            )
       .then(() => {
         console.log(this.state.friendsList);
       });
@@ -148,13 +150,10 @@ export default class CFriendsList extends React.Component {
             <div
               id="I38:1056;4:4"
               style={{
-                marginLeft: 0,
-                marginRight: 0,
-                flexGrow: 1,
-                marginTop: 0,
-                height: "10%",
-                marginBottom: 0,
-                backgroundColor: "rgba(102, 0, 153, 1)",
+                  flexGrow: 1,
+                  height: "10%",
+                  borderRadius: "10px 10px 0px 0px",
+                  backgroundColor: "rgba(102, 0, 153, 1)",
               }}
               className="innerDiv"
             >

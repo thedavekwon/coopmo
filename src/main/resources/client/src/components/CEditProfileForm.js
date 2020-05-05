@@ -7,7 +7,6 @@ export default class CEditProfileForm extends React.Component {
         super(props);
         this.state = {
             request: {
-                userId: this.props.userId,
                 newName: "",
                 newUsername: "",
                 newPassword: "",
@@ -43,9 +42,9 @@ export default class CEditProfileForm extends React.Component {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Cache-Control": "no-cache",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())
@@ -65,139 +64,58 @@ export default class CEditProfileForm extends React.Component {
     };
 
     render() {
+        const formEntries = [{
+            name: "Name",
+            valKey: "newName",
+        },
+            {
+                name: "Username",
+                valKey: "newUsername"
+            },
+            {
+                name: "Password",
+                valKey: "newPassword"
+            },
+            {
+                name: "Email",
+                valKey: "newEmail"
+            },
+            {
+                name: "Handle",
+                valKey: "newHandle"
+            }]
+
+        let formBlocks = formEntries.map((value, index) => {
+            return (
+                <div
+                    style={{
+                        zIndex: index + 1,
+                    }}
+                    className="outerDiv centerer"
+                >
+                    <div
+                        id="35:300"
+                        style={{
+                            top: 19.53125 + 11.71875 * index + "%",
+                        }}
+                        className="innerDiv blocksOnForm"
+                    >
+                        <CSimpleInput
+                            {...this.props}
+                            name={value.name}
+                            valKey={value.valKey}
+                            onInput={this.handleChange}
+                            nodeId="35:300"
+                        />
+                    </div>
+                </div>
+            )
+        })
+
         return (
             <form>
                 <div>
-                    <div
-                        style={{
-                            zIndex: 1,
-                        }}
-                        className="outerDiv centerer"
-                    >
-                        <div
-                            id="35:300"
-                            style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
-                                top: "19.53125%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Name"
-                                valKey="newName"
-                                onInput={this.handleChange}
-                                nodeId="35:300"
-                            />
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            zIndex: 2,
-                        }}
-                        className="outerDiv centerer"
-                    >
-                        <div
-                            id="35:280"
-                            style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
-                                top: "31.25%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Username"
-                                valKey="newUsername"
-                                onInput={this.handleChange}
-                                nodeId="35:280"
-                            />
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            zIndex: 3,
-                        }}
-                        className="outerDiv centerer"
-                    >
-                        <div
-                            id="35:285"
-                            style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
-                                top: "42.96875%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Password"
-                                valKey="newPassword"
-                                onInput={this.handleChange}
-                                nodeId="35:285"
-                            />
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            zIndex: 4,
-                        }}
-                        className="outerDiv centerer"
-                    >
-                        <div
-                            id="35:290"
-                            style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
-                                top: "54.6875%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Email"
-                                valKey="newEmail"
-                                onInput={this.handleChange}
-                                nodeId="35:290"
-                            />
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            zIndex: 5,
-                        }}
-                        className="outerDiv centerer"
-                    >
-                        <div
-                            id="35:295"
-                            style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
-                                top: "66.40625%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Handle"
-                                valKey="newHandle"
-                                onInput={this.handleChange}
-                                nodeId="35:295"
-                            />
-                        </div>
-                    </div>
+                    {formBlocks}
 
                     <div
                         style={{
@@ -208,14 +126,10 @@ export default class CEditProfileForm extends React.Component {
                         <div
                             id="35:320"
                             style={{
-                                width: "47.22222222222222%",
-                                marginLeft: "37.986111111111114%",
-                                height: "11.71875%",
                                 top: "78.1251%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
                                 overflow: "hidden",
                             }}
-                            className="innerDiv"
+                            className="innerDiv blocksOnForm"
                         >
                             <CSingleButton
                                 {...this.props}

@@ -23,17 +23,17 @@ export default class CFeedTab extends React.Component {
                     <div
                         id="I38:1057;30:46;30:9;30:5"
                         style={{
-              marginLeft: 0,
-              marginRight: 0,
-              flexGrow: 1,
-              top: "98%",
-              height: "2%",
-              backgroundColor: "rgba(102, 0, 153, 1)",
-            }}
-            className="innerDiv"
-          >
-            <div></div>
-          </div>
+                            marginLeft: 0,
+                            marginRight: 0,
+                            flexGrow: 1,
+                            top: "98%",
+                            height: "2%",
+                            backgroundColor: "rgba(102, 0, 153, 1)",
+                        }}
+                        className="innerDiv"
+                    >
+                        <div></div>
+                    </div>
         </div>
       );
     }

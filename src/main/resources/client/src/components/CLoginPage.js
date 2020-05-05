@@ -21,8 +21,11 @@ export default class CLoginPage extends React.Component {
     }
 
     renderCreate = () => {
-        ReactDOM.render(<CCreateUserPage domainName={this.props.domainName}></CCreateUserPage>, document.body);
-    }
+        ReactDOM.render(
+            <CCreateUserPage domainName={this.props.domainName}></CCreateUserPage>,
+            document.getElementById("root")
+        );
+    };
 
     handleChange = (key, value) => {
         var newRequest = this.state.request;
@@ -39,7 +42,6 @@ export default class CLoginPage extends React.Component {
         }));
     }
 
-
     sendRequest = () => {
         const path = this.props.domainName + "/login";
         const formData = new FormData();
@@ -48,9 +50,12 @@ export default class CLoginPage extends React.Component {
 
         fetch(path, {
             method: "POST",
-            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
             body: formData,
-            credentials: 'include'
+            credentials: "include",
         })
             .then((res) => {
                 console.log(res);
@@ -59,7 +64,10 @@ export default class CLoginPage extends React.Component {
             .then(
                 (result) => {
                     console.log(result);
-                    ReactDOM.render(<CMainPage domainName={this.props.domainName}></CMainPage>, document.body);
+                    ReactDOM.render(
+                        <CMainPage domainName={this.props.domainName}></CMainPage>,
+                        document.getElementById("root")
+                    );
                 },
                 (error) => {
                     // alert("failed to login");
@@ -72,8 +80,11 @@ export default class CLoginPage extends React.Component {
         const path = this.props.domainName + "/user/getUserWithId";
         fetch(path, {
             method: "GET",
-            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
-            credentials: 'include'
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
         })
             .then((res) => {
                 return res.json();
@@ -132,7 +143,6 @@ export default class CLoginPage extends React.Component {
                                 onInput={this.handleChange}
                                 nodeId="35:300"
                             />
-
                         </div>
                     </div>
                 </div>
@@ -174,20 +184,20 @@ export default class CLoginPage extends React.Component {
                                 letterSpacing: "0px",
                             }}
                             className="innerDiv"
-
                         >
                             <div>
-                            <span
-                                style={{
-                                    fontSize: 16,
-                                    fontStyle: "normal",
-                                    lineHeight: "NaN%",
-                                    letterSpacing: "undefinedpx",
-                                    color: "rgba(102, 0, 153, 1)",
-                                }}
-                                onClick={this.renderCreate}>
-                                Click Here to Make a New Account
-                            </span>
+                <span
+                    style={{
+                        fontSize: 16,
+                        fontStyle: "normal",
+                        lineHeight: "NaN%",
+                        letterSpacing: "undefinedpx",
+                        color: "rgba(102, 0, 153, 1)",
+                    }}
+                    onClick={this.renderCreate}
+                >
+                  Click Here to Make a New Account
+                </span>
                             </div>
                         </div>
                     </div>
@@ -217,18 +227,18 @@ export default class CLoginPage extends React.Component {
                             className="innerDiv"
                         >
                             <div>
-                      <span
-                          style={{
-                              fontSize: 73,
-                              fontStyle: "normal",
-                              lineHeight: "NaN%",
-                              letterSpacing: "undefinedpx",
-                              color: "rgba(102, 0, 153, 1)",
-                          }}
-                          key="4"
-                      >
-                        Coop
-                      </span>
+                <span
+                    style={{
+                        fontSize: 73,
+                        fontStyle: "normal",
+                        lineHeight: "NaN%",
+                        letterSpacing: "undefinedpx",
+                        color: "rgba(102, 0, 153, 1)",
+                    }}
+                    key="4"
+                >
+                  Coop
+                </span>
                                 <span
                                     style={{
                                         fontSize: 73,
@@ -238,8 +248,8 @@ export default class CLoginPage extends React.Component {
                                     }}
                                     key="end"
                                 >
-                        mo
-                      </span>
+                  mo
+                </span>
                             </div>
                         </div>
                     </div>

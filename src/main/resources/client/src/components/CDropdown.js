@@ -22,18 +22,18 @@ export default class CDropdown extends React.Component {
                         </option>
                     );
                 });
-      }
-      dropdown = (
-        <select
-          id="Bank Account"
-          name="Bank Account"
-          onChange={this.handleChange}
-          style={{ width: "100%", border: "none", outline: "none" }}
-        >
-          {content}
-        </select>
-      );
-    } else if (this.props.dropType == "payment") {
+            }
+            dropdown = (
+                <select
+                    id="Bank Account"
+                    name="Bank Account"
+                    onChange={this.handleChange}
+                    style={{width: "100%", border: "none", outline: "none"}}
+                >
+                    {content}
+                </select>
+            );
+        } else if (this.props.dropType == "payment") {
       if (this.props.paymentTypes != null) {
         content = this.props.paymentTypes.map((e, key) => {
           return (

@@ -19,26 +19,26 @@ export class CFriendRequest extends React.Component {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Cache-Control": "no-cache",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify(this.state.request),
         })
             .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              accepted: true,
-            }));
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      );
+            .then(
+                (result) => {
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            accepted: true,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log("error sending request");
+                }
+            );
     console.log("in accept request");
   };
 
@@ -46,8 +46,12 @@ export class CFriendRequest extends React.Component {
       const path = this.props.domainName + "/user/declineFriendRequest";
     fetch(path, {
         method: "POST",
-        headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache", "Content-Type": "application/json"},
-        credentials: 'include',
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
         body: JSON.stringify(this.state.request),
     })
       .then((res) => res.json())

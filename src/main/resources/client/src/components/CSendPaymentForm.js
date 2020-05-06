@@ -1,32 +1,32 @@
 import React from "react";
-import CSingleButton from "./CSingleButton.js";
-import CInputwithanIcon from "./CInputwithanIcon.js";
-import CDropdown from "./CDropdown.js";
-import CTypableDropdown from "./CTypableDropdown.js";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
+import Select from "react-select";
 
 export default class CSendPaymentForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        request: {
-            toUserId: "",
-            amount: 0,
-            type: "PRIVATE",
-            comment: "YEEE",
-        },
-        findUserRequest: {
-            match: "",
-            type: "USERNAME",
-        },
-        users: [],
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {
+                toUserId: "",
+                amount: 0,
+                type: "PRIVATE",
+                comment: "YEEE",
+            },
+            findUserRequest: {
+                match: "",
+                type: "USERNAME",
+            },
+            users: [],
 
-        respMessage: {
-            messageType: "NONE",
-            message: "",
-        },
-        userListDrop: [],
-    };
-  }
+            respMessage: {
+                messageType: "NONE",
+                message: "",
+            },
+            userListDrop: [],
+        };
+    }
 
     setMessage(message, messageType) {
         var newRespMessage = this.state.respMessage;
@@ -91,152 +91,143 @@ export default class CSendPaymentForm extends React.Component {
             );
     };
 
-  handleChange = (paymentType) => {
-    var newRequest = this.state.request;
-    newRequest.type = paymentType;
-    this.setState((state) => ({
-      request: newRequest,
-    }));
-  };
+    handlePayChange = (paymentType) => {
+        var newRequest = this.state.request;
+        newRequest.type = paymentType.value;
+        this.setState((state) => ({
+            request: newRequest,
+        }));
+    };
 
-  handleAmtChange = (valKey, amount) => {
-    var newRequest = this.state.request;
-    newRequest.amount = parseInt(amount);
-    this.setState((state) => ({
-      request: newRequest,
-    }));
-  };
+    handleAmtChange = (event) => {
+        var newRequest = this.state.request;
+        newRequest[event.target.id] = parseInt(event.target.value * 100);
+        this.setState((state) => ({request: newRequest}));
+    };
 
-  sendRequest = () => {
-      var newRequest = this.state.request;
-      if (this.state.users != null) {
-          if (this.state.users.length != 0)
-              newRequest.toUserId = this.state.users[0].id;
-          else {
-              this.setMessage("No User starting with that username found", "ERROR");
-              return;
-          }
-      }
-      this.setState((state) => ({
-          request: newRequest,
-      }));
+    handleCommentChange = (event) => {
+        var newRequest = this.state.request;
+        newRequest[event.target.id] = event.target.value;
+        this.setState((state) => ({request: newRequest}));
+    };
 
-      console.log(this.state.request);
-      const path = this.props.domainName + "/pay/createPayment";
-      fetch(path, {
-          method: "POST",
-          headers: {
-              "Access-Control-Allow-Origin": "*",
-              "Cache-Control": "no-cache",
-              "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(this.state.request),
-      })
-          .then((res) => res.json())
-          .then(
-              (result) => {
-                  if (result.error != null) {
-                      console.log(result.error);
-                      this.setMessage(result.error.message, "ERROR");
-                  } else {
-                      this.setMessage("Successfully sent payment!", "SUCCESS");
-                  }
-              },
-        (error) => {
-          this.setMessage("ERROR sending request", "ERROR");
+    sendRequest = (event) => {
+        event.preventDefault();
+        var newRequest = this.state.request;
+        if (this.state.users != null) {
+            if (this.state.users.length != 0)
+                newRequest.toUserId = this.state.users[0].id;
+            else {
+                this.setMessage("No User starting with that username found", "ERROR");
+                return;
+            }
         }
-      );
-  };
+        this.setState((state) => ({
+            request: newRequest,
+        }));
+
+        console.log(this.state.request);
+        const path = this.props.domainName + "/pay/createPayment";
+        fetch(path, {
+            method: "POST",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(this.state.request),
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    if (result.error != null) {
+                        console.log(result.error);
+                        this.setMessage(result.error.message, "ERROR");
+                    } else {
+                        this.setMessage("Successfully sent payment!", "SUCCESS");
+                    }
+                },
+                (error) => {
+                    this.setMessage("ERROR sending request", "ERROR");
+                }
+            );
+    };
 
   render() {
     let paymentTypes = [
-      {
-        val: "PRIVATE",
-        name: "Private",
-      },
-      {
-        val: "FRIEND",
-        name: "Friend",
-      },
-      {
-        val: "PUBLIC",
-        name: "Public",
-      },
+        {
+            value: "PRIVATE",
+            label: "Private",
+        },
+        {
+            value: "FRIEND",
+            label: "Friend",
+        },
+        {
+            value: "PUBLIC",
+            label: "Public",
+        },
     ];
 
     return (
-      <form>
-        <div style={{ overflow: "auto" }}>
-            <div style={{zIndex: 1}} className="outerDiv centerer">
-                <div
-                    id="35:300"
-                    style={{
-                        top: "19.53125%",
-                    }}
-                    className="innerDiv blocksOnForm"
-                >
-                    <CTypableDropdown
-                        name="To Who"
-                        valKey="textInput"
-                        list={this.state.userListDrop}
-                        handleChange={this.handleInputChange}
-                        value={this.state.request.match}
+        <Form onSubmit={this.sendRequest}>
+            <Form.Group controlId="friendId">
+                <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                    Friend's Username
+                </Form.Label>
+                <Select
+                    isSearchable={true}
+                    onInputChange={this.handleInputChange}
+                    onChange={this.handleInputChange}
+                    options={this.state.userListDrop}
+                    placeholder="Search..."
+                />
+            </Form.Group>
+            <Form.Group controlId="type">
+                <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                    Privacy Level
+                </Form.Label>
+                <Select
+                    isSearchable={true}
+                    onChange={this.handlePayChange}
+                    options={paymentTypes}
+                    placeholder="Search..."
+                />
+            </Form.Group>
+            <Form.Group controlId="amount">
+                <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                    Amount
+                </Form.Label>
+                <InputGroup>
+                    <InputGroup.Prepend>
+                        <InputGroup.Text id="inputGroupPrepend">$</InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control
+                        required
+                        style={{fontFamily: "Muli"}}
+                        size="lg"
+                        type="number"
+                        step=".01"
+                        min="0"
+                        placeholder={"Enter Amount"}
+                        onChange={this.handleAmtChange}
                     />
-                </div>
-            </div>
-            <div style={{zIndex: 2}} className="outerDiv centerer">
-                <div
-                    id="35:280"
-                    style={{
-                        top: "31.25%",
-                    }}
-                    className="innerDiv blocksOnForm"
-                >
-                    <CInputwithanIcon
-                        onInput={this.handleAmtChange}
-                        name="Payment Amount"
-                    />
-                </div>
-          </div>
-          <div style={{ zIndex: 3 }} className="outerDiv centerer">
-              <div
-                  id="35:285"
-                  style={{
-                      top: "42.96875%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                  <CDropdown
-                      {...this.props}
-                      name="Type of Payment"
-                      dropType="payment"
-                      handleChange={this.handleChange}
-                      paymentTypes={paymentTypes}
-                      nodeId="35:320"
-                  />
-              </div>
-          </div>
-          <div style={{ zIndex: 3 }} className="outerDiv centerer">
-              <div
-                  id="35:285"
-                  style={{
-                      top: "54.6875%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                  <CSingleButton
-                      {...this.props}
-                      text="Submit"
-                      onSub={this.sendRequest}
-                      nodeId="35:320"
-                      messageType={this.state.respMessage.messageType}
-                      message={this.state.respMessage.message}
-                  />
-              </div>
-          </div>
-        </div>
-      </form>
+                </InputGroup>
+            </Form.Group>
+            <Form.Group controlId="comment">
+                <Form.Label>Comment</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    rows="3"
+                    required
+                    onChange={this.handleCommentChange}
+                />
+            </Form.Group>
+            <Button className="submitButton" type="submit">
+                Submit
+            </Button>
+        </Form>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from "react";
-import CSimpleInput from "./CSimpleInput";
-import CSingleButton from "./CSingleButton.js";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 //Need to test again
 export default class CChangeBankAccounts extends React.Component {
   constructor(props) {
@@ -17,9 +17,9 @@ export default class CChangeBankAccounts extends React.Component {
     };
   }
 
-  handleChange = (key, value) => {
+  handleChange = (event) => {
     var newRequest = this.state.request;
-    newRequest[key] = parseInt(value);
+    newRequest[event.target.id] = parseInt(event.target.value);
     this.setState((state) => ({request: newRequest}));
   };
 
@@ -32,8 +32,10 @@ export default class CChangeBankAccounts extends React.Component {
     }));
   }
 
-  sendRequest = () => {
+  sendRequest = (event) => {
+    event.preventDefault();
     const path = this.props.domainName + "/bank/createBankAccount";
+    console.log(path);
     fetch(path, {
       method: "POST",
       headers: {
@@ -61,58 +63,38 @@ export default class CChangeBankAccounts extends React.Component {
   };
 
   render() {
+    const formEntries = [
+      {
+        name: "Routing Number",
+        valKey: "routingNumber",
+      },
+    ];
+    let formBlocks = formEntries.map((value, index) => {
+      return (
+          <Form.Group controlId={value.valKey}>
+            <Form.Label style={{fontFamily: "Muli"}} column="lg">
+              {value.name}
+            </Form.Label>
+            <Form.Control
+                required
+                style={{fontFamily: "Muli"}}
+                size="lg"
+                type="number"
+                step="1"
+                min="0"
+                placeholder={"Enter " + value.name}
+                onChange={this.handleChange}
+            />
+          </Form.Group>
+      );
+    });
     return (
-        <form>
-          <div
-              style={{
-                overflow: "auto",
-              }}
-          >
-            <div
-                style={{
-                  zIndex: 1,
-                }}
-                className="outerDiv centerer"
-            >
-              <div
-                  id="35:300"
-                  style={{
-                    top: "19.53125%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CSimpleInput
-                    name="Routing Number"
-                    valKey="routingNumber"
-                    onInput={this.handleChange}
-                />
-              </div>
-            </div>
-            <div
-                style={{
-              zIndex: 2,
-            }}
-            className="outerDiv centerer"
-          >
-              <div
-                  id="35:280"
-                  style={{
-                    top: "31.25%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CSingleButton
-                    {...this.props}
-                    text="Submit"
-                    onSub={this.sendRequest}
-                    nodeId="35:320"
-                    messageType={this.state.respMessage.messageType}
-                    message={this.state.respMessage.message}
-                />
-              </div>
-          </div>
-        </div>
-      </form>
+        <Form onSubmit={this.sendRequest}>
+          {formBlocks}
+          <Button className="submitButton" type="submit">
+            Submit
+          </Button>
+        </Form>
     );
   }
 }

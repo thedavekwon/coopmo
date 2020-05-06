@@ -100,7 +100,7 @@ export default class CMainPage extends React.Component {
                   />
               </div>
           </div>
-            <TitleBar page="main" balance={this.state.balance}/>
+            <TitleBar page="main" balance={this.state.balance} domainName={this.props.domainName}/>
         </div>
       </div>
     );

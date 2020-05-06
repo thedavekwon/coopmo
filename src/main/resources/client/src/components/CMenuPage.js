@@ -150,11 +150,18 @@ export default class CMenuPage extends PureComponent {
                             className="innerDiv"
                         >
                             <div></div>
-            </div>
-          </div>
-          {formPage}
-                    <TitleBar page="editProfile"/>
-        </div>
+                        </div>
+                    </div>
+                    <div className="outerDiv centerer">
+                        <div
+                            className="innerDiv menuForm"
+                        >
+                            {formPage}
+                        </div>
+                    </div>
+
+                    <TitleBar page="editProfile" domainName={this.props.domainName}/>
+                </div>
       </div>
     );
   }

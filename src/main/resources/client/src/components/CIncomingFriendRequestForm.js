@@ -81,16 +81,7 @@ export default class CMenuIncomingFriendRequests extends React.Component {
       );
     }
     return (
-      <div
-        class="outerDiv centerer"
-        style={{
-          marginLeft: "37.986111111111114%",
-          width: "47.22222222222222%",
-          height: 11.71875 * 6 + "%",
-          top: "19.53125%",
-          zIndex: 9,
-        }}
-      >
+
         <div
           class="innerDiv centerer"
           style={{
@@ -102,7 +93,6 @@ export default class CMenuIncomingFriendRequests extends React.Component {
         >
           {friendRequests}
         </div>
-      </div>
     );
   }
 }

@@ -1,6 +1,7 @@
 import React from "react";
-import CSingleButton from "./CSingleButton.js";
-import CTypableDropdown from "./CTypableDropdown.js";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Select from "react-select";
 
 export default class CAddFriendForm extends React.Component {
   constructor(props) {
@@ -86,7 +87,8 @@ export default class CAddFriendForm extends React.Component {
     }));
   }
 
-  sendRequest = () => {
+  sendRequest = (event) => {
+    event.preventDefault();
     if (this.state.users != null && this.state.users.length != 0) {
       var newRequest = this.state.request;
       newRequest.friendId = this.state.users[0].id;
@@ -123,44 +125,23 @@ export default class CAddFriendForm extends React.Component {
 
   render() {
     return (
-        <form>
-          <div>
-            <div style={{zIndex: 1}} className="outerDiv centerer">
-              <div
-                  id="35:300"
-                  style={{
-                    top: "19.53125%",
-                    overflowY: "visible",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CTypableDropdown
-                    name="Friend's Username"
-                    valKey="friendUsername"
-                    list={this.state.userListDrop}
-                    handleChange={this.handleInputChange}
-                    value={this.state.request.match}
-                />
-              </div>
-            </div>
-            <div style={{zIndex: 2}} className="outerDiv centerer">
-              <div
-                  id="35:280"
-                  style={{
-                    top: "31.25%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CSingleButton
-                    text="Send Friend Request"
-                    onSub={this.sendRequest}
-                    messageType={this.state.respMessage.messageType}
-                    message={this.state.respMessage.message}
-                />
-              </div>
-          </div>
-        </div>
-      </form>
+        <Form onSubmit={this.sendRequest}>
+          <Form.Group controlId="friendId">
+            <Form.Label style={{fontFamily: "Muli"}} column="lg">
+              Friend's Username
+            </Form.Label>
+            <Select
+                isSearchable={true}
+                onInputChange={this.handleInputChange}
+                onChange={this.handleInputChange}
+                options={this.state.userListDrop}
+                placeholder="Search..."
+            />
+          </Form.Group>
+          <Button className="submitButton" type="submit">
+            Submit
+          </Button>
+        </Form>
     );
   }
 }

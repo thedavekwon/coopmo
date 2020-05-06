@@ -3,6 +3,7 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
+import FormAlert from "./FormAlert.js";
 
 export default class CEditProfileForm extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ export default class CEditProfileForm extends React.Component {
         messageType: "NONE",
         message: "",
       },
+      showMessage: false,
     };
   }
 
@@ -34,6 +36,7 @@ export default class CEditProfileForm extends React.Component {
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
+      showMessage: true
     }));
   }
 
@@ -131,13 +134,26 @@ export default class CEditProfileForm extends React.Component {
       );
     });
 
+
     return (
-        <Form onSubmit={this.sendRequest}>
-          {formBlocks}
-          <Button className="submitButton" type="submit">
-            Submit
-          </Button>
-        </Form>
+        <>
+          <FormAlert
+              onClose={() => {
+                this.setState((state) => ({
+                  showMessage: false
+                }))
+              }}
+              showMessage={this.state.showMessage}
+              messageType={this.state.respMessage.messageType}
+              message={this.state.respMessage.message}
+          />
+          <Form onSubmit={this.sendRequest}>
+            {formBlocks}
+            <Button className="submitButton" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </>
     );
   }
 }

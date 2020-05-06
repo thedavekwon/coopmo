@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class BaseExceptionHandler {
     @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class,
             InvalidBalanceException.class, AlreadyFriendsException.class, NoUserFoundException.class,
-            DuplicateFriendRequestException.class, UsersAreNotFriendsException.class, FriendRequestDoesNotExistException.class})
+            DuplicateFriendRequestException.class, UsersAreNotFriendsException.class, FriendRequestDoesNotExistException.class,
+            FriendRequestAlreadyExistException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
         return handleAllInValidException(ex);
     }

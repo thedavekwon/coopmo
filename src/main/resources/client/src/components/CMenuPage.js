@@ -7,6 +7,8 @@ import CChangeBankAccounts from "./CChangeBankAccounts.js";
 import CCashInForm from "./CCashInForm.js";
 import CSendPaymentForm from "./CSendPaymentForm.js";
 import TitleBar from "./TitleBar.js";
+import ReactDOM from "react-dom";
+import CLoginPage from "./CLoginPage.js";
 
 export default class CMenuPage extends PureComponent {
     constructor(props) {
@@ -24,30 +26,19 @@ export default class CMenuPage extends PureComponent {
     }
 
     signOut = () => {
-        var path = this.props.domainName + "/logout";
+        var path = this.props.domainName + "/logout"
         fetch(path, {
             method: "GET",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Cache-Control": "no-cache",
-            },
-            credentials: "include",
+            headers: {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+            credentials: 'include'
         })
             .then((res) => {
-                console.log(res.body);
-                res.json();
-            })
-            .then(
-                (result) => {
-                    console.log(result);
-                    //ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.getElementById("root"));
-                },
-                (error) => {
-                    console.log(error);
-                    this.setMessage("ERROR sending request", "ERROR");
+                if (res.status == 200) {
+                    ReactDOM.render(<CLoginPage
+                        domainName={this.props.domainName}></CLoginPage>, document.getElementById("root"));
                 }
-            );
-    };
+            });
+    }
 
     render() {
         let formPage;
@@ -65,7 +56,8 @@ export default class CMenuPage extends PureComponent {
             formPage = <CCashInForm domainName={this.props.domainName}/>;
         else if (this.state.activePage == "Send Payment")
             formPage = <CSendPaymentForm domainName={this.props.domainName}/>;
-        else formPage = <CEditProfileForm/>;
+        else
+            this.signOut();
 
         let pages = [
             "Edit Profile",
@@ -96,7 +88,7 @@ export default class CMenuPage extends PureComponent {
                             backgroundColor: "rgba(0, 0, 0, 0)",
                         }}
                         className="innerDiv"
-                        onClick={() => this.changePage(value)}
+                        onClick={value != "Sign Out" ? () => this.changePage(value) : this.signOut}
                     >
                         <CMenuButtonDefault
                             {...this.props}
@@ -153,16 +145,12 @@ export default class CMenuPage extends PureComponent {
                         </div>
                     </div>
                     <div className="outerDiv centerer">
-                        <div
-                            className="innerDiv menuForm"
-                        >
-                            {formPage}
-                        </div>
+                        <div className="innerDiv menuForm">{formPage}</div>
                     </div>
 
                     <TitleBar page="editProfile" domainName={this.props.domainName}/>
                 </div>
-      </div>
-    );
-  }
+            </div>
+        );
+    }
 }

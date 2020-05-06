@@ -84,73 +84,72 @@ export default class TitleBar extends React.Component {
                                 }}
                                 className="innerDiv"
                             >
-                                <div>
-                                    <div style={{}} className="outerDiv centerer">
-                                        <div
-                                            id="I76:47;76:20"
-                                            style={{
-                                                flexGrow: 1,
-                                                backgroundColor: backgroundColor,
-                                            }}
-                                            className="innerDiv"
-                                        >
-                                            <div></div>
-                                        </div>
-                                    </div>
+                                <div style={{}} className="outerDiv centerer">
                                     <div
+                                        id="I76:47;76:20"
                                         style={{
                                             flexGrow: 1,
-                                            width: "10%",
-                                            top: "25%",
-                                            height: "50%",
-                                            marginLeft: "2%",
+                                            backgroundColor: backgroundColor,
                                         }}
-                                        className="outerDiv centerer"
+                                        className="innerDiv"
                                     >
-                                        <div
-                                            id="I76:47;76:21"
-                                            style={{
-                                                flexGrow: 1,
-                                                backgroundColor: "rgba(0, 0, 0, 1)",
-                                            }}
-                                            className="innerDiv"
-                                        >
-                                            <CMenuButton
-                                                {...this.props}
-                                                backgroundColor={backgroundColor}
-                                                textColor={textColor}
-                                                nodeId="I76:47;76:21"
-                                                page={this.props.page}
-                                                domainName={this.props.domainName}
-                                            />
-                                        </div>
+                                        <div></div>
                                     </div>
+                                </div>
+                                <div
+                                    style={{
+                                        flexGrow: 1,
+                                        width: "10%",
+                                        top: "25%",
+                                        height: "50%",
+                                        marginLeft: "2%",
+                                    }}
+                                    className="outerDiv centerer"
+                                >
                                     <div
+                                        id="I76:47;76:21"
                                         style={{
-                                            zIndex: 2,
-                                            top: "25%",
-                                            height: "50%",
+                                            flexGrow: 1,
+                                            backgroundColor: "rgba(0, 0, 0, 1)",
                                         }}
-                                        className="outerDiv centerer"
+                                        className="innerDiv"
                                     >
-                                        <div
-                                            id="I76:29;97:225"
-                                            style={{
-                                                marginLeft: "40%",
-                                                marginRight: "40%",
-                                                flexGrow: 1,
-                                                color: "rgba(0, 0, 0, 1)",
-                                                fontSize: 73,
-                                                fontWeight: 700,
-                                                fontFamily: "Muli",
-                                                textAlign: "CENTER",
-                                                fontStyle: "normal",
-                                                lineHeight: "125%",
-                                                letterSpacing: "0px",
-                                            }}
-                                            className="innerDiv vertCenterAndCut"
-                                        >
-                                            <div>
+                                        <CMenuButton
+                                            {...this.props}
+                                            backgroundColor={backgroundColor}
+                                            textColor={textColor}
+                                            nodeId="I76:47;76:21"
+                                            page={this.props.page}
+                                            domainName={this.props.domainName}
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    style={{
+                                        zIndex: 2,
+                                        top: "25%",
+                                        height: "50%",
+                                    }}
+                                    className="outerDiv vertCenterAndCut"
+                                >
+                                    <div
+                                        id="I76:29;97:225"
+                                        style={{
+                                            marginLeft: "40%",
+                                            marginRight: "40%",
+                                            flexGrow: 1,
+                                            color: "rgba(0, 0, 0, 1)",
+                                            fontSize: 73,
+                                            fontWeight: 700,
+                                            fontFamily: "Muli",
+                                            textAlign: "CENTER",
+                                            fontStyle: "normal",
+                                            lineHeight: "125%",
+                                            letterSpacing: "0px",
+                                        }}
+                                        className="innerDiv vertCenterAndCut  "
+                                    >
+                                        <div>
                         <span
                             style={{
                                 fontSize: 73,
@@ -163,23 +162,23 @@ export default class TitleBar extends React.Component {
                         >
                           Coop
                         </span>
-                                                <span
-                                                    style={{
-                                                        fontSize: 73,
-                                                        fontStyle: "normal",
-                                                        lineHeight: "NaN%",
-                                                        letterSpacing: "undefinedpx",
-                                                    }}
-                                                    key="end"
-                                                >
+                                            <span
+                                                style={{
+                                                    fontSize: 73,
+                                                    fontStyle: "normal",
+                                                    lineHeight: "NaN%",
+                                                    letterSpacing: "undefinedpx",
+                                                }}
+                                                key="end"
+                                            >
                           mo
                         </span>
-                                            </div>
                                         </div>
                                     </div>
-                                    {includeBalance}
                                 </div>
+                                {includeBalance}
                             </div>
+
                         </div>
                     </div>
                 </div>

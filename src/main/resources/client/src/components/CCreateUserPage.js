@@ -39,6 +39,7 @@ export default class CCreateUserPage extends React.Component {
         newRespMessage.messageType = messageType;
         this.setState((state) => ({
             respMessage: newRespMessage,
+            showMessage: true
         }));
     }
 

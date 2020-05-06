@@ -2,6 +2,7 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
+import FormAlert from "./FormAlert.js";
 
 export default class CAddFriendForm extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ export default class CAddFriendForm extends React.Component {
         message: "",
       },
       userListDrop: [],
+      showMessage: false,
     };
   }
 
@@ -59,7 +61,7 @@ export default class CAddFriendForm extends React.Component {
                     userList = [
                       ...userList,
                       {
-                        value: result.data[i].name,
+                        value: result.data[i].id,
                         label: result.data[i].name,
                       },
                     ];
@@ -78,24 +80,26 @@ export default class CAddFriendForm extends React.Component {
         );
   };
 
+  handleSelect = (event) => {
+    var newRequest = this.state.request;
+    newRequest.friendId = event.value;
+    this.setState((state) => ({
+      request: newRequest,
+    }));
+  }
+
   setMessage(message, messageType) {
     var newRespMessage = this.state.respMessage;
     newRespMessage.message = message;
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
+      showMessage: true
     }));
   }
 
   sendRequest = (event) => {
     event.preventDefault();
-    if (this.state.users != null && this.state.users.length != 0) {
-      var newRequest = this.state.request;
-      newRequest.friendId = this.state.users[0].id;
-      this.setState((state) => ({
-        request: newRequest,
-      }));
-    }
     const path = this.props.domainName + "/user/sendOutRequest";
     fetch(path, {
       method: "POST",
@@ -125,23 +129,35 @@ export default class CAddFriendForm extends React.Component {
 
   render() {
     return (
-        <Form onSubmit={this.sendRequest}>
-          <Form.Group controlId="friendId">
-            <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              Friend's Username
-            </Form.Label>
-            <Select
-                isSearchable={true}
-                onInputChange={this.handleInputChange}
-                onChange={this.handleInputChange}
-                options={this.state.userListDrop}
-                placeholder="Search..."
-            />
-          </Form.Group>
-          <Button className="submitButton" type="submit">
-            Submit
-          </Button>
-        </Form>
+        <>
+          <FormAlert
+              onClose={() => {
+                this.setState((state) => ({
+                  showMessage: false
+                }))
+              }}
+              showMessage={this.state.showMessage}
+              messageType={this.state.respMessage.messageType}
+              message={this.state.respMessage.message}
+          />
+          <Form onSubmit={this.sendRequest}>
+            <Form.Group controlId="friendId">
+              <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                Friend's Username
+              </Form.Label>
+              <Select
+                  isSearchable={true}
+                  onInputChange={this.handleInputChange}
+                  onChange={this.handleSelect}
+                  options={this.state.userListDrop}
+                  placeholder="Search..."
+              />
+            </Form.Group>
+            <Button className="submitButton" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </>
     );
   }
 }

@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import InputGroup from "react-bootstrap/InputGroup";
+import FormAlert from "./FormAlert.js";
 
 export default class CCashInForm extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ export default class CCashInForm extends React.Component {
         messageType: "NONE",
         message: "",
       },
+      showMessage: false,
     };
     this.getBankAccounts();
   }
@@ -28,6 +30,7 @@ export default class CCashInForm extends React.Component {
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
+      showMessage: true
     }));
   }
 
@@ -143,109 +146,65 @@ export default class CCashInForm extends React.Component {
 
     ]
     return (
-        <Form onSubmit={this.sendRequest}>
-          <Form.Group controlId="bankAccountId">
-            <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              Bank Account
-            </Form.Label>
-            <Select
-                isSearchable={true}
-                onChange={this.handleBankChange}
-                options={this.state.bankAcctList}
-                placeholder="Search..."
-            />
-          </Form.Group>
-          <Form.Group controlId="type">
-            <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              Cash In or Out?
-            </Form.Label>
-            <Select
-                isSearchable={true}
-                onChange={this.handleCashChange}
-                options={cashType}
-                placeholder="Search..."
-            />
-          </Form.Group>
-          <Form.Group controlId="amount">
-            <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              Amount
-            </Form.Label>
-            <InputGroup>
-              <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroupPrepend">$</InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control
-                  required
-                  style={{fontFamily: "Muli"}}
-                  size="lg"
-                  type="number"
-                  step=".01"
-                  min="0"
-                  placeholder={"Enter Amount"}
-                  onChange={this.handleAmtChange}
+        <>
+          <FormAlert
+              onClose={() => {
+                this.setState((state) => ({
+                  showMessage: false
+                }))
+              }}
+              showMessage={this.state.showMessage}
+              messageType={this.state.respMessage.messageType}
+              message={this.state.respMessage.message}
+          />
+          <Form onSubmit={this.sendRequest}>
+            <Form.Group controlId="bankAccountId">
+              <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                Bank Account
+              </Form.Label>
+              <Select
+                  isSearchable={true}
+                  onChange={this.handleBankChange}
+                  options={this.state.bankAcctList}
+                  placeholder="Search..."
               />
-            </InputGroup>
-          </Form.Group>
-          <Button className="submitButton" type="submit">
-            Submit
-          </Button>
-        </Form>
-        /*
-        <form>
-          <div style={{ overflow: "auto" }}>
-            <div style={{ zIndex: 1 }} className="outerDiv centerer">
-              <div
-                  id="35:300"
-                  style={{
-                    top: "19.53125%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CDropdown
-                    name="Bank Account to Withdraw From"
-                    bankAcctList={this.state.bankAcctList}
-                    handleChange={this.handleBankChange}
-                    dropType="bank"
-                    request={this.state.request}
+            </Form.Group>
+            <Form.Group controlId="type">
+              <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                Cash In or Out?
+              </Form.Label>
+              <Select
+                  isSearchable={true}
+                  onChange={this.handleCashChange}
+                  options={cashType}
+                  placeholder="Search..."
+              />
+            </Form.Group>
+            <Form.Group controlId="amount">
+              <Form.Label style={{fontFamily: "Muli"}} column="lg">
+                Amount
+              </Form.Label>
+              <InputGroup>
+                <InputGroup.Prepend>
+                  <InputGroup.Text id="inputGroupPrepend">$</InputGroup.Text>
+                </InputGroup.Prepend>
+                <Form.Control
+                    required
+                    style={{fontFamily: "Muli"}}
+                    size="lg"
+                    type="number"
+                    step=".01"
+                    min="0"
+                    placeholder={"Enter Amount"}
+                    onChange={this.handleAmtChange}
                 />
-              </div>
-            </div>
-            <div style={{ zIndex: 2 }} className="outerDiv centerer">
-              <div
-                  id="35:280"
-                  style={{
-                    top: "31.25%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CInputwithanIcon
-                    onInput={this.handleAmtChange}
-                    valKey="amount"
-                    name="Amount to Withdraw"
-                />
-              </div>
-            </div>
-            <div style={{ zIndex: 3 }} className="outerDiv centerer">
-              <div
-                  id="35:285"
-                  style={{
-                    top: "42.96875%",
-                  }}
-                  className="innerDiv blocksOnForm"
-              >
-                <CSingleButton
-                    {...this.props}
-                    text="Submit"
-                    onSub={this.sendRequest}
-                    nodeId="35:320"
-                    messageType={this.state.respMessage.messageType}
-                    message={this.state.respMessage.message}
-                />
-              </div>
-            </div>
-          </div>
-        </form>
-        */
+              </InputGroup>
+            </Form.Group>
+            <Button className="submitButton" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </>
     );
   }
 }

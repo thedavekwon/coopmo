@@ -1,20 +1,22 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-//Need to test again
+import FormAlert from "./FormAlert.js";
+
 export default class CChangeBankAccounts extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      request: {
-        routingNumber: 0,
-        balance: 1000,
-      },
-      respMessage: {
-        messageType: "NONE",
-        message: "",
-      },
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {
+                routingNumber: 0,
+                balance: 1000,
+            },
+            respMessage: {
+                messageType: "NONE",
+                message: "",
+            },
+            showMessage: false,
+        };
   }
 
   handleChange = (event) => {
@@ -29,6 +31,7 @@ export default class CChangeBankAccounts extends React.Component {
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
+        showMessage: true
     }));
   }
 
@@ -89,12 +92,24 @@ export default class CChangeBankAccounts extends React.Component {
       );
     });
     return (
-        <Form onSubmit={this.sendRequest}>
-          {formBlocks}
-          <Button className="submitButton" type="submit">
-            Submit
-          </Button>
-        </Form>
+        <>
+            <FormAlert
+                onClose={() => {
+                    this.setState((state) => ({
+                        showMessage: false
+                    }))
+                }}
+                showMessage={this.state.showMessage}
+                messageType={this.state.respMessage.messageType}
+                message={this.state.respMessage.message}
+            />
+            <Form onSubmit={this.sendRequest}>
+                {formBlocks}
+                <Button className="submitButton" type="submit">
+                    Submit
+                </Button>
+            </Form>
+        </>
     );
   }
 }

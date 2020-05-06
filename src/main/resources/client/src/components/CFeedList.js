@@ -1,5 +1,6 @@
 import React from "react";
-import CFeedItem from "./CFeedItem.js";
+import CFeedItemPayment from "./CFeedItemPayment.js";
+import CFeedItemBank from "./CFeedItemBank.js";
 import {fetchFeed} from "../functions/fetchFeed";
 
 export default class CFeedList extends React.Component {
@@ -34,7 +35,7 @@ export default class CFeedList extends React.Component {
         console.log(response);
         if (response.data) {
           // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
-          const feedItemDatas = response.data.filter((d) => d.type !== "IN");
+          const feedItemDatas = response.data;
           this.setState({
             feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
           });
@@ -60,18 +61,31 @@ export default class CFeedList extends React.Component {
     const feedItems = [];
     for (let ii = 1; ii <= payments.length; ii++) {
       var payment = payments[ii - 1];
-      feedItems.push(
-        <CFeedItem
-          tab={this.props.feedTab}
-          listIndex={ii}
-          key={ii.toString()}
-          name1={payment.fromUser.handle}
-          name2={payment.toUser.handle}
-          message={payment.type}
-          paymentAmount={payment.amount}
-          itemDateTime={payment.timestamp}
-        />
-      );
+      if (payment.type === "IN" || payment.type === "OUT") {
+        feedItems.push(
+          <CFeedItemBank
+            tab={this.props.feedTab}
+            listIndex={ii}
+            key={ii.toString()}
+            type={payment.type}
+            amount={payment.amount}
+            timestamp={payment.timestamp}
+          />
+        );
+      } else {
+        feedItems.push(
+          <CFeedItemPayment
+            tab={this.props.feedTab}
+            listIndex={ii}
+            key={ii.toString()}
+            fromUserHandle={payment.fromUser.handle}
+            toUserHandle={payment.toUser.handle}
+            type={payment.type}
+            amount={payment.amount}
+            timestamp={payment.timestamp}
+          />
+        );
+      }
     }
 
     return (

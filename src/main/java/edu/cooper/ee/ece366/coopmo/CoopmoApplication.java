@@ -9,8 +9,7 @@ import java.io.IOException;
 public class CoopmoApplication {
     public static void main(String[] args) throws IOException, InterruptedException {
         SpringApplication.run(CoopmoApplication.class, args);
-        //CoopmoTest.testPayment();
-        //CoopmoTest.testFriends();
-        //CoopmoTest.sendRequests();
+        // for Demo
+        CoopmoTest.sendRequests();
     }
 }

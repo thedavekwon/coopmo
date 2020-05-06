@@ -34,32 +34,56 @@ input:focus {
 }
 
 .innerDiv {
-  position: relative;
-  box-sizing: border-box;
-  pointer-events: auto;
+    position: relative;
+    box-sizing: border-box;
+    pointer-events: auto;
 }
 
 .centerer {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  left: 0;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 
-.maxer {
-  align-items: flex-end;
-  position: absolute;
-  bottom: 0;
+.vertCenterAndCut {
+    top: 50%;
+    transform: translateY(-50%);
+    height: 50%;
+}
+
+.blocksOnForm {
+    width: 47.22222222222222%;
+    margin-left: 37.986111111111114%;
+    height: 11.71875%;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.menuForm {
+    width: 47.22222222222222%;
+    margin-left: 37.986111111111114%;
+    height: 11.71875 *6 + "%";
+    top: 19.53125%;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .vector svg {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.submitButton {
+    width: 29.4118%;
+    margin-left: 65.8824%;
+    height: 56px;
+    margin-top: 10;
+    background-color: rgb(12, 200, 99);
+    color: white;
 }
 
 a {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar {

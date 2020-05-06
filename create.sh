@@ -33,3 +33,5 @@ docker run -it --rm --name=coopmoMaven --hostname=coopmoMaven --network=coopmoNe
 # build the container and run the app in 8080
 docker build -t thedavekwon/coopmo .
 docker run --name=coopmo --hostname=coopmo --network=coopmoNetwork -p 8080:8080 -t thedavekwon/coopmo
+
+docker-machine ip default

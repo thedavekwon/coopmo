@@ -1,49 +1,58 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export class CFriendRequest extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      request: {
-        userId: this.props.userId,
-        friendId: this.props.friendId,
-      },
-      accepted: false,
-      declined: false,
-    };
-  }
+export class CFriendRequest extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {
+                friendId: this.props.friendId,
+            },
+            accepted: false,
+            declined: false,
+        };
+    }
 
-  acceptRequest = () => {
-    const path = "http://localhost:8080/user/acceptIncomingRequest";
-    fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state.request),
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              accepted: true,
-            }));
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      );
+    acceptRequest = () => {
+        const path = this.props.domainName + "/user/acceptIncomingRequest";
+        fetch(path, {
+            method: "POST",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(this.state.request),
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            accepted: true,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log("error sending request");
+                }
+            );
     console.log("in accept request");
   };
 
   declineRequest = () => {
-    const path = "http://localhost:8080/user/declineFriendRequest";
+      const path = this.props.domainName + "/user/declineFriendRequest";
     fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state.request),
+        method: "POST",
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(this.state.request),
     })
       .then((res) => res.json())
       .then(

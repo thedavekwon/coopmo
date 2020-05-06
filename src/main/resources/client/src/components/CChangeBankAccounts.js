@@ -1,101 +1,100 @@
-import React, {PureComponent} from "react";
-import CSimpleInput from "./CSimpleInput";
-import CSingleButton from "./CSingleButton.js";
-
-export default class CChangeBankAccounts extends PureComponent {
+import React from "react";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+//Need to test again
+export default class CChangeBankAccounts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: this.props.userId,
-      routingNumber: 0,
-      balance: 1000,
+      request: {
+        routingNumber: 0,
+        balance: 1000,
+      },
+      respMessage: {
+        messageType: "NONE",
+        message: "",
+      },
     };
   }
 
-  handleChange = (key, value) => {
-    this.setState((state) => ({ [key]: parseInt(value) }));
+  handleChange = (event) => {
+    var newRequest = this.state.request;
+    newRequest[event.target.id] = parseInt(event.target.value);
+    this.setState((state) => ({request: newRequest}));
   };
 
-  sendRequest = () => {
-    console.log(this.state);
-    const path = "http://localhost:8080/bank/createBankAccount";
+  setMessage(message, messageType) {
+    var newRespMessage = this.state.respMessage;
+    newRespMessage.message = message;
+    newRespMessage.messageType = messageType;
+    this.setState((state) => ({
+      respMessage: newRespMessage,
+    }));
+  }
+
+  sendRequest = (event) => {
+    event.preventDefault();
+    const path = this.props.domainName + "/bank/createBankAccount";
+    console.log(path);
     fetch(path, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(this.state.request),
     })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      );
+        .then((res) => res.json())
+        .then(
+            (result) => {
+              if (result.error != null) {
+                console.log(result.error);
+                this.setMessage(result.error.message, "ERROR");
+              } else {
+                this.setMessage("Successfully Created a Bank Account!", "SUCCESS");
+              }
+            },
+            (error) => {
+              this.setMessage("ERROR sending request", "ERROR");
+            }
+        );
   };
 
   render() {
+    const formEntries = [
+      {
+        name: "Routing Number",
+        valKey: "routingNumber",
+      },
+    ];
+    let formBlocks = formEntries.map((value, index) => {
+      return (
+          <Form.Group controlId={value.valKey}>
+            <Form.Label style={{fontFamily: "Muli"}} column="lg">
+              {value.name}
+            </Form.Label>
+            <Form.Control
+                required
+                style={{fontFamily: "Muli"}}
+                size="lg"
+                type="number"
+                step="1"
+                min="0"
+                placeholder={"Enter " + value.name}
+                onChange={this.handleChange}
+            />
+          </Form.Group>
+      );
+    });
     return (
-      <form>
-        <div
-          style={{
-            overflow: "auto",
-          }}
-        >
-          <div
-            style={{
-              zIndex: 1,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:300"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "19.53125%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                name="Routing Number"
-                valKey="routingNumber"
-                onInput={this.handleChange}
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              zIndex: 2,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:280"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "31.25%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSingleButton
-                {...this.props}
-                text="Submit"
-                onSub={this.sendRequest}
-                nodeId="35:320"
-              />
-            </div>
-          </div>
-        </div>
-      </form>
+        <Form onSubmit={this.sendRequest}>
+          {formBlocks}
+          <Button className="submitButton" type="submit">
+            Submit
+          </Button>
+        </Form>
     );
   }
 }

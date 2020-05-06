@@ -1,208 +1,143 @@
-import React, {PureComponent} from "react";
-import CSimpleInput from "./CSimpleInput.js";
-import CSingleButton from "./CSingleButton.js";
+import React from "react";
+//need to test request updating again
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
 
-export default class CEditProfileForm extends PureComponent {
+export default class CEditProfileForm extends React.Component {
   constructor(props) {
     super(props);
-    //Test using a user id rn
     this.state = {
-      userId: "2b905676-e74d-4747-81c6-9013f2ecb43e",
-      newName: "",
-      newUsername: "",
-      newPassword: "",
-      newEmail: "",
-      newHandle: "",
+      request: {
+        newName: "",
+        newUsername: "",
+        newPassword: "",
+        newEmail: "",
+        newHandle: "",
+      },
+      respMessage: {
+        messageType: "NONE",
+        message: "",
+      },
     };
   }
 
-  handleChange = (key, value) => {
-    this.setState((state) => ({ [key]: value }));
+  handleChange = (event) => {
+    var newRequest = this.state.request;
+    newRequest[event.target.id] = event.target.value;
+    this.setState((state) => ({request: newRequest}));
   };
 
-  sendRequest = () => {
-    const path = "http://localhost:8080/user/editProfile";
+  setMessage(message, messageType) {
+    var newRespMessage = this.state.respMessage;
+    newRespMessage.message = message;
+    newRespMessage.messageType = messageType;
+    this.setState((state) => ({
+      respMessage: newRespMessage,
+    }));
+  }
+
+  sendRequest = (event) => {
+    event.preventDefault();
+    const path = this.props.domainName + "/user/editProfile";
+
     fetch(path, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(this.state.request),
     })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      );
+        .then((res) => res.json())
+        .then(
+            (result) => {
+              if (result.error != null) {
+                console.log(result.error);
+                this.setMessage(result.error.message, "ERROR");
+              } else {
+                this.setMessage("Successfully Edited Profile!", "SUCCESS");
+              }
+            },
+            (error) => {
+              this.setMessage("ERROR sending request", "ERROR");
+            }
+        );
   };
 
   render() {
-    return (
-      <form>
-        <div>
-          <div
-            style={{
-              zIndex: 1,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:300"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "19.53125%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                {...this.props}
-                name="Name"
-                valKey="newName"
-                onInput={this.handleChange}
-                nodeId="35:300"
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              zIndex: 2,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:280"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "31.25%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                {...this.props}
-                name="Username"
-                valKey="newUsername"
-                onInput={this.handleChange}
-                nodeId="35:280"
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              zIndex: 3,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:285"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "42.96875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                {...this.props}
-                name="Password"
-                valKey="newPassword"
-                onInput={this.handleChange}
-                nodeId="35:285"
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              zIndex: 4,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:290"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "54.6875%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                {...this.props}
-                name="Email"
-                valKey="newEmail"
-                onInput={this.handleChange}
-                nodeId="35:290"
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              zIndex: 5,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:295"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "66.40625%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <CSimpleInput
-                {...this.props}
-                name="Handle"
-                valKey="newHandle"
-                onInput={this.handleChange}
-                nodeId="35:295"
-              />
-            </div>
-          </div>
+    const formEntries = [
+      {
+        name: "Name",
+        valKey: "newName",
+      },
+      {
+        name: "Username",
+        valKey: "newUsername",
+      },
+      {
+        name: "Password",
+        valKey: "newPassword",
+      },
+      {
+        name: "Email",
+        valKey: "newEmail",
+      },
+      {
+        name: "Handle",
+        valKey: "newHandle",
+      },
+    ];
 
-          <div
-            style={{
-              zIndex: 7,
-            }}
-            className="outerDiv centerer"
-          >
-            <div
-              id="35:320"
-              style={{
-                width: "47.22222222222222%",
-                marginLeft: "37.986111111111114%",
-                height: "11.71875%",
-                top: "78.1251%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-                overflow: "hidden",
-              }}
-              className="innerDiv"
-            >
-              <CSingleButton
-                {...this.props}
-                text="Submit"
-                onSub={this.sendRequest}
-                nodeId="35:320"
+    let formBlocks = formEntries.map((value, index) => {
+      let inputBlock;
+      if (value.name == "Handle") {
+        inputBlock = (
+            <InputGroup>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                  required
+                  style={{fontFamily: "Muli"}}
+                  size="lg"
+                  type={value.name != "Password" ? "text" : "password"}
+                  placeholder={"Enter " + value.name}
+                  onChange={this.handleChange}
               />
-            </div>
-          </div>
-        </div>
-      </form>
+            </InputGroup>
+        );
+      } else {
+        inputBlock = (
+            <Form.Control
+                required
+                style={{fontFamily: "Muli"}}
+                size="lg"
+                type={value.name != "Password" ? "text" : "password"}
+                placeholder={"Enter " + value.name}
+                onChange={this.handleChange}
+            />
+        );
+      }
+      return (
+          <Form.Group controlId={value.valKey}>
+            <Form.Label style={{fontFamily: "Muli"}} column="lg">
+              {value.name}
+            </Form.Label>
+            {inputBlock}
+          </Form.Group>
+      );
+    });
+
+    return (
+        <Form onSubmit={this.sendRequest}>
+          {formBlocks}
+          <Button className="submitButton" type="submit">
+            Submit
+          </Button>
+        </Form>
     );
   }
 }

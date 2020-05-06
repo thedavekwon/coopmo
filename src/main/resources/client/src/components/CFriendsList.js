@@ -1,37 +1,40 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CFriendsList extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      friendsList: [],
-    };
-    this.getFriendsList();
-  }
+export default class CFriendsList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            friendsList: [],
+        };
+        this.getFriendsList();
+    }
 
-  getFriendsList = () => {
-    const path =
-      "http://localhost:8080/user/getUserFriendList?userId=" +
-      this.props.userId;
-    fetch(path, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              friendsList: result.data,
-            }));
-          }
-        },
-        (error) => {
-          console.log("error sending request");
-        }
-      )
+    getFriendsList = () => {
+        const path = this.props.domainName + "/user/getUserFriendList";
+        fetch(path, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            friendsList: result.data,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log("error sending request");
+                }
+            )
       .then(() => {
         console.log(this.state.friendsList);
       });
@@ -147,13 +150,10 @@ export default class CFriendsList extends PureComponent {
             <div
               id="I38:1056;4:4"
               style={{
-                marginLeft: 0,
-                marginRight: 0,
-                flexGrow: 1,
-                marginTop: 0,
-                height: "10%",
-                marginBottom: 0,
-                backgroundColor: "rgba(102, 0, 153, 1)",
+                  flexGrow: 1,
+                  height: "10%",
+                  borderRadius: "10px 10px 0px 0px",
+                  backgroundColor: "rgba(102, 0, 153, 1)",
               }}
               className="innerDiv"
             >

@@ -1,46 +1,47 @@
-import React, {PureComponent} from "react";
+import React from "react";
 
-export default class CInputwithanIcon extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
+export default class CInputwithanIcon extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-  handleChange(event) {
-    this.props.onInput(this.props.valKey, event.target.value);
-  }
-  render() {
-    return (
-      <div className="master" style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}>
-        <div>
-          <div style={{ zIndex: 1 }} className="outerDiv centerer">
-            <div
-              id="I35:280;35:276"
-              style={{
-                marginLeft: "3%",
-                width: "94%",
-                flexGrow: 1,
-                height: "40%",
-                top: "40%",
-                backgroundColor: "rgba(0, 0, 0, 0)",
-              }}
-              className="innerDiv"
-            >
-              <div>
-                <div style={{}} className="outerDiv centerer">
-                  <div
-                    id="I35:280;35:277"
-                    style={{
-                      width: "100%",
-                      marginLeft: "0%",
-                      height: "100%",
-                      top: "0%",
-                      border: "1px solid rgba(38, 38, 38, 1)",
-                      borderRadius: "8px 8px 8px 8px",
-                    }}
-                    className="innerDiv"
-                  >
-                    <div></div>
+    handleChange(event) {
+        this.props.onInput(this.props.valKey, event.target.value);
+    }
+
+    render() {
+        return (
+            <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+                <div>
+                    <div style={{zIndex: 1}} className="outerDiv centerer">
+                        <div
+                            id="I35:280;35:276"
+                            style={{
+                                marginLeft: "3%",
+                                width: "94%",
+                                flexGrow: 1,
+                                height: "40%",
+                                top: "40%",
+                                backgroundColor: "rgba(0, 0, 0, 0)",
+                            }}
+                            className="innerDiv"
+                        >
+                            <div>
+                                <div style={{}} className="outerDiv centerer">
+                                    <div
+                                        id="I35:280;35:277"
+                                        style={{
+                                            width: "100%",
+                                            marginLeft: "0%",
+                                            height: "100%",
+                                            top: "0%",
+                                            border: "1px solid rgba(38, 38, 38, 1)",
+                                            borderRadius: "8px 8px 8px 8px",
+                                        }}
+                                        className="innerDiv"
+                                    >
+                                        <div></div>
                   </div>
                 </div>
               </div>
@@ -104,8 +105,6 @@ export default class CInputwithanIcon extends PureComponent {
                   onChange={this.handleChange}
                 ></input>
               </span>
-
-              {/*<span style={{}} key="end">Placeholder</span>*/}
             </div>
           </div>
           <div

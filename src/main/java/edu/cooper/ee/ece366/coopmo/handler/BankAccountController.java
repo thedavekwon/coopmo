@@ -1,5 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
+import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
@@ -8,6 +9,7 @@ import edu.cooper.ee.ece366.coopmo.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +23,24 @@ public class BankAccountController extends BaseController {
         this.bankAccountService = bankAccountService;
     }
 
-    @PostMapping("createBankAccount")
+    @PostMapping("/createBankAccount")
     public ResponseEntity<?> createBankAccount(@RequestBody CreateBankAccountRequest bankAccountRequest) throws InValidFieldValueException, EmptyFieldException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
+        /*
+        if (bankAccountRequest.getUserId().isEmpty())
+            throw new EmptyFieldException("Empty Field");
 
-        if (bankAccountRequest.getUserId().isEmpty() || bankAccountRequest.getBalance() < 0)
+         */
+        bankAccountRequest.setUserId(userId);
+        if (bankAccountRequest.getBalance() == null)
             throw new EmptyFieldException("Empty Field");
 
         Message respMessage = new Message();
@@ -35,7 +49,7 @@ public class BankAccountController extends BaseController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    @PostMapping("getBankAccountBalance")
+    @PostMapping("/getBankAccountBalance")
     public ResponseEntity<?> getBankAccountBalance(@RequestBody String bankAccountId) throws EmptyFieldException, InValidFieldValueException {
         if (bankAccountId.isEmpty())
             throw new EmptyFieldException("Empty Bank Account Id");
@@ -49,18 +63,27 @@ public class BankAccountController extends BaseController {
     }
 
     public static class CreateBankAccountRequest {
-        private final String userId;
+        private String userId;
         private final Long routingNumber;
         private final Long balance;
 
-        public CreateBankAccountRequest(String userId, Long routingNumber, Long balance) {
-            this.userId = userId;
+        public CreateBankAccountRequest(Long routingNumber, Long balance) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof MyUserDetails) {
+                userId = ((MyUserDetails) principal).getId();
+            } else {
+                userId = principal.toString();
+            }
             this.routingNumber = routingNumber;
             this.balance = balance;
         }
 
         public String getUserId() {
             return userId;
+        }
+
+        public void setUserId(String newUserId) {
+            userId = newUserId;
         }
 
         public Long getRoutingNumber() {

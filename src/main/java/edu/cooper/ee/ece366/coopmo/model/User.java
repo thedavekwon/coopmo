@@ -42,6 +42,9 @@ public class User {
     @Column(nullable = false)
     private boolean deleted;
 
+    @Column(nullable = false)
+    private Boolean profilePic;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "fromUser", orphanRemoval = true)
     @JsonIgnore
     @OrderBy("timestamp DESC")
@@ -86,6 +89,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.handle = handle;
+        profilePic = false;
         deleted = false;
         friendSet = new HashSet<>();
         bankAccountSet = new HashSet<>();
@@ -106,6 +110,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getProfilePic() {
+        return this.profilePic;
+    }
+
+    public void setProfilePic(Boolean profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getUsername() {

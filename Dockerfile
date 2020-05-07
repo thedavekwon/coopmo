@@ -7,6 +7,6 @@ RUN mvn verify clean --fail-never
 
 COPY . ./
 RUN mvn -v
-RUN mvn clean install -DskipTests
+RUN mvn -Pdocker  clean install -DskipTests
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app/target/coopmo-0.0.1-SNAPSHOT.jar"]

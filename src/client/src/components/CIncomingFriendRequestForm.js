@@ -47,16 +47,16 @@ export default class CMenuIncomingFriendRequests extends React.Component {
     if (this.state.incomingRequests != null) {
       friendRequests = (
         <form>
-          {this.state.incomingRequests.map((e, key) => {
+          {this.state.incomingRequests.map((incomingRequest, key) => {
             return (
               <div
                 style={{
                   zIndex: key + 1,
                 }}
                 className="outerDiv centerer"
+                key={incomingRequest.id}
               >
                 <div
-                    id="35:300"
                     style={{
                         width: "100%",
 
@@ -67,8 +67,8 @@ export default class CMenuIncomingFriendRequests extends React.Component {
                     className="innerDiv"
                 >
                     <CFriendRequest
-                        name={e.name}
-                        friendId={e.id}
+                        name={incomingRequest.name}
+                        friendId={incomingRequest.id}
                         key={key}
                         userId={this.props.userId}
                         domainName={this.props.domainName}

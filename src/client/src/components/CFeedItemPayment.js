@@ -1,16 +1,9 @@
 import React from "react";
+import {formatMoney} from "../functions/formatMoney";
 
 export default class CFeedItemPayment extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    formatAmount(amount) {
-        if (amount !== "") {
-            return "$" + amount;
-        } else {
-            return "";
-        }
     }
 
     render() {
@@ -30,7 +23,7 @@ export default class CFeedItemPayment extends React.Component {
         const toUserHandle = this.props.toUserHandle;
 
         const amount =
-            this.props.tab === "Me" ? (this.props.amount.toFixed(2) / 100.0).toString() : "";  
+            this.props.tab === "Me" ? formatMoney(this.props.amount) : "";  
         return (
             <div
                 style={{
@@ -57,7 +50,7 @@ export default class CFeedItemPayment extends React.Component {
                 {fromUserHandle} paid {toUserHandle}
             </span>
                         <br/>
-                        <span>{this.formatAmount(amount)}</span>
+                        <span>{amount}</span>
                     </div>
                     <div
                         style={{

@@ -23,13 +23,14 @@ export default class CFeedItemPayment extends React.Component {
         const timestamp =
             itemDate + " " + itemHourStr + ":" + itemMinute + " " + amOrPm;
         const fontSize = 24;
-        const message = this.props.type;
+        const type = this.props.type;
+        const comment = this.props.comment;
 
         const fromUserHandle = this.props.fromUserHandle;
         const toUserHandle = this.props.toUserHandle;
 
         const amount =
-            this.props.tab === "Me" ? this.props.amount : "";  
+            this.props.tab === "Me" ? (this.props.amount.toFixed(2) / 100.0).toString() : "";  
         return (
             <div
                 style={{
@@ -60,12 +61,18 @@ export default class CFeedItemPayment extends React.Component {
                     </div>
                     <div
                         style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                             paddingRight: "10px",
                         }}
                     >
-                        <br/>
-                        <span style={{}}>{message}</span>
-                        <br/>
+                        <div>
+                                <span>{type}</span>
+                        </div>
+                        <div>
+                                <span>{comment}</span>
+                        </div>
                     </div>
                 </div>
                 <hr

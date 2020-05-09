@@ -23,9 +23,9 @@ export default class CFeedItemBank extends React.Component {
         const timestamp =
             itemDate + " " + itemHourStr + ":" + itemMinute + " " + amOrPm;
         const fontSize = 24;
-        const message = "CASH " + this.props.type;
+        const type = "CASH " + this.props.type;
 
-        const amount = this.props.amount.toString();
+        const amount = (this.props.amount.toFixed(2) / 100.0).toString();
         return (
             <div
                 style={{
@@ -52,12 +52,15 @@ export default class CFeedItemBank extends React.Component {
                     </div>
                     <div
                         style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
                             paddingRight: "10px",
                         }}
                     >
-                        <br/>
-                        <span style={{}}>{message}</span>
-                        <br/>
+                        <div>
+                                <span>{type}</span>
+                        </div>
                     </div>
                 </div>
                 <hr

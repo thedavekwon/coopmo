@@ -83,6 +83,7 @@ export default class CFeedList extends React.Component {
             type={payment.type}
             amount={payment.amount}
             timestamp={payment.timestamp}
+            comment={payment.comment}
           />
         );
       }

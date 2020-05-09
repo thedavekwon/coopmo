@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,11 +28,13 @@ import java.util.regex.Pattern;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private boolean validateEmail(String email) {
@@ -190,7 +193,7 @@ public class UserController {
 
         String newName = editProfileRequest.getNewName();
         String newUsername = editProfileRequest.getNewUsername();
-        String newPassword = editProfileRequest.getNewPassword();
+        String newPassword = passwordEncoder.encode(editProfileRequest.getNewPassword());
         String newEmail = editProfileRequest.getNewEmail();
         String newHandle = editProfileRequest.getNewHandle();
 

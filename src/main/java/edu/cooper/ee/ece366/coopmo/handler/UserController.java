@@ -139,7 +139,7 @@ public class UserController {
 
     // Debug Purpose
     @GetMapping(path = "/getUserSize")
-    public Long getUserSize() {
+    public long getUserSize() {
         return userRepository.count();
     }
 
@@ -172,7 +172,7 @@ public class UserController {
 
         Message respMessage = new Message();
 
-        Long balance = userService.getUserBalance(userId);
+        long balance = userService.getUserBalance(userId);
         respMessage.setData(balance);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
@@ -375,10 +375,17 @@ public class UserController {
     public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
         if (request.getMatch().equals(""))
             throw new EmptyFieldException("Empty Field");
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         Set<User> users = userService.findUsers(request);
+        users.removeIf(user -> user.getId().equals(userId));
         respMessage.setData(users);
-
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 

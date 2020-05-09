@@ -152,7 +152,7 @@ public class User {
         this.handle = handle;
     }
 
-    public Long getBalance() {
+    public long getBalance() {
         return balance;
     }
 

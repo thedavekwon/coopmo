@@ -38,7 +38,7 @@ public class PaymentController extends BaseController {
             fromUserId = principal.toString();
         }
         String toUserId = createPaymentRequest.getToUserId();
-        Long amount = createPaymentRequest.getAmount();
+        long amount = createPaymentRequest.getAmount();
         String type = createPaymentRequest.getType();
         String comment = createPaymentRequest.getComment();
 
@@ -151,11 +151,11 @@ public class PaymentController extends BaseController {
 
     public static class CreatePaymentRequest {
         private final String toUserId;
-        private final Long amount;
+        private final long amount;
         private final String type;
         private final String comment;
 
-        public CreatePaymentRequest(String toUserId, Long amount, String type, String comment) {
+        public CreatePaymentRequest(String toUserId, long amount, String type, String comment) {
             this.toUserId = toUserId;
             this.amount = amount;
             this.type = type;
@@ -166,7 +166,7 @@ public class PaymentController extends BaseController {
             return toUserId;
         }
 
-        public Long getAmount() {
+        public long getAmount() {
             return amount;
         }
 

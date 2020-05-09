@@ -54,31 +54,37 @@ public class BankAccountController extends BaseController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
+    private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") long routingNumber) {
         return (routingNumber / 1000000000) < 1;
     }
 
     public static class CreateBankAccountRequest {
         private String userId;
+        private final String nickname;
         private final long routingNumber;
         private final long balance;
         private final long accountNumber;
 
-        public CreateBankAccountRequest(long accountNumber, long routingNumber, long balance) {
+        public CreateBankAccountRequest(String nickname, long accountNumber, long routingNumber, long balance) {
+            this.nickname = nickname;
             this.routingNumber = routingNumber;
             this.balance = balance;
             this.accountNumber = accountNumber;
+        }
+
+        public String getNickname() {
+            return nickname;
         }
 
         public String getUserId() {
             return userId;
         }
 
-        public void setUserId(String newUserId) {
-            userId = newUserId;
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
 
-        public Long getRoutingNumber() {
+        public long getRoutingNumber() {
             return routingNumber;
         }
 

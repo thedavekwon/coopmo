@@ -27,7 +27,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type, String comment)
+    public Payment createPayment(String fromUserId, String toUserId, long amount, Payment.PaymentType type, String comment)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         User fromUser = userService.checkValidUserId(fromUserId);
         User toUser = userService.checkValidUserId(toUserId);

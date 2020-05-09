@@ -26,7 +26,7 @@ export default class CAddFriendForm extends React.Component {
   }
 
   handleInputChange = (value) => {
-    if (value == "") return;
+    if (value === "") return;
     var newRequest = this.state.findUserRequest;
     newRequest.match = value;
     this.setState((state) => ({

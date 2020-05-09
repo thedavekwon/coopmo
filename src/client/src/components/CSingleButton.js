@@ -12,7 +12,7 @@ export default class CSingleButton extends React.Component {
 
   render() {
     let message;
-    if (this.props.messageType == "ERROR") {
+    if (this.props.messageType === "ERROR") {
       message = (
         <div
           style={{ zIndex: 3, alignItems: "center" }}
@@ -44,7 +44,7 @@ export default class CSingleButton extends React.Component {
           </div>
         </div>
       );
-    } else if (this.props.messageType == "SUCCESS") {
+    } else if (this.props.messageType === "SUCCESS") {
       message = (
         <div
           style={{ zIndex: 3, alignItems: "center" }}

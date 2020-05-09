@@ -22,12 +22,14 @@ export default class CFeedList extends React.Component {
       case "Me":
         fetch_type = "Private";
         break;
-      case "Friends":
+      case "Friend":
         fetch_type = "Friend";
         break;
       case "Public":
         fetch_type = "Public";
         break;
+      default:
+        fetch_type = "(ERROR, SHOULD NOT SEE THIS)";
     }
     fetchFeed(this.props.domainName, num_items, fetch_type)
       .then((response) => response.json())

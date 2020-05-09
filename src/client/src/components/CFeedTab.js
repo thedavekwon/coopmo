@@ -12,7 +12,7 @@ export default class CFeedTab extends React.Component {
 
     render() {
         let active = false;
-        if (this.props.feedTab == this.props.name) active = true;
+        if (this.props.feedTab === this.props.name) active = true;
         let purple = "rgba(102, 0, 153, 1)";
         let white = "rgba(255, 255, 255, 1)";
         let barBottom;

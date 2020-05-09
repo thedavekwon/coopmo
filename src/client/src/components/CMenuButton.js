@@ -10,7 +10,7 @@ export default class CMenuButton extends React.Component {
     this.state = { isToggleOn: toggle };
   }
   handleClick() {
-    if (this.props.page == "main") {
+    if (this.props.page === "main") {
       ReactDOM.render(<CMenuEditProfile
           domainName={this.props.domainName}></CMenuEditProfile>, document.getElementById("root"));
     } else {

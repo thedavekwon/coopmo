@@ -41,7 +41,7 @@ export default class CSendPaymentForm extends React.Component {
   }
 
   handleInputChange = (value) => {
-    if (value == "") return;
+    if (value === "") return;
     var newRequest = this.state.findUserRequest;
     newRequest.match = value;
     this.setState((state) => ({

@@ -94,9 +94,9 @@ export default class CEditProfileForm extends React.Component {
       },
     ];
 
-    let formBlocks = formEntries.map((value, index) => {
+    let formBlocks = formEntries.map((formEntry, index) => {
       let inputBlock;
-      if (value.name == "Handle") {
+      if (formEntry.name === "Handle") {
         inputBlock = (
             <InputGroup>
               <InputGroup.Prepend>
@@ -106,8 +106,8 @@ export default class CEditProfileForm extends React.Component {
                   required
                   style={{fontFamily: "Muli"}}
                   size="lg"
-                  type={value.name != "Password" ? "text" : "password"}
-                  placeholder={"Enter " + value.name}
+                  type={formEntry.name !== "Password" ? "text" : "password"}
+                  placeholder={"Enter " + formEntry.name}
                   onChange={this.handleChange}
               />
             </InputGroup>
@@ -118,16 +118,16 @@ export default class CEditProfileForm extends React.Component {
                 required
                 style={{fontFamily: "Muli"}}
                 size="lg"
-                type={value.name != "Password" ? "text" : "password"}
-                placeholder={"Enter " + value.name}
+                type={formEntry.name !== "Password" ? "text" : "password"}
+                placeholder={"Enter " + formEntry.name}
                 onChange={this.handleChange}
             />
         );
       }
       return (
-          <Form.Group controlId={value.valKey}>
+          <Form.Group controlId={formEntry.valKey} key={formEntry.valKey}>
             <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              {value.name}
+              {formEntry.name}
             </Form.Label>
             {inputBlock}
           </Form.Group>

@@ -72,11 +72,11 @@ export default class CChangeBankAccounts extends React.Component {
         valKey: "routingNumber",
       },
     ];
-    let formBlocks = formEntries.map((value, index) => {
+    let formBlocks = formEntries.map((formEntry, index) => {
       return (
-          <Form.Group controlId={value.valKey}>
+          <Form.Group controlId={formEntry.valKey} key={formEntry.valKey}>
             <Form.Label style={{fontFamily: "Muli"}} column="lg">
-              {value.name}
+              {formEntry.name}
             </Form.Label>
             <Form.Control
                 required
@@ -85,7 +85,7 @@ export default class CChangeBankAccounts extends React.Component {
                 type="number"
                 step="1"
                 min="0"
-                placeholder={"Enter " + value.name}
+                placeholder={"Enter " + formEntry.name}
                 onChange={this.handleChange}
             />
           </Form.Group>

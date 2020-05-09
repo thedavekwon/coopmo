@@ -12,15 +12,15 @@ export default class TitleBar extends React.Component {
 
     render() {
         let backgroundColor =
-            this.props.page == "main"
+            this.props.page === "main"
                 ? "rgba(102, 0, 153, 1)"
                 : "rgba(255, 255, 255, 1)";
         let textColor =
-            this.props.page == "main"
+            this.props.page === "main"
                 ? "rgba(255, 255, 255, 1)"
                 : "rgba(102, 0, 153, 1)";
         let includeBalance;
-        if (this.props.page == "main") {
+        if (this.props.page === "main") {
             includeBalance = (
                 <div
                     style={{
@@ -37,10 +37,6 @@ export default class TitleBar extends React.Component {
                         style={{
                             flexGrow: 1,
                             backgroundColor: "rgba(102, 0, 153, 1)",
-                            fontSize: 24,
-                            fontStyle: "normal",
-                            lineHeight: "NaN%",
-                            letterSpacing: "undefinedpx",
                             color: "rgba(255, 255, 255, 1)",
                             fontSize: 24,
                             fontWeight: 400,

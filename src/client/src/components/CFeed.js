@@ -25,15 +25,14 @@ export default class CFeed extends React.Component {
 
         let feedTabs = tabNames.map((value, index) => {
             return (
-                <div style={{zIndex: index}} className="outerDiv centerer">
+                <div className="outerDiv centerer" key={value}>
                     <div
-                        id="I38:1057;30:46;30:9"
                         style={{
                             marginLeft: 100 / 3 * index + "%",
                             marginRight: 100 / 3 * (2 - index) + "%",
                             flexGrow: 1,
                             backgroundColor:
-                                this.state.feedTab == value ? purple : white,
+                                this.state.feedTab === value ? purple : white,
                             borderRadius: "8px 8px 0px 0px",
                         }}
                         className="innerDiv"
@@ -49,9 +48,8 @@ export default class CFeed extends React.Component {
         return (
             <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
                 <div>
-                    <div style={{}} className="outerDiv centerer">
+                    <div className="outerDiv centerer">
                         <div
-                            id="I38:1057;30:46"
                             style={{
                                 marginLeft: 0,
                                 marginRight: 0,

@@ -1,15 +1,10 @@
 import React from "react";
 
 export default class CMenuButtonDefault extends React.Component {
-    state = {};
-
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         let highlight;
-        if (this.props.active == this.props.name) {
+        if (this.props.active === this.props.name) {
             highlight = (
                 <React.Fragment>
                     <div style={{zIndex: 1}} className="outerDiv centerer">

@@ -59,7 +59,6 @@ export default class CMenuIncomingFriendRequests extends React.Component {
                 <div
                     style={{
                         width: "100%",
-
                         height: (1 / 6) * 100 + "%",
                         top: (key / 6) * 100 + "%",
                         backgroundColor: "rgba(0, 0, 0, 0)",

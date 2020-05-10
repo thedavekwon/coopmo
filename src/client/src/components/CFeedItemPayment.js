@@ -1,10 +1,13 @@
 import React from "react";
 import {formatMoney} from "../functions/formatMoney";
+import {MINH_PIC_LINK} from "../minhPic"
 
 export default class CFeedItemPayment extends React.Component {
 
     render() {
         let purple = "rgba(102, 0, 153, 1)";
+        const profilePicWidth = 40;
+        const profilePicHeight = 40;
         const itemDate = this.props.timestamp.substring(0, 10);
         const itemHour = parseInt(this.props.timestamp.substring(11, 13));
         const itemMinute = this.props.timestamp.substring(14, 16);
@@ -28,7 +31,6 @@ export default class CFeedItemPayment extends React.Component {
                     fontSize: fontSize,
                     fontWeight: 400,
                     fontFamily: "Muli",
-                    textAlign: "LEFT",
                     fontStyle: "normal",
                     lineHeight: "125%",
                     letterSpacing: "0px",
@@ -40,14 +42,24 @@ export default class CFeedItemPayment extends React.Component {
                         justifyContent: "space-between",
                     }}
                 >
-                    <div>
-                        <span style={{}}>{timestamp}</span>
-                        <br/>
-                        <span style={{}}>
-                {fromUserHandle} paid {toUserHandle}
-            </span>
-                        <br/>
-                        <span>{amount}</span>
+                    <div style={
+                        {
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            textAlign: "left"}
+                        }>
+                        <div><span>{timestamp}</span></div>
+                        <div>
+                            <span>
+                                <img src={MINH_PIC_LINK} style={{
+                                width: profilePicWidth,
+                                height: profilePicHeight,
+                                borderRadius:"50%"
+                                }} />
+                                {fromUserHandle} paid {toUserHandle}
+                            </span>
+                        </div>
                     </div>
                     <div
                         style={{
@@ -55,10 +67,14 @@ export default class CFeedItemPayment extends React.Component {
                             flexDirection: "column",
                             justifyContent: "space-between",
                             paddingRight: "10px",
+                            textAlign: "right"
                         }}
                     >
                         <div>
                                 <span>{type}</span>
+                        </div>
+                        <div>
+                            <span>{amount}</span>
                         </div>
                         <div>
                                 <span>{comment}</span>

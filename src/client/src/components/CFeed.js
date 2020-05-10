@@ -23,22 +23,22 @@ export default class CFeed extends React.Component {
 
         let tabNames = ["Me", "Friend", "Public"];
 
-        let feedTabs = tabNames.map((value, index) => {
+        let feedTabs = tabNames.map((feedTab, index) => {
             return (
-                <div className="outerDiv centerer" key={value}>
+                <div className="outerDiv centerer" key={feedTab}>
                     <div
                         style={{
                             marginLeft: 100 / 3 * index + "%",
                             marginRight: 100 / 3 * (2 - index) + "%",
                             flexGrow: 1,
                             backgroundColor:
-                                this.state.feedTab === value ? purple : white,
+                                this.state.feedTab === feedTab ? purple : white,
                             borderRadius: "8px 8px 0px 0px",
                         }}
                         className="innerDiv"
-                        onClick={() => this.handleClick(value)}
+                        onClick={() => this.handleClick(feedTab)}
                     >
-                        <CFeedTab name={value} feedTab={this.state.feedTab}/>
+                        <CFeedTab name={feedTab} feedTab={this.state.feedTab}/>
                     </div>
                 </div>
             );

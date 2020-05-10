@@ -23,7 +23,6 @@ export default class CFeedItemBank extends React.Component {
                     fontSize: fontSize,
                     fontWeight: 400,
                     fontFamily: "Muli",
-                    textAlign: "LEFT",
                     fontStyle: "normal",
                     lineHeight: "125%",
                     letterSpacing: "0px",
@@ -35,7 +34,7 @@ export default class CFeedItemBank extends React.Component {
                         justifyContent: "space-between",
                     }}
                 >
-                    <div>
+                    <div style={{textAlign: "left"}}>
                         <span style={{}}>{timestamp}</span>
                         <br/>
                         <span>{amount}</span>
@@ -46,6 +45,7 @@ export default class CFeedItemBank extends React.Component {
                             flexDirection: "column",
                             justifyContent: "space-between",
                             paddingRight: "10px",
+                            textAlign: "right"
                         }}
                     >
                         <div>

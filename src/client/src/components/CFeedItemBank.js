@@ -1,18 +1,8 @@
 import React from "react";
+import {formatMoney} from "../functions/formatMoney";
 
 export default class CFeedItemBank extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    formatAmount(amount) {
-        if (amount !== "") {
-            return "$" + amount;
-        } else {
-            return "";
-        }
-    }
-
+    
     render() {
         let purple = "rgba(102, 0, 153, 1)";
         const itemDate = this.props.timestamp.substring(0, 10);
@@ -25,7 +15,7 @@ export default class CFeedItemBank extends React.Component {
         const fontSize = 24;
         const type = "CASH " + this.props.type;
 
-        const amount = (this.props.amount.toFixed(2) / 100.0).toString();
+        const amount = formatMoney(this.props.amount);
         return (
             <div
                 style={{
@@ -48,7 +38,7 @@ export default class CFeedItemBank extends React.Component {
                     <div>
                         <span style={{}}>{timestamp}</span>
                         <br/>
-                        <span>{this.formatAmount(amount)}</span>
+                        <span>{amount}</span>
                     </div>
                     <div
                         style={{

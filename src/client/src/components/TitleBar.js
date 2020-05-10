@@ -1,5 +1,6 @@
 import React from "react";
 import CMenuButton from "./CMenuButton.js";
+import {formatMoney} from "../functions/formatMoney";
 
 export default class TitleBar extends React.Component {
     constructor(props) {
@@ -36,10 +37,6 @@ export default class TitleBar extends React.Component {
                         style={{
                             flexGrow: 1,
                             backgroundColor: "rgba(102, 0, 153, 1)",
-                            fontSize: 24,
-                            fontStyle: "normal",
-                            lineHeight: "NaN%",
-                            letterSpacing: "undefinedpx",
                             color: "rgba(255, 255, 255, 1)",
                             fontSize: 24,
                             fontWeight: 400,
@@ -51,7 +48,7 @@ export default class TitleBar extends React.Component {
                         }}
                         className="innerDiv vertCenterAndCut"
                     >
-                        <span>Balance : ${this.props.balance.toFixed(2) / 100.0}</span>
+                        <span>Balance : {formatMoney(this.props.balance)}</span>
                     </div>
                 </div>
             );

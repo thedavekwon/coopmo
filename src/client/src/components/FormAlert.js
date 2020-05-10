@@ -3,9 +3,6 @@ import React from "react";
 import Alert from "react-bootstrap/Alert";
 
 export default class FormAlert extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
 

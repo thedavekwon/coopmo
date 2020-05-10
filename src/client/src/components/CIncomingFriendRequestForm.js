@@ -83,7 +83,7 @@ export default class CMenuIncomingFriendRequests extends React.Component {
     return (
 
         <div
-          class="innerDiv centerer"
+          className="innerDiv centerer"
           style={{
             height: "100%",
             width: "100%",

@@ -45,9 +45,9 @@ export default class CFriendsList extends React.Component {
     if (this.state.friendsList != null) {
       friends = (
         <div>
-          {this.state.friendsList.map((e, key) => {
+          {this.state.friendsList.map((friend, key) => {
             return (
-              <div style={{ zIndex: key + 1 }} className="outerDiv centerer">
+              <div style={{ zIndex: key + 1 }} className="outerDiv centerer" key={friend}>
                 <div
                   id="I38:1056;14:12"
                   style={{
@@ -129,7 +129,7 @@ export default class CFriendsList extends React.Component {
                       >
                         <div>
                           <span style={{}} key="end">
-                            {e.name}
+                            {friend.name}
                           </span>
                         </div>
                       </div>

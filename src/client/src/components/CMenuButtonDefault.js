@@ -1,11 +1,6 @@
 import React from "react";
 
 export default class CMenuButtonDefault extends React.Component {
-    state = {};
-
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         let highlight;

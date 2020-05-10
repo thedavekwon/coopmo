@@ -103,7 +103,7 @@ export default class CCashInForm extends React.Component {
             console.log(result.error);
             this.setMessage(result.error.message, "ERROR");
           } else {
-            if (result.data != null && result.data.length != 0) {
+            if (result.data != null && result.data.length !== 0) {
               var bankList = [];
               console.log(result.data);
               for (var i = 0; i < result.data.length; i++) {

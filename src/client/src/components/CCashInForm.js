@@ -111,14 +111,14 @@ export default class CCashInForm extends React.Component {
                   ...bankList,
                   {
                     value: result.data[i].id,
-                    label: result.data[i].routingNumber,
+                    label: result.data[i].routingNumber + "+" + result.data[i].accountNumber,
                   },
                 ];
               }
               this.setState((state) => ({
                 bankAcctList: bankList,
               }));
-
+              //console.log(this.state.bankAcctList)
               var newRequest = this.state.request;
               newRequest.bankAccountId = result.data[0].id;
               this.setState((state) => ({

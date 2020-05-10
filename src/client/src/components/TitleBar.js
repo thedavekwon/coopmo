@@ -11,15 +11,15 @@ export default class TitleBar extends React.Component {
 
     render() {
         let backgroundColor =
-            this.props.page == "main"
+            this.props.page === "main"
                 ? "rgba(102, 0, 153, 1)"
                 : "rgba(255, 255, 255, 1)";
         let textColor =
-            this.props.page == "main"
+            this.props.page === "main"
                 ? "rgba(255, 255, 255, 1)"
                 : "rgba(102, 0, 153, 1)";
         let includeBalance;
-        if (this.props.page == "main") {
+        if (this.props.page === "main") {
             includeBalance = (
                 <div
                     style={{
@@ -150,18 +150,18 @@ export default class TitleBar extends React.Component {
                                         className="innerDiv vertCenterAndCut  "
                                     >
                                         <div>
-                        <span
-                            style={{
-                                fontSize: 73,
-                                fontStyle: "normal",
-                                lineHeight: "NaN%",
-                                letterSpacing: "undefinedpx",
-                                color: textColor,
-                            }}
-                            key="4"
-                        >
-                          Coop
-                        </span>
+                      <span
+                          style={{
+                              fontSize: 73,
+                              fontStyle: "normal",
+                              lineHeight: "NaN%",
+                              letterSpacing: "undefinedpx",
+                              color: textColor,
+                          }}
+                          key="4"
+                      >
+                        Coop
+                      </span>
                                             <span
                                                 style={{
                                                     fontSize: 73,
@@ -171,14 +171,13 @@ export default class TitleBar extends React.Component {
                                                 }}
                                                 key="end"
                                             >
-                          mo
-                        </span>
+                        mo
+                      </span>
                                         </div>
                                     </div>
                                 </div>
                                 {includeBalance}
                             </div>
-
                         </div>
                     </div>
                 </div>

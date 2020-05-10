@@ -29,7 +29,7 @@ public class BankAccountService {
     @Transactional
     public BankAccount createBankAccount(BankAccountController.CreateBankAccountRequest createBankAccountRequest) throws InValidFieldValueException {
         User curUser = userService.checkValidUserId(createBankAccountRequest.getUserId());
-        BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
+        BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getAccountNumber(), createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
         bankAccountRepository.save(bankAccount);
         return bankAccount;
     }

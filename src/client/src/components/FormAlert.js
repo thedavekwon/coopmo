@@ -11,7 +11,7 @@ export default class FormAlert extends React.Component {
 
         if (this.props.showMessage) {
             return (
-                <Alert variant={this.props.messageType == "ERROR" ? "danger" : "primary"}
+                <Alert variant={this.props.messageType === "ERROR" ? "danger" : "primary"}
                        onClose={this.props.onClose} dismissible>
                     <Alert.Heading>{this.props.messageType}</Alert.Heading>
                     <p>

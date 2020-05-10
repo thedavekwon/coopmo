@@ -1,3 +1,5 @@
+#!/bin/bash
+
 docker network create coopmoNetwork
 
 set -e

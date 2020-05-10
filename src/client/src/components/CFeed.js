@@ -33,7 +33,7 @@ export default class CFeed extends React.Component {
                             marginRight: 100 / 3 * (2 - index) + "%",
                             flexGrow: 1,
                             backgroundColor:
-                                this.state.feedTab == value ? purple : white,
+                                this.state.feedTab === value ? purple : white,
                             borderRadius: "8px 8px 0px 0px",
                         }}
                         className="innerDiv"

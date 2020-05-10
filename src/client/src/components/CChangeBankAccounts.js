@@ -9,6 +9,7 @@ export default class CChangeBankAccounts extends React.Component {
         this.state = {
             request: {
                 routingNumber: 0,
+                accountNumber: 0,
                 balance: 1000,
             },
             respMessage: {
@@ -67,10 +68,14 @@ export default class CChangeBankAccounts extends React.Component {
 
   render() {
     const formEntries = [
-      {
-        name: "Routing Number",
-        valKey: "routingNumber",
-      },
+        {
+            name: "Routing Number",
+            valKey: "routingNumber",
+        },
+        {
+            name: "Account Number",
+            valKey: "accountNumber"
+        }
     ];
     let formBlocks = formEntries.map((value, index) => {
       return (

@@ -12,17 +12,17 @@ export default class CSingleButton extends React.Component {
 
   render() {
     let message;
-    if (this.props.messageType == "ERROR") {
-      message = (
-        <div
-          style={{ zIndex: 3, alignItems: "center" }}
-          className="outerDiv centerer"
-        >
-          <div
-            id="I35:320;35:317"
-            style={{
-              width: "50%",
-              marginLeft: "5%",
+    if (this.props.messageType === "ERROR") {
+        message = (
+            <div
+                style={{zIndex: 3, alignItems: "center"}}
+                className="outerDiv centerer"
+            >
+                <div
+                    id="I35:320;35:317"
+                    style={{
+                        width: "50%",
+                        marginLeft: "5%",
               height: 19,
               color: "rgba(237, 75, 75, 1)",
               fontSize: 16,
@@ -33,28 +33,28 @@ export default class CSingleButton extends React.Component {
               lineHeight: "125%",
               letterSpacing: "0px",
             }}
-            className="innerDiv"
-            onClick={this.handleClick}
-          >
-            <div>
+                    className="innerDiv"
+                    onClick={this.handleClick}
+                >
+                    <div>
               <span style={{}} key="end">
                 {this.props.message}
               </span>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      );
-    } else if (this.props.messageType == "SUCCESS") {
-      message = (
-        <div
-          style={{ zIndex: 3, alignItems: "center" }}
-          className="outerDiv centerer"
-        >
-          <div
-            id="I35:320;35:317"
-            style={{
-                width: "50%",
-                marginLeft: "5%",
+        );
+    } else if (this.props.messageType === "SUCCESS") {
+        message = (
+            <div
+                style={{zIndex: 3, alignItems: "center"}}
+                className="outerDiv centerer"
+            >
+                <div
+                    id="I35:320;35:317"
+                    style={{
+                        width: "50%",
+                        marginLeft: "5%",
                 height: 19,
                 color: "rgba(38, 38, 38, 1)",
                 fontSize: 16,

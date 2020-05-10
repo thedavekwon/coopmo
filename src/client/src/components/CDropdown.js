@@ -13,7 +13,7 @@ export default class CDropdown extends React.Component {
         let dropdown;
         let content;
 
-        if (this.props.dropType == "bank") {
+        if (this.props.dropType === "bank") {
             if (this.props.bankAcctList != null) {
                 content = this.props.bankAcctList.map((e, key) => {
                     return (
@@ -33,16 +33,16 @@ export default class CDropdown extends React.Component {
                     {content}
                 </select>
             );
-        } else if (this.props.dropType == "payment") {
-      if (this.props.paymentTypes != null) {
-        content = this.props.paymentTypes.map((e, key) => {
-          return (
-            <option value={e.val} key={key}>
-              {e.name}
-            </option>
-          );
-        });
-      }
+        } else if (this.props.dropType === "payment") {
+            if (this.props.paymentTypes != null) {
+                content = this.props.paymentTypes.map((e, key) => {
+                    return (
+                        <option value={e.val} key={key}>
+                            {e.name}
+                        </option>
+                    );
+                });
+            }
 
       dropdown = (
         <select

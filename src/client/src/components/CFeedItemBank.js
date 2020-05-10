@@ -4,7 +4,8 @@ import {formatMoney} from "../functions/formatMoney";
 export default class CFeedItemBank extends React.Component {
     
     render() {
-        let purple = "rgba(102, 0, 153, 1)";
+        const purple = "rgba(102, 0, 153, 1)";
+        const black = "rgba(0, 0, 0, 1)";
         const itemDate = this.props.timestamp.substring(0, 10);
         const itemHour = parseInt(this.props.timestamp.substring(11, 13));
         const itemMinute = this.props.timestamp.substring(14, 16);
@@ -19,7 +20,7 @@ export default class CFeedItemBank extends React.Component {
         return (
             <div
                 style={{
-                    color: purple,
+                    color: black,
                     fontSize: fontSize,
                     fontWeight: 400,
                     fontFamily: "Muli",
@@ -34,9 +35,13 @@ export default class CFeedItemBank extends React.Component {
                         justifyContent: "space-between",
                     }}
                 >
-                    <div style={{textAlign: "left"}}>
-                        <span style={{}}>{timestamp}</span>
-                        <br/>
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        textAlign: "left"
+                        }}>
+                        <span>{type}</span>
                         <span>{amount}</span>
                     </div>
                     <div
@@ -48,9 +53,8 @@ export default class CFeedItemBank extends React.Component {
                             textAlign: "right"
                         }}
                     >
-                        <div>
-                                <span>{type}</span>
-                        </div>
+                        <span>{timestamp}</span>
+                        <span>PRIVATE</span>
                     </div>
                 </div>
                 <hr

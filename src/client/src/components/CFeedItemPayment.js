@@ -36,7 +36,8 @@ export default class CFeedItemPayment extends React.Component {
     }
 
     render() {
-        let purple = "rgba(102, 0, 153, 1)";
+        const purple = "rgba(102, 0, 153, 1)";
+        const black = "rgba(0, 0, 0, 1)";
         const profilePicWidth = 40;
         const profilePicHeight = 40;
         const itemDate = this.props.timestamp.substring(0, 10);
@@ -58,7 +59,7 @@ export default class CFeedItemPayment extends React.Component {
         return (
             <div
                 style={{
-                    color: purple,
+                    color: black,
                     fontSize: fontSize,
                     fontWeight: 400,
                     fontFamily: "Muli",
@@ -80,17 +81,16 @@ export default class CFeedItemPayment extends React.Component {
                             justifyContent: "space-between",
                             textAlign: "left"}
                         }>
-                        <div><span>{timestamp}</span></div>
-                        <div>
-                            <span>
-                                <img src={this.state.profilePic} style={{
-                                width: profilePicWidth,
-                                height: profilePicHeight,
-                                borderRadius:"50%"
-                                }} />
-                                {fromUserHandle} paid {toUserHandle}
-                            </span>
-                        </div>
+                        <span>
+                            <img src={this.state.profilePic} style={{
+                            width: profilePicWidth,
+                            height: profilePicHeight,
+                            borderRadius:"50%"
+                            }} />
+                            {fromUserHandle} paid {toUserHandle}
+                        </span>
+                        <span>{amount}</span>
+                        <span>{comment}</span>
                     </div>
                     <div
                         style={{
@@ -101,15 +101,8 @@ export default class CFeedItemPayment extends React.Component {
                             textAlign: "right"
                         }}
                     >
-                        <div>
-                                <span>{type}</span>
-                        </div>
-                        <div>
-                            <span>{amount}</span>
-                        </div>
-                        <div>
-                                <span>{comment}</span>
-                        </div>
+                        <span>{timestamp}</span>
+                        <span>{type}</span>
                     </div>
                 </div>
                 <hr

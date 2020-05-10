@@ -88,7 +88,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;35:532"
               style={{
                 width: "29.41176470588235%",
                 marginLeft: "65.88235294117646%",
@@ -101,7 +100,6 @@ export class CFriendRequest extends React.Component {
               <div>
                 <div style={{}} className="outerDiv centerer">
                   <div
-                    id="I38:417;35:533"
                     style={{
                       width: "100%",
                       marginLeft: "0%",
@@ -127,7 +125,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;35:534"
               style={{
                 width: "29.41176470588235%",
                 marginLeft: "65.88235294117646%",
@@ -160,7 +157,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;35:535"
               style={{
                 width: 16,
                 marginLeft: "70%",
@@ -196,7 +192,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;35:525"
               style={{
                 width: "29.41176470588235%",
                 marginLeft: "65.88235294117646%",
@@ -209,7 +204,6 @@ export class CFriendRequest extends React.Component {
               <div>
                 <div style={{}} className="outerDiv centerer">
                   <div
-                    id="I38:417;35:526"
                     style={{
                       width: "100%",
                       marginLeft: "0%",
@@ -235,7 +229,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;35:527"
               style={{
                 width: "29.41176470588235%",
                 marginLeft: "65.88235294117646%",
@@ -268,7 +261,6 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              id="I38:417;38:411"
               style={{
                 width: 16,
                 marginLeft: "70%",
@@ -304,7 +296,6 @@ export class CFriendRequest extends React.Component {
           className="outerDiv centerer"
         >
           <div
-            id="I38:417;38:413"
             style={{
               marginLeft: 8,
               marginRight: "40%",
@@ -318,7 +309,6 @@ export class CFriendRequest extends React.Component {
             <div>
               <div style={{}} className="outerDiv centerer">
                 <div
-                  id="I38:417;38:413;10:3"
                   style={{
                     marginRight: 0,
                     flexGrow: 1,
@@ -337,7 +327,6 @@ export class CFriendRequest extends React.Component {
                 className="outerDiv centerer"
               >
                 <div
-                  id="I38:417;38:413;10:6"
                   style={{
                     marginLeft: 23.49072265625,
                     marginRight: "80%",
@@ -364,7 +353,6 @@ export class CFriendRequest extends React.Component {
                 className="outerDiv centerer"
               >
                 <div
-                  id="I38:417;38:413;11:0"
                   style={{
                     marginLeft: 101.3818359375,
                     marginRight: 13.5999755859375,
@@ -399,7 +387,6 @@ export class CFriendRequest extends React.Component {
           className="outerDiv centerer"
         >
           <div
-            id="I38:417;38:535"
             style={{
               marginLeft: 0,
               marginRight: 0,

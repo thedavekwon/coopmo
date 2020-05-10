@@ -37,7 +37,7 @@ export default class CMenuButton extends React.Component {
       <div className="master" style={bColorStyle}>
         <div>
           <div style={{}} className="outerDiv centerer">
-            <div id="I100:0;30:174;7:1" style={textStyle} className="innerDiv vertCenterAndCut">
+            <div id="I100:0;30:174;7:1" className="innerDiv vertCenterAndCut menuButton">
               <div onClick={this.handleClick}>
                 <span style={{}} key="end">
                   Menu

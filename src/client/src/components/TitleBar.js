@@ -147,18 +147,18 @@ export default class TitleBar extends React.Component {
                                         className="innerDiv vertCenterAndCut  "
                                     >
                                         <div>
-                        <span
-                            style={{
-                                fontSize: 73,
-                                fontStyle: "normal",
-                                lineHeight: "NaN%",
-                                letterSpacing: "undefinedpx",
-                                color: textColor,
-                            }}
-                            key="4"
-                        >
-                          Coop
-                        </span>
+                      <span
+                          style={{
+                              fontSize: 73,
+                              fontStyle: "normal",
+                              lineHeight: "NaN%",
+                              letterSpacing: "undefinedpx",
+                              color: textColor,
+                          }}
+                          key="4"
+                      >
+                        Coop
+                      </span>
                                             <span
                                                 style={{
                                                     fontSize: 73,
@@ -168,14 +168,13 @@ export default class TitleBar extends React.Component {
                                                 }}
                                                 key="end"
                                             >
-                          mo
-                        </span>
+                        mo
+                      </span>
                                         </div>
                                     </div>
                                 </div>
                                 {includeBalance}
                             </div>
-
                         </div>
                     </div>
                 </div>

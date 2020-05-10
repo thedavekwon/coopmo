@@ -4,12 +4,23 @@
 ```
 git clone https://github.com/thedavekwon/coopmo.git
 cd coopmo
+```
+
+### Docker
+```
+# using docker-compose
+docker-compose build
+docker-compose up
+```
+
+### Local
+```
 mvn clean install
 
 # run the program
 mvn spring-boot:run
 # or 
-mvn -jar target/coopmo-0.0.1-SNAPSHOT.jar
+mvn -jar target/coopmo-{VERSION}-SNAPSHOT.jar
 
 # run the test (demo)
 mvn test
@@ -18,16 +29,8 @@ mvn test
 mysql < createdb.sh
 
 # to set up react
-cd src/main/resources/client
+cd client
 npm install
 npm start
-
-# currently react server is not in docker
-
-# docker setup
-./create.sh
-
-# docker clean up
-./delete.sh
 ```
 

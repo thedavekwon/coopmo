@@ -20,7 +20,7 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -273,5 +273,20 @@ public class UserService {
         if (curUser.isEmpty())
             throw new InValidFieldValueException("Invalid " + msg);
         return curUser.get();
+    }
+
+    public void addProfilePic(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        user.setProfilePic(true);
+    }
+
+    public void deleteProfilePic(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        user.setProfilePic(false);
+    }
+
+    public Boolean getProfilePic(String userId) throws InValidFieldValueException {
+        User user = checkValidUserId(userId);
+        return user.getProfilePic();
     }
 }

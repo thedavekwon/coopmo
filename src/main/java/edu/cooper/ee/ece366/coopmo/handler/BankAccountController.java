@@ -34,11 +34,7 @@ public class BankAccountController extends BaseController {
         }
         if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
-        /*
-        if (bankAccountRequest.getUserId().isEmpty())
-            throw new EmptyFieldException("Empty Field");
 
-         */
         bankAccountRequest.setUserId(userId);
         if (bankAccountRequest.getBalance() == null)
             throw new EmptyFieldException("Empty Field");
@@ -64,18 +60,14 @@ public class BankAccountController extends BaseController {
 
     public static class CreateBankAccountRequest {
         private String userId;
-        private final Long routingNumber;
-        private final Long balance;
+        private final long routingNumber;
+        private final long balance;
+        private final long accountNumber;
 
-        public CreateBankAccountRequest(Long routingNumber, Long balance) {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof MyUserDetails) {
-                userId = ((MyUserDetails) principal).getId();
-            } else {
-                userId = principal.toString();
-            }
+        public CreateBankAccountRequest(long accountNumber, long routingNumber, long balance) {
             this.routingNumber = routingNumber;
             this.balance = balance;
+            this.accountNumber = accountNumber;
         }
 
         public String getUserId() {
@@ -88,6 +80,10 @@ public class BankAccountController extends BaseController {
 
         public Long getRoutingNumber() {
             return routingNumber;
+        }
+
+        public long getAccountNumber() {
+            return accountNumber;
         }
 
         public Long getBalance() {

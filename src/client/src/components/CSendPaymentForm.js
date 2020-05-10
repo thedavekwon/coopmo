@@ -180,9 +180,9 @@ export default class CSendPaymentForm extends React.Component {
               message={this.state.respMessage.message}
           />
           <Form onSubmit={this.sendRequest}>
-            <Form.Group controlId="friendId">
+            <Form.Group controlId="toUserId">
               <Form.Label style={{fontFamily: "Muli"}} column="lg">
-                Friend's Username
+                To Who? (Username)
               </Form.Label>
               <Select
                   isSearchable={true}
@@ -194,7 +194,7 @@ export default class CSendPaymentForm extends React.Component {
             </Form.Group>
             <Form.Group controlId="type">
               <Form.Label style={{fontFamily: "Muli"}} column="lg">
-                Privacy Level
+                Who can see this?
               </Form.Label>
               <Select
                   isSearchable={true}

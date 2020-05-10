@@ -79,7 +79,9 @@ export default class CFeedList extends React.Component {
           <CFeedItemPayment
             tab={this.props.feedTab}
             listIndex={ii}
+            domainName={this.props.domainName}
             key={ii.toString()}
+            fromUserId={payment.fromUser.id}
             fromUserHandle={payment.fromUser.handle}
             toUserHandle={payment.toUser.handle}
             type={payment.type}

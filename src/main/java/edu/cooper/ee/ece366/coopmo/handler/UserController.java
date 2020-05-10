@@ -53,6 +53,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {
         Message respMessage = new Message();
+        user.setProfilePic(false);
 
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
@@ -428,13 +429,14 @@ public class UserController {
     public ResponseEntity<?> getOthersProfilePic(@RequestParam("userId") String userId) throws InValidFieldValueException, EmptyFieldException {
         if (userId == null)
             throw new EmptyFieldException("No UserId provided");
-        if (!userService.getProfilePic(userId)) {
+        String parsedUserId = userId.replaceAll("%2D", "-");
+        if (!userService.getProfilePic(parsedUserId)) {
             Message respMessage = new Message();
             Message.Err err = new Message.Err("10", "file not exist");
             respMessage.setError(err);
             return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
         }
-        Resource file = storageService.loadAsResource(userId);
+        Resource file = storageService.loadAsResource(parsedUserId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }

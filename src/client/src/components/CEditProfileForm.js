@@ -59,7 +59,7 @@ export default class CEditProfileForm extends React.Component {
         .then((res) => res.json())
         .then(
             (result) => {
-              if (result.error != null) {
+              if (result.error !== null) {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
@@ -128,7 +128,7 @@ export default class CEditProfileForm extends React.Component {
         .then((res) => res.json())
         .then(
             (result) => {
-              if (result.error != null) {
+              if (result.error !== null) {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
@@ -177,7 +177,7 @@ export default class CEditProfileForm extends React.Component {
                   required
                   style={{fontFamily: "Muli"}}
                   size="lg"
-                  type={value.name != "Password" ? "text" : "password"}
+                  type={value.name !== "Password" ? "text" : "password"}
                   placeholder={"Enter " + value.name}
                   onChange={this.handleChange}
               />
@@ -189,14 +189,14 @@ export default class CEditProfileForm extends React.Component {
                 required
                 style={{fontFamily: "Muli"}}
                 size="lg"
-                type={value.name != "Password" ? "text" : "password"}
+                type={value.name !== "Password" ? "text" : "password"}
                 placeholder={"Enter " + value.name}
                 onChange={this.handleChange}
             />
         );
       }
       return (
-          <Form.Group controlId={value.valKey}>
+          <Form.Group controlId={value.valKey} key = {value.valKey}>
             <Form.Label style={{fontFamily: "Muli"}} column="lg">
               {value.name}
             </Form.Label>
@@ -208,7 +208,7 @@ export default class CEditProfileForm extends React.Component {
 
     return (
         <>
-          <Form onSubmit={this.sendRequest} fluid>
+          <Form onSubmit={this.sendRequest}>
             {formBlocks}
 
             <Form.Group>
@@ -230,7 +230,7 @@ export default class CEditProfileForm extends React.Component {
                   style={{fontFamily: "Muli"}}
                   size="lg"
                   data-browse="Upload Profile Picture"
-                  class="custom-file-input"
+                  className="custom-file-input"
                   custom
                   onChange={this.handleProfilePic}
               />

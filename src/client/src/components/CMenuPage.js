@@ -79,9 +79,9 @@ export default class CMenuPage extends PureComponent {
                         zIndex: index + 1,
                     }}
                     className="outerDiv centerer"
+                    key={value}
                 >
                     <div
-                        id="I254:861;30:393"
                         style={{
                             marginLeft: 0,
                             marginRight: 0,

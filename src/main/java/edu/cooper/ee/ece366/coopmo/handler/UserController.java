@@ -32,12 +32,13 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final StorageService storageService;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, UserRepository userRepository, StorageService storageService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.storageService = storageService;
         this.passwordEncoder = passwordEncoder;
     }
 

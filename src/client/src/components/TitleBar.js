@@ -20,7 +20,7 @@ export default class TitleBar extends React.Component {
 
     showNotifications = () => {
         console.log("bleh");
-    }
+    };
     getProfilePic = () => {
         const path = this.props.domainName + "/user/getProfilePic";
         fetch(path, {
@@ -67,14 +67,18 @@ export default class TitleBar extends React.Component {
                         top: "25%",
                         height: "50%",
                         marginLeft: "80%",
-
                     }}
                     className="outerDiv centerer"
                 >
-                    <div className="innerDiv friendListPic vertCenterAndCut" style={{
-                        pointerEvents: "NONE",
-                    }}>
-                        <Image src={this.state.profilePic} roundedCircle fluid onClick={this.showNotifications}/>
+                    <div
+                        className="innerDiv friendListPic vertCenterAndCut"
+                    >
+                        <Image
+                            src={this.state.profilePic}
+                            roundedCircle
+                            fluid
+
+                        />
                     </div>
 
                     <div
@@ -90,7 +94,7 @@ export default class TitleBar extends React.Component {
                     </div>
 
                     <div className="innerDiv bellPng vertCenterAndCut">
-                        <Image src={bellImg} fluid/>
+                        <Image src={bellImg} fluid onClick={this.showNotifications}/>
                     </div>
                 </div>
             );
@@ -129,8 +133,7 @@ export default class TitleBar extends React.Component {
                                         backgroundColor: backgroundColor,
                                     }}
                                     className="innerDiv"
-                                >
-                                </div>
+                                ></div>
                             </div>
                             <div
                                 style={{

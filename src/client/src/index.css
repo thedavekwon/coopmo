@@ -90,6 +90,12 @@ input:focus {
     padding: 3px;
 }
 
+.titleBarPic {
+    width: 75px;
+    height: 75px;
+    float: left;
+}
+
 .bellPng {
     width: 40px;
     height: 40px;

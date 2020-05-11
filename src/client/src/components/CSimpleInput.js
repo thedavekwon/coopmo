@@ -42,9 +42,9 @@ export default class CSimpleInput extends React.Component {
                                         }}
                                         className="innerDiv"
                                     ></div>
-                </div>
-              </div>
-            </div>
+                                </div>
+                            </div>
+                        </div>
           </div>
           <div style={{ zIndex: 2 }} className="outerDiv centerer">
             <div

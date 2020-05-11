@@ -65,28 +65,28 @@ export default class CFeedList extends React.Component {
       var payment = payments[ii - 1];
       if (payment.type === "IN" || payment.type === "OUT") {
         feedItems.push(
-          <CFeedItemBank
-            tab={this.props.feedTab}
-            listIndex={ii}
-            key={ii.toString()}
-            type={payment.type}
-            amount={payment.amount}
-            timestamp={payment.timestamp}
-          />
+            <CFeedItemBank
+                tab={this.props.feedTab}
+                listIndex={ii}
+                key={ii.toString()}
+                type={payment.type}
+                amount={payment.amount}
+                timestamp={payment.timestamp}
+            />
         );
       } else {
         feedItems.push(
-          <CFeedItemPayment
-            tab={this.props.feedTab}
-            listIndex={ii}
-            key={ii.toString()}
-            fromUserHandle={payment.fromUser.handle}
-            toUserHandle={payment.toUser.handle}
-            type={payment.type}
-            amount={payment.amount}
-            timestamp={payment.timestamp}
-            comment={payment.comment}
-          />
+            <CFeedItemPayment
+                tab={this.props.feedTab}
+                listIndex={ii}
+                key={ii.toString()}
+                fromUserHandle={payment.fromUser.handle}
+                toUserHandle={payment.toUser.handle}
+                type={payment.type}
+                amount={payment.amount}
+                timestamp={payment.timestamp}
+                comment={payment.comment}
+            />
         );
       }
     }

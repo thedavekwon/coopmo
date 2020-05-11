@@ -65,17 +65,17 @@ public class User {
     private Set<BankAccount> bankAccountSet;
 
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     @JoinTable
     private Set<User> friendSet;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     @JoinTable
     private Set<User> outgoingFriendRequestSet;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     @JoinTable
     private Set<User> incomingFriendRequestSet;
@@ -152,7 +152,7 @@ public class User {
         this.handle = handle;
     }
 
-    public Long getBalance() {
+    public long getBalance() {
         return balance;
     }
 

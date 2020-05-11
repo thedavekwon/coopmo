@@ -187,7 +187,6 @@ public class CoopmoTest {
 
         for (int i = 2; i < 12; i++) {
             String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
-            //sendOutRequest(user, masterUser);
         }
     }
 
@@ -597,7 +596,7 @@ public class CoopmoTest {
                 .withPort(8080)
                 .withPath("bank/createBankAccount")
                 .toUri();
-        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(accountNumber, routingNumber, balance);
+        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest("", accountNumber, routingNumber, balance);
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createBankAccountRequest)))
                 .header("Content-Type", "application/json")

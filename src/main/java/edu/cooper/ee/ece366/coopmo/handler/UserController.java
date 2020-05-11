@@ -1,12 +1,15 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
+import edu.cooper.ee.ece366.coopmo.handler.UserController.*;
 import edu.cooper.ee.ece366.coopmo.message.Message;
+import edu.cooper.ee.ece366.coopmo.message.NotificationMessage;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import edu.cooper.ee.ece366.coopmo.service.NotificationService;
 import edu.cooper.ee.ece366.coopmo.service.StorageService;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-@CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
@@ -33,16 +35,20 @@ public class UserController {
     private final UserService userService;
     private final StorageService storageService;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, StorageService storageService, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-        this.storageService = storageService;
-        this.passwordEncoder = passwordEncoder;
+    public UserController(UserService userService, UserRepository userRepository,
+                          StorageService storageService, NotificationService notificationService,
+                          PasswordEncoder passwordEncoder) {
+            this.userRepository = userRepository;
+            this.userService = userService;
+            this.storageService = storageService;
+            this.notificationService = notificationService;
+            this.passwordEncoder = passwordEncoder;
     }
 
-    private boolean validateEmail(String email) {
+    private boolean validateEmail (String email){
         // https://howtodoinjava.com/regex/java-regex-validate-email-address/
         String EMAIL_REGEX = "^(.+)@(.+)$";
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
@@ -144,7 +150,7 @@ public class UserController {
 
     // Debug Purpose
     @GetMapping(path = "/getUserSize")
-    public Long getUserSize() {
+    public long getUserSize() {
         return userRepository.count();
     }
 
@@ -177,15 +183,14 @@ public class UserController {
 
         Message respMessage = new Message();
 
-        Long balance = userService.getUserBalance(userId);
+        long balance = userService.getUserBalance(userId);
         respMessage.setData(balance);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @PostMapping(path = "/editProfile", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> editProfile(
-            @RequestBody EditProfileRequest editProfileRequest
-    ) throws EmptyFieldException {
+    public ResponseEntity<?> editProfile(@RequestBody EditProfileRequest editProfileRequest)
+            throws EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -248,6 +253,9 @@ public class UserController {
             throw new EmptyFieldException("userId or friendId is empty");
         } else {
             if (userService.acceptIncomingRequest(userId, friendId) == 0) {
+                User fromUser = userService.checkValidUserId(userId);
+                User toUser = userService.checkValidUserId(friendId);
+                notificationService.notify(new NotificationMessage(fromUser, "FRIENDACCEPT"), toUser.getUsername());
                 return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else {
                 throw new InValidFieldValueException("No User with provided ID and/or Friend ID found in Incoming Requests");
@@ -277,6 +285,9 @@ public class UserController {
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0) {
+                User fromUser = userService.checkValidUserId(userId);
+                User toUser = userService.checkValidUserId(friendId);
+                notificationService.notify(new NotificationMessage(fromUser, "FRIENDREQUEST"), toUser.getUsername());
                 return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
                 throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
@@ -380,10 +391,17 @@ public class UserController {
     public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
         if (request.getMatch().equals(""))
             throw new EmptyFieldException("Empty Field");
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         Set<User> users = userService.findUsers(request);
+        users.removeIf(user -> user.getId().equals(userId));
         respMessage.setData(users);
-
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 

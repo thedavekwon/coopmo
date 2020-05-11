@@ -19,11 +19,11 @@ export default class MenuPage extends PureComponent {
     this.changePage = this.changePage.bind(this);
   }
 
-  changePage(newPage) {
-    this.setState((state) => ({
-      activePage: newPage,
-    }));
-  }
+    changePage(newPage) {
+        this.setState((state) => ({
+            activePage: newPage,
+        }));
+    }
 
   signOut = () => {
     var path = this.props.domainName + "/logout";
@@ -81,7 +81,6 @@ export default class MenuPage extends PureComponent {
               className="outerDiv centerer"
           >
             <div
-                id="I254:861;30:393"
                 style={{
                   flexGrow: 1,
                   top: (100 / 7) * index + "%",
@@ -96,7 +95,6 @@ export default class MenuPage extends PureComponent {
               <MenuTab
                   {...this.props}
                   name={value}
-                  nodeId="I254:861;30:393"
                   active={this.state.activePage}
               />
             </div>

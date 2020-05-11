@@ -195,7 +195,7 @@ public class UserService {
         }
     }
 
-    public Long getUserBalance(String userId) throws InValidFieldValueException {
+    public long getUserBalance(String userId) throws InValidFieldValueException {
         User user = checkValidUserId(userId);
         return user.getBalance();
     }

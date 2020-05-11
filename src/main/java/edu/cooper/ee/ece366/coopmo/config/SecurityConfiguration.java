@@ -1,4 +1,4 @@
-package edu.cooper.ee.ece366.coopmo.SecurityConfig;
+package edu.cooper.ee.ece366.coopmo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

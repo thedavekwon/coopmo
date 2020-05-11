@@ -1,4 +1,4 @@
-package edu.cooper.ee.ece366.coopmo.SecurityConfig;
+package edu.cooper.ee.ece366.coopmo.config;
 
 import edu.cooper.ee.ece366.coopmo.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,12 +10,12 @@ import java.util.Collection;
 
 public class MyUserDetails implements UserDetails {
 
-    private String id;
-    private String name;
-    private String username;
-    private String password;
-    private String email;
-    private String handle;
+    private final String id;
+    private final String name;
+    private final String username;
+    private final String password;
+    private final String email;
+    private final String handle;
 
 
     public MyUserDetails(User user) {

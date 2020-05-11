@@ -44,15 +44,15 @@ export default class CDropdown extends React.Component {
                 });
             }
 
-      dropdown = (
-        <select
-          id="Payment type"
-          name="Payment Type"
-          onChange={this.handleChange}
-          style={{ width: "100%", border: "none", outline: "none" }}
-        >
-          {content}
-        </select>
+            dropdown = (
+                <select
+                    id="Payment type"
+                    name="Payment Type"
+                    onChange={this.handleChange}
+                    style={{width: "100%", border: "none", outline: "none"}}
+                >
+                    {content}
+                </select>
       );
     }
 

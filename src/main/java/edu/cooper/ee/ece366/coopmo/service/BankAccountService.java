@@ -17,19 +17,17 @@ public class BankAccountService {
     private final UserService userService;
 
     private final BankAccountRepository bankAccountRepository;
-    private final UserRepository userRepository;
 
     @Autowired
     public BankAccountService(UserService userService, BankAccountRepository bankAccountRepository, UserRepository userRepository) {
         this.userService = userService;
         this.bankAccountRepository = bankAccountRepository;
-        this.userRepository = userRepository;
     }
 
     @Transactional
     public BankAccount createBankAccount(BankAccountController.CreateBankAccountRequest createBankAccountRequest) throws InValidFieldValueException {
         User curUser = userService.checkValidUserId(createBankAccountRequest.getUserId());
-        BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getAccountNumber(), createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
+        BankAccount bankAccount = new BankAccount(curUser, createBankAccountRequest.getNickname(), createBankAccountRequest.getAccountNumber(), createBankAccountRequest.getRoutingNumber(), createBankAccountRequest.getBalance());
         bankAccountRepository.save(bankAccount);
         return bankAccount;
     }

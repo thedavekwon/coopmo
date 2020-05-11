@@ -2,7 +2,7 @@ import React from "react";
 import {formatMoney} from "../functions/formatMoney";
 
 export default class CFeedItemBank extends React.Component {
-    
+
     render() {
         let purple = "rgba(102, 0, 153, 1)";
         const itemDate = this.props.timestamp.substring(0, 10);
@@ -49,7 +49,7 @@ export default class CFeedItemBank extends React.Component {
                         }}
                     >
                         <div>
-                                <span>{type}</span>
+                            <span>{type}</span>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@ export default class CFeedItemBank extends React.Component {
                     }}
                 />
             </div>
-        );      
+        );
 
     }
 }

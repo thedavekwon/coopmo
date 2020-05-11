@@ -8,29 +8,29 @@ body {
 }
 
 .master {
-  position: absolute;
-  overflow: hidden;
-  width: 100%;
-  min-height: 100%;
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    min-height: 100%;
 }
 
 input {
-  font: inherit;
-  border: inherit;
-  padding: inherit;
-  background-color: inherit;
-  color: inherit;
+    font: inherit;
+    border: inherit;
+    padding: inherit;
+    background-color: inherit;
+    color: inherit;
 }
 
 input:focus {
-  outline: none;
+    outline: none;
 }
 
 .outerDiv {
-  position: relative;
-  display: flex;
-  width: 100%;
-  pointer-events: none;
+    position: relative;
+    display: flex;
+    width: 100%;
+    pointer-events: none;
 }
 
 .innerDiv {

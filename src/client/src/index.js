@@ -4,6 +4,7 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LoginPage from "./components/LoginPage";
+import SockJsClient from "react-stomp";
 
 ReactDOM.render(
   <React.StrictMode>

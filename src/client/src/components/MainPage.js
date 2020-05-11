@@ -1,7 +1,8 @@
 import React from "react";
-import FriendsList from "./FriendsList.js";
+import CFriendsList from "./CFriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
+import SockJsClient from "react-stomp";
 
 export default class MainPage extends React.Component {
     constructor(props) {
@@ -32,17 +33,17 @@ export default class MainPage extends React.Component {
                         this.setState((state) => ({
                             balance: result.data,
                         }));
-          }
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  };
+                    }
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+    };
 
-  componentDidMount() {
-    this.getBalance();
-  }
+    componentDidMount() {
+        this.getBalance();
+    }
 
   render() {
     return (
@@ -52,10 +53,12 @@ export default class MainPage extends React.Component {
           backgroundColor: "rgba(255, 255, 255, 1)",
         }}
       >
-        <div>
+          <SockJsClient url='http://localhost:8080/notification_ws' topics={["/user/queue/notify"]}
+                        onMessage={(msg) => { console.log(msg); }}
+                        ref={ (client) => { this.clientRef = client; console.log(client)}} />
+          <div>
             <div style={{}} className="outerDiv centerer">
                 <div
-                    id="38:1057"
                     style={{
                         width: "55.208333333333336%",
                         marginLeft: "7.692311604817708%",
@@ -82,7 +85,6 @@ export default class MainPage extends React.Component {
                 className="outerDiv centerer"
             >
                 <div
-                    id="38:1056"
                     style={{
                         width: "20.416666666666668%",
                         marginLeft: "72.91666666666667%",
@@ -109,4 +111,3 @@ export default class MainPage extends React.Component {
       </div>
     );
   }
-}

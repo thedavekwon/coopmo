@@ -57,6 +57,7 @@ public class UserController {
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
+        user.setProfilePic(false);
 
         if (!validateEmail(user.getEmail())) {
             throw new InValidFieldValueException("Invalid Email Address");
@@ -404,7 +405,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/getProfilePic", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<?> getProfilePic() throws InValidFieldValueException {
+    public ResponseEntity<?> getProfilePic() throws InValidFieldValueException, BaseExceptionHandler.ProfilePicDoesNotExistException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -414,10 +415,7 @@ public class UserController {
             userId = principal.toString();
         }
         if (!userService.getProfilePic(userId)) {
-            Message respMessage = new Message();
-            Message.Err err = new Message.Err("10", "file not exist");
-            respMessage.setError(err);
-            return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.ProfilePicDoesNotExistException("No Profile Pic uploaded");
         }
         Resource file = storageService.loadAsResource(userId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
@@ -425,14 +423,11 @@ public class UserController {
     }
 
     @GetMapping(path = "/getOthersProfilePic", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<?> getOthersProfilePic(@RequestParam("userId") String userId) throws InValidFieldValueException, EmptyFieldException {
+    public ResponseEntity<?> getOthersProfilePic(@RequestParam("userId") String userId) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.ProfilePicDoesNotExistException {
         if (userId == null)
             throw new EmptyFieldException("No UserId provided");
         if (!userService.getProfilePic(userId)) {
-            Message respMessage = new Message();
-            Message.Err err = new Message.Err("10", "file not exist");
-            respMessage.setError(err);
-            return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+            throw new BaseExceptionHandler.ProfilePicDoesNotExistException("No Profile Pic uploaded");
         }
         Resource file = storageService.loadAsResource(userId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,

@@ -59,7 +59,7 @@ export default class CEditProfileForm extends React.Component {
         .then((res) => res.json())
         .then(
             (result) => {
-              if (result.error != null) {
+              if (result.error !== null) {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
@@ -92,7 +92,6 @@ export default class CEditProfileForm extends React.Component {
           }));
         });
       } else {
-        console.log("here");
         let url = defaultImg;
         this.setState((state) => ({
           profilePic: url,
@@ -128,7 +127,7 @@ export default class CEditProfileForm extends React.Component {
         .then((res) => res.json())
         .then(
             (result) => {
-              if (result.error != null) {
+              if (result.error !== null) {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
@@ -177,7 +176,7 @@ export default class CEditProfileForm extends React.Component {
                   required
                   style={{fontFamily: "Muli"}}
                   size="lg"
-                  type={value.name != "Password" ? "text" : "password"}
+                  type={value.name !== "Password" ? "text" : "password"}
                   placeholder={"Enter " + value.name}
                   onChange={this.handleChange}
               />
@@ -189,7 +188,7 @@ export default class CEditProfileForm extends React.Component {
                 required
                 style={{fontFamily: "Muli"}}
                 size="lg"
-                type={value.name != "Password" ? "text" : "password"}
+                type={value.name !== "Password" ? "text" : "password"}
                 placeholder={"Enter " + value.name}
                 onChange={this.handleChange}
             />
@@ -208,6 +207,16 @@ export default class CEditProfileForm extends React.Component {
 
     return (
         <>
+          <FormAlert
+              onClose={() => {
+                this.setState((state) => ({
+                  showMessage: false,
+                }));
+              }}
+              showMessage={this.state.showMessage}
+              messageType={this.state.respMessage.messageType}
+              message={this.state.respMessage.message}
+          />
           <Form onSubmit={this.sendRequest} fluid>
             {formBlocks}
 
@@ -231,6 +240,7 @@ export default class CEditProfileForm extends React.Component {
                   size="lg"
                   data-browse="Upload Profile Picture"
                   class="custom-file-input"
+                  accept="image/*"
                   custom
                   onChange={this.handleProfilePic}
               />
@@ -240,16 +250,7 @@ export default class CEditProfileForm extends React.Component {
               Submit
             </Button>
           </Form>
-          <FormAlert
-              onClose={() => {
-                this.setState((state) => ({
-                  showMessage: false,
-                }));
-              }}
-              showMessage={this.state.showMessage}
-              messageType={this.state.respMessage.messageType}
-              message={this.state.respMessage.message}
-          />
+
         </>
     );
   }

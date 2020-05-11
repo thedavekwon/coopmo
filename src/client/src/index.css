@@ -73,7 +73,16 @@ input:focus {
 
 .pic {
     width: 200px;
-    height: 200px;
+    height: 207px;
+    float: left;
+    margin: 3px;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+.friendListPic {
+    width: 75px;
+    height: 75px;
     float: left;
     margin: 3px;
     padding: 3px;
@@ -87,7 +96,7 @@ input:focus {
 
 .submitButton {
     width: 29.4118%;
-    margin-left: 65.8824%;
+    margin-left: 66.6666%;
     height: 56px;
     margin-top: 10;
     background-color: rgb(12, 200, 99);
@@ -111,15 +120,34 @@ a {
 }
 
 .menuButton:hover {
-    color: #DF6589FF;
+    /*color: #DF6589FF;*/
+    color: #C3C3E5;
+}
+
+.menuButtonAlt {
+    flex-grow: 1;
+    color: rgba(102, 0, 153, 1);
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+}
+
+.menuButtonAlt:hover {
+    color: #C3C3E5;
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 9px;
+
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
+    /*background: white;*/
 }
 
 ::-webkit-scrollbar-thumb {

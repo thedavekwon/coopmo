@@ -2,6 +2,7 @@ import React from "react";
 import CFriendsList from "./CFriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
+import SockJsClient from "react-stomp";
 
 export default class CMainPage extends React.Component {
     constructor(props) {
@@ -52,6 +53,9 @@ export default class CMainPage extends React.Component {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }}
             >
+                <SockJsClient url='http://localhost:8080/notification_ws' topics={["/user/queue/notify"]}
+                              onMessage={(msg) => { console.log(msg); }}
+                              ref={ (client) => { this.clientRef = client; console.log(client)}} />
                 <div>
                     <div style={{}} className="outerDiv centerer">
                         <div

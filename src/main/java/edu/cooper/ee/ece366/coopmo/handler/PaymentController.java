@@ -67,9 +67,9 @@ public class PaymentController extends BaseController {
 
         Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType, comment);
         respMessage.setData(newPayment);
+        User toUser = userService.checkValidUserId(toUserId);
         User fromUser = userService.checkValidUserId(fromUserId);
-        // Generate Notificaiton
-        notificationService.notify(new NotificationMessage(fromUser, newPayment), toUserId);
+        notificationService.notify(new NotificationMessage(fromUser, newPayment), toUser.getUsername());
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 

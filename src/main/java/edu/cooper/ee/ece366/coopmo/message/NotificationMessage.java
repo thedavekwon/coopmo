@@ -6,19 +6,23 @@ import edu.cooper.ee.ece366.coopmo.model.User;
 import java.sql.Timestamp;
 
 public class NotificationMessage {
-    private final NotificationType notificationType;
     private final String message;
     private final Timestamp timestamp;
+    private final String type;
 
     public NotificationMessage(User fromUser, Payment payment) {
-        this.notificationType = NotificationType.PAYMENT;
         this.message = fromUser.getHandle() + " sent $" + payment.getAmount() / 100.0;
         this.timestamp = payment.getTimestamp();
+        this.type = "PAYMENT";
     }
 
-    public NotificationMessage(User fromUser) {
-        this.notificationType = NotificationType.FRIEND;
-        this.message = "Friend Request from " + fromUser.getHandle();
+    public NotificationMessage(User fromUser, String type) {
+        this.type = type;
+        if (this.type == "FRIENDREQUEST") {
+            this.message = "Friend Request from " + fromUser.getHandle();
+        } else {
+            this.message = "Friend Request Accepted by " + fromUser.getHandle();
+        }
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -30,7 +34,7 @@ public class NotificationMessage {
         return timestamp;
     }
 
-    public enum NotificationType {
-        PAYMENT, FRIEND
+    public String getType() {
+        return type;
     }
 }

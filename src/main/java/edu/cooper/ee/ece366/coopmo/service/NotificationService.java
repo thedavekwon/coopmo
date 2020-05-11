@@ -19,9 +19,9 @@ public class NotificationService {
         this.paymentService = paymentService;
     }
 
-    public void notify(NotificationMessage message, String userId) {
+    public void notify(NotificationMessage message, String username) {
         messagingTemplate.convertAndSendToUser(
-                userId,
+                username,
                 "/queue/notify",
                 message
         );

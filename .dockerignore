@@ -1,2 +1,6 @@
 target
 src/client
+docker
+.github
+.mvn
+.idea

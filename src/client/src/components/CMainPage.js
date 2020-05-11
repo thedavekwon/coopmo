@@ -53,7 +53,7 @@ export default class CMainPage extends React.Component {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }}
             >
-                <SockJsClient url='http://localhost:8080/notification_ws' topics={["/user/queue/notify"]}
+                <SockJsClient url='http://localhost:8080/ws' topics={["/user/queue/notify"]}
                               onMessage={(msg) => { console.log(msg); }}
                               ref={ (client) => { this.clientRef = client; console.log(client)}} />
                 <div>

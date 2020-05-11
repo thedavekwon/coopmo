@@ -1,9 +1,9 @@
 import React from "react";
-import CFriendsList from "./CFriendsList.js";
+import FriendsList from "./FriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
 
-export default class CMainPage extends React.Component {
+export default class MainPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -93,7 +93,7 @@ export default class CMainPage extends React.Component {
                     }}
                     className="innerDiv"
                 >
-                    <CFriendsList
+                    <FriendsList
                         {...this.props}
                         nodeId="38:1056"
                         domainName={this.props.domainName}

@@ -1,16 +1,16 @@
 import React, {PureComponent} from 'react';
 import {CFeed} from './components/CFeed';
-import {CFriendsList} from './components/CFriendsList';
-import {CMenuButton} from './components/CMenuButton';
-import {CMainPage} from './components/CMainPage';
+import {FriendsList} from './components/FriendsList';
+import {MenuButton} from './components/MenuButton';
+import {MainPage} from './components/MainPage';
 
 export class MasterMainPage extends PureComponent {
     render() {
-      return <div className="master" style={{backgroundColor: "rgba(255, 255, 255, 1)"}}>
-        <CMainPage {...this.props} nodeId="1:2" />
-      </div>
+        return <div className="master" style={{backgroundColor: "rgba(255, 255, 255, 1)"}}>
+            <CMainPage {...this.props} nodeId="1:2"/>
+        </div>
     }
-  }
+}
 
 class CMainPage1D2 extends PureComponent {
     render() {

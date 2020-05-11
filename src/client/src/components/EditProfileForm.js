@@ -8,7 +8,7 @@ import bsCustomFileInput from "bs-custom-file-input";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 
-export default class CEditProfileForm extends React.Component {
+export default class EditProfileForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

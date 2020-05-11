@@ -1,16 +1,16 @@
 import React, {PureComponent} from "react";
-import CMenuButtonDefault from "./CMenuButtonDefault.js";
-import CEditProfileForm from "./CEditProfileForm.js";
-import CAddFriendForm from "./CAddFriendForm.js";
-import CIncomingFriendRequestForm from "./CIncomingFriendRequestForm.js";
-import CChangeBankAccounts from "./CChangeBankAccounts.js";
-import CCashInForm from "./CCashInForm.js";
-import CSendPaymentForm from "./CSendPaymentForm.js";
+import MenuTab from "./MenuTab.js";
+import EditProfileForm from "./EditProfileForm.js";
+import AddFriendForm from "./AddFriendForm.js";
+import CIncomingFriendRequestForm from "./IncomingFriendRequestForm.js";
+import AddBankAccounts from "./AddBankAccounts.js";
+import CashInForm from "./CashInForm.js";
+import SendPaymentForm from "./SendPaymentForm.js";
 import TitleBar from "./TitleBar.js";
 import ReactDOM from "react-dom";
-import CLoginPage from "./CLoginPage.js";
+import LoginPage from "./LoginPage.js";
 
-export default class CMenuPage extends PureComponent {
+export default class MenuPage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,7 +37,7 @@ export default class CMenuPage extends PureComponent {
     }).then((res) => {
       if (res.status === 200) {
         ReactDOM.render(
-            <CLoginPage domainName={this.props.domainName}></CLoginPage>,
+            <LoginPage domainName={this.props.domainName}></LoginPage>,
             document.getElementById("root")
         );
       }
@@ -47,19 +47,19 @@ export default class CMenuPage extends PureComponent {
   render() {
     let formPage;
     if (this.state.activePage === "Edit Profile")
-      formPage = <CEditProfileForm domainName={this.props.domainName}/>;
+      formPage = <EditProfileForm domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Add Friend")
-      formPage = <CAddFriendForm domainName={this.props.domainName}/>;
+      formPage = <AddFriendForm domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Incoming Friend Requests")
       formPage = (
           <CIncomingFriendRequestForm domainName={this.props.domainName}/>
       );
     else if (this.state.activePage === "Add a Bank Account")
-      formPage = <CChangeBankAccounts domainName={this.props.domainName}/>;
+      formPage = <AddBankAccounts domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Cash In")
-      formPage = <CCashInForm domainName={this.props.domainName}/>;
+      formPage = <CashInForm domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Send Payment")
-      formPage = <CSendPaymentForm domainName={this.props.domainName}/>;
+      formPage = <SendPaymentForm domainName={this.props.domainName}/>;
     else this.signOut();
 
     let pages = [
@@ -93,7 +93,7 @@ export default class CMenuPage extends PureComponent {
                   value !== "Sign Out" ? () => this.changePage(value) : this.signOut
                 }
             >
-              <CMenuButtonDefault
+              <MenuTab
                   {...this.props}
                   name={value}
                   nodeId="I254:861;30:393"
@@ -144,12 +144,10 @@ export default class CMenuPage extends PureComponent {
                   }}
                   className="innerDiv"
               >
-                <div></div>
               </div>
             </div>
             <div className="outerDiv centerer">
               <div
-                  style={{paddingRight: 10}}
                   className={
                     this.state.activePage === "Edit Profile"
                         ? "innerDiv menuForm editForm"

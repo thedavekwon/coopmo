@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
-import CMainPage from "./CMainPage.js";
-import CCreateUserPage from "./CCreateUserPage.js";
+import MainPage from "./MainPage.js";
+import CreateUserPage from "./CreateUserPage.js";
 
-export default class CLoginPage extends React.Component {
+export default class LoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,7 +22,7 @@ export default class CLoginPage extends React.Component {
 
     renderCreate = () => {
         ReactDOM.render(
-            <CCreateUserPage domainName={this.props.domainName}></CCreateUserPage>,
+            <CreateUserPage domainName={this.props.domainName}></CreateUserPage>,
             document.getElementById("root")
         );
     };
@@ -65,7 +65,7 @@ export default class CLoginPage extends React.Component {
                 (result) => {
                     console.log(result);
                     ReactDOM.render(
-                        <CMainPage domainName={this.props.domainName}></CMainPage>,
+                        <MainPage domainName={this.props.domainName}></MainPage>,
                         document.getElementById("root")
                     );
                 },

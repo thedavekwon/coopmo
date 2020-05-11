@@ -5,7 +5,7 @@ import Select from "react-select";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormAlert from "./FormAlert.js";
 
-export default class CCashInForm extends React.Component {
+export default class CashInForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

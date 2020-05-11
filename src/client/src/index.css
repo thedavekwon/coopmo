@@ -1,0 +1,160 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Muli";
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+}
+
+.master {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    min-height: 100%;
+}
+
+input {
+    font: inherit;
+    border: inherit;
+    padding: inherit;
+    background-color: inherit;
+    color: inherit;
+}
+
+input:focus {
+    outline: none;
+}
+
+.outerDiv {
+    position: relative;
+    display: flex;
+    width: 100%;
+    pointer-events: none;
+}
+
+.innerDiv {
+    position: relative;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+.centerer {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.vertCenterAndCut {
+    top: 50%;
+    transform: translateY(-50%);
+    height: 50%;
+}
+
+.blocksOnForm {
+    width: 47.22222222222222%;
+    margin-left: 37.986111111111114%;
+    height: 11.71875%;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.menuForm {
+    width: 47.22222222222222%;
+    margin-left: 37.986111111111114%;
+    height: 70.3125%;
+    top: 19.53125%;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.editForm {
+    overflow-y: scroll;
+}
+
+.pic {
+    width: 200px;
+    height: 207px;
+    float: left;
+    margin: 3px;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+.friendListPic {
+    width: 75px;
+    height: 75px;
+    float: left;
+    margin: 3px;
+    padding: 3px;
+}
+
+.vector svg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.submitButton {
+    width: 29.4118%;
+    margin-left: 66.6666%;
+    height: 56px;
+    margin-top: 10;
+    background-color: rgb(12, 200, 99);
+    color: white;
+}
+
+a {
+    cursor: pointer;
+}
+
+.menuButton {
+    flex-grow: 1;
+    color: white;
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+}
+
+.menuButton:hover {
+    /*color: #DF6589FF;*/
+    color: #C3C3E5;
+}
+
+.menuButtonAlt {
+    flex-grow: 1;
+    color: rgba(102, 0, 153, 1);
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+}
+
+.menuButtonAlt:hover {
+    color: #C3C3E5;
+}
+
+::-webkit-scrollbar {
+    width: 9px;
+
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /*background: white;*/
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(102, 0, 153, 1);
+}
+
+@font-face {
+    font-family: "Muli";
+    src: url(".\\fonts\\Muli\\static\\Muli-Regular.ttf");
+}

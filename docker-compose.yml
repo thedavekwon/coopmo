@@ -29,6 +29,6 @@ services:
       - "backend"
     restart: always
     stdin_open: true
-    build: client
+    build: src/client
     ports:
       - 3000:3000

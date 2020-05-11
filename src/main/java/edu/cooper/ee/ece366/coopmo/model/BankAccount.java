@@ -43,6 +43,14 @@ public class BankAccount {
         this.balance = balance;
     }
 
+    public long getRoutingNumber() {
+        return routingNumber;
+    }
+
+    public long getAccountNumber() {
+        return accountNumber;
+    }
+
     public String getId() {
         return id;
     }

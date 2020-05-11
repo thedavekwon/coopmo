@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;

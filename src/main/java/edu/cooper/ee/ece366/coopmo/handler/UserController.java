@@ -1,12 +1,13 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import edu.cooper.ee.ece366.coopmo.service.NotificationService;
 import edu.cooper.ee.ece366.coopmo.service.StorageService;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,15 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final StorageService storageService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository, StorageService storageService) {
+    public UserController(UserService userService, UserRepository userRepository,
+                          StorageService storageService, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.storageService = storageService;
+        this.notificationService = notificationService;
     }
 
     private boolean validateEmail(String email) {

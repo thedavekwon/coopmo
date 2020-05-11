@@ -1,11 +1,15 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
+import edu.cooper.ee.ece366.coopmo.message.NotificationMessage;
 import edu.cooper.ee.ece366.coopmo.model.Payment;
+import edu.cooper.ee.ece366.coopmo.model.User;
+import edu.cooper.ee.ece366.coopmo.service.NotificationService;
 import edu.cooper.ee.ece366.coopmo.service.PaymentService;
 import edu.cooper.ee.ece366.coopmo.service.TransactionService;
+import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +23,17 @@ import java.sql.Timestamp;
 @RequestMapping(path = "/pay", produces = "application/json")
 public class PaymentController extends BaseController {
     private final PaymentService paymentService;
+    private final UserService userService;
     private final TransactionService transactionService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, TransactionService transactionService) {
+    public PaymentController(PaymentService paymentService, TransactionService transactionService,
+                             NotificationService notificationService, UserService userService) {
         this.paymentService = paymentService;
         this.transactionService = transactionService;
+        this.notificationService = notificationService;
+        this.userService = userService;
     }
 
     @PostMapping(path = "/createPayment", consumes = "application/json")
@@ -58,6 +67,9 @@ public class PaymentController extends BaseController {
 
         Payment newPayment = paymentService.createPayment(fromUserId, toUserId, amount, paymentType, comment);
         respMessage.setData(newPayment);
+        User fromUser = userService.checkValidUserId(fromUserId);
+        // Generate Notificaiton
+        notificationService.notify(new NotificationMessage(fromUser, newPayment), toUserId);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 

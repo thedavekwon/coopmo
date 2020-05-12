@@ -22,8 +22,10 @@ public class NotificationMessage {
         this.type = type;
         if (this.type.equals("FRIENDREQUEST")) {
             this.message = "Friend Request from " + fromUser.getHandle();
-        } else {
+        } else if (this.type.equals("FRIENDACCEPT")){
             this.message = "Friend Request Accepted by " + fromUser.getHandle();
+        } else {
+            this.message = "Payment Liked by " + fromUser.getHandle();
         }
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.referenceId = fromUser.getId();

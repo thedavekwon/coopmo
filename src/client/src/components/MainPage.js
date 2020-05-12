@@ -3,6 +3,7 @@ import FriendsList from "./FriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
 import {connect} from "react-redux";
+import SockJsClient from "react-stomp";
 
 class MainPage extends React.Component {
     constructor(props) {
@@ -45,7 +46,6 @@ class MainPage extends React.Component {
         this.getBalance();
     }
 
-
     render() {
         return (
             <div
@@ -54,10 +54,13 @@ class MainPage extends React.Component {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }}
             >
-
+                <SockJsClient url='http://localhost:8080/ws' topics={["/user/queue/notify"]}
+                              onMessage={(msg) => { console.log(msg); }}
+                              ref={ (client) => { this.clientRef = client; console.log(client)}} />
                 <div>
                     <div style={{}} className="outerDiv centerer">
                         <div
+                            id="38:1057"
                             style={{
                                 width: "55.208333333333336%",
                                 marginLeft: "7.692311604817708%",
@@ -84,6 +87,7 @@ class MainPage extends React.Component {
                         className="outerDiv centerer"
                     >
                         <div
+                            id="38:1056"
                             style={{
                                 width: "20.416666666666668%",
                                 marginLeft: "72.91666666666667%",
@@ -94,7 +98,7 @@ class MainPage extends React.Component {
                             }}
                             className="innerDiv"
                         >
-                            <FriendsList
+                            <CFriendsList
                                 {...this.props}
                                 nodeId="38:1056"
                                 domainName={this.props.domainName}

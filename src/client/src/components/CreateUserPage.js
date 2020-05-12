@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
-import CLoginPage from "./CLoginPage.js";
+import LoginPage from "./LoginPage.js";
 
 
-export default class CCreateUserPage extends React.Component {
+export default class CreateUserPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,7 +24,7 @@ export default class CCreateUserPage extends React.Component {
     }
 
     renderCreate = () => {
-        ReactDOM.render(<CLoginPage domainName={this.props.domainName}></CLoginPage>, document.getElementById("root"));
+        ReactDOM.render(<LoginPage domainName={this.props.domainName}></LoginPage>, document.getElementById("root"));
     }
 
     handleChange = (key, value) => {

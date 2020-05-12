@@ -65,6 +65,8 @@ input:focus {
     height: 70.3125%;
     top: 19.53125%;
     background-color: rgba(0, 0, 0, 0);
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 .editForm {
@@ -73,9 +75,42 @@ input:focus {
 
 .pic {
     width: 200px;
-    height: 200px;
+    height: 207px;
     float: left;
     margin: 3px;
+    margin-bottom: 10px;
+    padding: 3px;
+}
+
+.friendListPic {
+    width: 75px;
+    height: 75px;
+    float: left;
+    margin: 3px;
+    padding: 3px;
+}
+
+.titleBarPic {
+    width: 75px;
+    height: 75px;
+    float: left;
+}
+
+.bellPng {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin: 3px;
+    padding: 3px;
+    color: white;
+}
+
+.friendRequestPic {
+    width: 120px;
+    height: 120px;
+    float: left;
+    margin: 3px;
+    margin-top: 10px;
     padding: 3px;
 }
 
@@ -87,7 +122,7 @@ input:focus {
 
 .submitButton {
     width: 29.4118%;
-    margin-left: 65.8824%;
+    margin-left: 66.6666%;
     height: 56px;
     margin-top: 10;
     background-color: rgb(12, 200, 99);
@@ -111,15 +146,92 @@ a {
 }
 
 .menuButton:hover {
-    color: #DF6589FF;
+    /*color: #DF6589FF;*/
+    color: #C3C3E5;
+}
+
+.menuButtonAlt {
+    flex-grow: 1;
+    color: rgba(102, 0, 153, 1);
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+}
+
+.textStyle {
+    color: rgba(0, 0, 0, 1);
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: left;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+    vertical-align: middle;
+}
+
+.menuButtonAlt:hover {
+    color: #C3C3E5;
+}
+
+.acceptFriendRequestButton {
+    width: 29.41176470588235%;
+    margin-left: 65.88235294117646%;
+    height: 20.5px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 16;
+    font-weight: 600;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+    margin-top: -44.5px;
+}
+
+.declineFriendRequestButton {
+    width: 29.41176470588235%;
+    margin-left: 65.88235294117646%;
+    height: 20.5px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 16;
+    font-weight: 600;
+    font-family: "Muli";
+    text-align: center;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+    margin-top: 53.5px;
+}
+
+.menuTab {
+    color: rgba(0, 0, 0, 1);
+    font-size: 24px;
+    font-weight: 400;
+    font-family: "Muli";
+    text-align: left;
+    font-style: normal;
+    line-height: 125%;
+    letter-spacing: 0px;
+    vertical-align: middle;
+}
+
+.menuTab:hover {
+    color: #C3C3E5;
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 9px;
+
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
+    /*background: white;*/
 }
 
 ::-webkit-scrollbar-thumb {

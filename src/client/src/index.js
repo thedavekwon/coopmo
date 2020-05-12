@@ -3,12 +3,12 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
-import CLoginPage from "./components/CLoginPage";
+import LoginPage from "./components/LoginPage";
 
 ReactDOM.render(
   <React.StrictMode>
     <div className="body">
-        <CLoginPage domainName="http://localhost:8080"/>
+        <LoginPage domainName="http://localhost:8080"/>
     </div>
   </React.StrictMode>,
   document.getElementById("root")

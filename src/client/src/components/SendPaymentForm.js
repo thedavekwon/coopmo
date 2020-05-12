@@ -5,7 +5,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Select from "react-select";
 import FormAlert from "./FormAlert.js";
 
-export default class CSendPaymentForm extends React.Component {
+export default class SendPaymentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

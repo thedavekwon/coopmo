@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import FormAlert from "./FormAlert.js";
 
-export default class CAddFriendForm extends React.Component {
+export default class AddFriendForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

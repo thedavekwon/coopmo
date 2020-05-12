@@ -1,7 +1,8 @@
 import React from "react";
-import {MINH_PIC_LINK} from "../minhPic.js";
+import Image from "react-bootstrap/Image";
+import defaultImg from "../shyam/shyam_close_cropped.jpg";
 
-export class CFriendRequest extends React.Component {
+export class FriendRequest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,8 +11,42 @@ export class CFriendRequest extends React.Component {
             },
             accepted: false,
             declined: false,
+            profilePic: "",
         };
     }
+
+    componentDidMount() {
+        this.getProfilePic();
+    }
+
+    getProfilePic = () => {
+        const path =
+            this.props.domainName +
+            "/user/getOthersProfilePic?userId=" +
+            this.props.friendId;
+        fetch(path, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
+        }).then((res) => {
+            if (res.status === 200) {
+                res.blob().then((blob) => {
+                    let url = window.URL.createObjectURL(blob);
+                    this.setState((state) => ({
+                        profilePic: url,
+                    }));
+                });
+            } else {
+                let url = defaultImg;
+                this.setState((state) => ({
+                    profilePic: url,
+                }));
+            }
+        });
+    };
 
     acceptRequest = () => {
         const path = this.props.domainName + "/user/acceptIncomingRequest";
@@ -40,21 +75,21 @@ export class CFriendRequest extends React.Component {
                     console.log("error sending request");
                 }
             );
-    console.log("in accept request");
-  };
+        console.log("in accept request");
+    };
 
-  declineRequest = () => {
-      const path = this.props.domainName + "/user/declineFriendRequest";
-    fetch(path, {
-        method: "POST",
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Cache-Control": "no-cache",
-            "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(this.state.request),
-    })
+    declineRequest = () => {
+        const path = this.props.domainName + "/user/declineFriendRequest";
+        fetch(path, {
+            method: "POST",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(this.state.request),
+        })
       .then((res) => res.json())
       .then(
         (result) => {
@@ -74,6 +109,7 @@ export class CFriendRequest extends React.Component {
   };
 
   render() {
+
     let acceptButton;
     let declineButton;
 
@@ -100,19 +136,18 @@ export class CFriendRequest extends React.Component {
               <div>
                 <div style={{}} className="outerDiv centerer">
                   <div
-                    style={{
-                      width: "100%",
-                      marginLeft: "0%",
-                      height: "100%",
-                      top: "0%",
-                      backgroundColor: "rgba(237, 75, 75, 1)",
-                      borderRadius: "8px 8px 8px 8px",
-                    }}
-                    className="innerDiv"
-                    onClick={!this.state.accepted ? this.declineRequest : null}
-                  >
-                    <div> </div>
-                  </div>
+                      id="I38:417;35:533"
+                      style={{
+                          width: "100%",
+                          marginLeft: "0%",
+                          height: "100%",
+                          top: "0%",
+                          backgroundColor: "rgba(237, 75, 75, 1)",
+                          borderRadius: "8px 8px 8px 8px",
+                      }}
+                      className="innerDiv"
+                      onClick={!this.state.accepted ? this.declineRequest : null}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -125,25 +160,11 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              style={{
-                width: "29.41176470588235%",
-                marginLeft: "65.88235294117646%",
-                height: 20.5,
-                marginTop: 53.5,
-                color: "rgba(255, 255, 255, 1)",
-                fontSize: 16,
-                fontWeight: 600,
-                fontFamily: "Muli",
-                textAlign: "CENTER",
-                fontStyle: "normal",
-                lineHeight: "125%",
-                letterSpacing: "0px",
-              }}
-              className="innerDiv"
-              onClick={!this.state.accepted ? this.declineRequest : null}
+                className="innerDiv declineFriendRequestButton"
+                onClick={!this.state.accepted ? this.declineRequest : null}
             >
               <div>
-                <span style={{}} key="end">
+                <span key="end">
                   {this.state.declined ? "Declined" : "Decline"}
                 </span>
               </div>
@@ -157,6 +178,7 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
+              id="I38:417;35:535"
               style={{
                 width: 16,
                 marginLeft: "70%",
@@ -192,6 +214,7 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
+              id="I38:417;35:525"
               style={{
                 width: "29.41176470588235%",
                 marginLeft: "65.88235294117646%",
@@ -204,19 +227,18 @@ export class CFriendRequest extends React.Component {
               <div>
                 <div style={{}} className="outerDiv centerer">
                   <div
-                    style={{
-                      width: "100%",
-                      marginLeft: "0%",
-                      height: "100%",
-                      top: "0%",
-                      backgroundColor: "rgba(12, 200, 99, 1)",
-                      borderRadius: "8px 8px 8px 8px",
-                    }}
-                    className="innerDiv"
-                    onClick={!this.state.accepted ? this.acceptRequest : null}
-                  >
-                    <div> </div>
-                  </div>
+                      id="I38:417;35:526"
+                      style={{
+                          width: "100%",
+                          marginLeft: "0%",
+                          height: "100%",
+                          top: "0%",
+                          backgroundColor: "rgba(12, 200, 99, 1)",
+                          borderRadius: "8px 8px 8px 8px",
+                      }}
+                      className="innerDiv"
+                      onClick={!this.state.accepted ? this.acceptRequest : null}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -229,22 +251,8 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
-              style={{
-                width: "29.41176470588235%",
-                marginLeft: "65.88235294117646%",
-                height: 20.5,
-                marginTop: -44.5,
-                color: "rgba(255, 255, 255, 1)",
-                fontSize: 16,
-                fontWeight: 600,
-                fontFamily: "Muli",
-                textAlign: "CENTER",
-                fontStyle: "normal",
-                lineHeight: "125%",
-                letterSpacing: "0px",
-              }}
-              className="innerDiv"
-              onClick={!this.state.accepted ? this.acceptRequest : null}
+                className="innerDiv acceptFriendRequestButton"
+                onClick={!this.state.accepted ? this.acceptRequest : null}
             >
               <div>
                 <span style={{}} key="end">
@@ -261,6 +269,7 @@ export class CFriendRequest extends React.Component {
             className="outerDiv centerer"
           >
             <div
+              id="I38:417;38:411"
               style={{
                 width: 16,
                 marginLeft: "70%",
@@ -295,88 +304,28 @@ export class CFriendRequest extends React.Component {
           }}
           className="outerDiv centerer"
         >
-          <div
-            style={{
-              marginLeft: 8,
-              marginRight: "40%",
-              flexGrow: 1,
-              marginTop: 25,
-              marginBottom: 25,
-              backgroundColor: "rgba(0, 0, 0, 0)",
-            }}
-            className="innerDiv"
-          >
-            <div>
-              <div style={{}} className="outerDiv centerer">
-                <div
-                  style={{
-                    marginRight: 0,
-                    flexGrow: 1,
-                    marginTop: 0,
-                    marginBottom: 0,
-                  }}
-                  className="innerDiv"
-                >
-                  <div> </div>
-                </div>
-              </div>
-              <div
+            <div
                 style={{
-                  zIndex: 1,
-                }}
-                className="outerDiv centerer"
-              >
-                <div
-                  style={{
-                    marginLeft: 23.49072265625,
-                    marginRight: "80%",
+                    marginLeft: 8,
+                    marginRight: "40%",
                     flexGrow: 1,
-                    marginTop: 2.54541015625,
-                    marginBottom: 3.8182296752929688,
-                  }}
-                  className="innerDiv"
-                >
-                  <div>
-                    <img src={MINH_PIC_LINK} style={{
-                      width: 64,
-                      height: 64,
-                      borderRadius:"50%"
-                      }} />
-                  </div>
-                  
-                </div>
-              </div>
-              <div
-                style={{
-                  zIndex: 2,
                 }}
-                className="outerDiv centerer"
-              >
-                <div
-                  style={{
-                    marginLeft: 101.3818359375,
-                    marginRight: 13.5999755859375,
-                    flexGrow: 1,
-                    marginTop: 16.54541015625,
-                    marginBottom: 16.545501708984375,
-                    color: "rgba(0, 0, 0, 1)",
-                    fontSize: 24,
-                    fontWeight: 400,
-                    fontFamily: "Muli",
-                    textAlign: "RIGHT",
-                    fontStyle: "normal",
-                    lineHeight: "125%",
-                    letterSpacing: "0px",
-                  }}
-                  className="innerDiv"
-                >
-                  <div>
-                    <span style={{}} key="end">
-                      {this.props.name}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                className="innerDiv"
+            >
+                <div className="outerDiv centerer">
+                    <div className="innerDiv friendRequestPic vertCenterAndCut">
+                        <Image src={this.state.profilePic} roundedCircle fluid/>
+                    </div>
+                    <div
+                        style={{
+                            width: "100%",
+                            lineHeight: "135px",
+                            textAlign: "RIGHT",
+                        }}
+                        className="innerDiv textStyle"
+                    >
+                        {this.props.name}
+                    </div>
             </div>
           </div>
         </div>
@@ -386,19 +335,15 @@ export class CFriendRequest extends React.Component {
           }}
           className="outerDiv centerer"
         >
-          <div
-            style={{
-              marginLeft: 0,
-              marginRight: 0,
-              flexGrow: 1,
-              marginTop: 0,
-              height: 1,
-              backgroundColor: "rgba(102, 0, 153, 1)",
-            }}
-            className="innerDiv"
-          >
-            <div></div>
-          </div>
+            <div
+                id="I38:417;38:535"
+                style={{
+                    flexGrow: 1,
+                    height: 1,
+                    backgroundColor: "rgba(102, 0, 153, 1)",
+                }}
+                className="innerDiv"
+            ></div>
         </div>
       </div>
     );

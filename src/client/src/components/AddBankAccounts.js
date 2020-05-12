@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FormAlert from "./FormAlert.js";
 
-export default class CChangeBankAccounts extends React.Component {
+export default class AddBankAccounts extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

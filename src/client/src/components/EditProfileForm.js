@@ -8,7 +8,7 @@ import bsCustomFileInput from "bs-custom-file-input";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 
-export default class CEditProfileForm extends React.Component {
+export default class EditProfileForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -92,7 +92,6 @@ export default class CEditProfileForm extends React.Component {
           }));
         });
       } else {
-        console.log("here");
         let url = defaultImg;
         this.setState((state) => ({
           profilePic: url,
@@ -207,7 +206,17 @@ export default class CEditProfileForm extends React.Component {
 
 
     return (
-        <>
+        <div>
+          <FormAlert
+              onClose={() => {
+                this.setState((state) => ({
+                  showMessage: false,
+                }));
+              }}
+              showMessage={this.state.showMessage}
+              messageType={this.state.respMessage.messageType}
+              message={this.state.respMessage.message}
+          />
           <Form onSubmit={this.sendRequest}>
             {formBlocks}
 
@@ -240,17 +249,8 @@ export default class CEditProfileForm extends React.Component {
               Submit
             </Button>
           </Form>
-          <FormAlert
-              onClose={() => {
-                this.setState((state) => ({
-                  showMessage: false,
-                }));
-              }}
-              showMessage={this.state.showMessage}
-              messageType={this.state.respMessage.messageType}
-              message={this.state.respMessage.message}
-          />
-        </>
+
+        </div>
     );
   }
 }

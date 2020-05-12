@@ -3,7 +3,6 @@ import {formatMoney} from "../functions/formatMoney";
 import {fetchOthersProfilePic} from "../functions/fetchProfilePics";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import {getTimeAgoStr} from "../functions/timeDifference";
-import {likeIcon} from "../likeIcon";
 import {likeTransaction} from "../functions/likeTransaction";
 import Button from "react-bootstrap/Button";
 
@@ -18,16 +17,17 @@ export default class CFeedItemPayment extends React.Component {
         super(props);
         this.state = {
             profilePic: "",
-            liked: false
+            liked: false,
+            newlyLiked: false
         };
     }
 
     handleLikeTransaction = (event) => {
         likeTransaction(this.props.domainName, this.props.transactionId, "PAY")
             .then((res) => {
-                console.log(res);
                 this.setState({
-                    liked: true
+                    liked: true,
+                    newlyLiked: true
                 })
             });
     }
@@ -47,25 +47,29 @@ export default class CFeedItemPayment extends React.Component {
               this.setState({
                 profilePic: url,
               });
-              res.blob().then((blob) => {
-                  console.log(blob);
-              });
             }
           });
     }
 
     componentDidMount() {
         this.getFromUserProfilePic(this.props.fromUserId);
+        for (let ii = 0; ii < this.props.likes.length; ii++) {
+            console.log(this.props.likes[ii].username);
+            if (this.props.likes[ii].username === this.props.username) {
+                this.setState({
+                    liked: true,
+                });
+            }
+        }
     }
 
     getButtonJSX = () => {
-        console.log(this.state.liked)
         if (this.state.liked) {
-            const numLikes = parseInt(this.props.numLikes) + 1;
+            const numLikes = this.state.newlyLiked ? parseInt(this.props.likes.length) + 1: parseInt(this.props.likes.length);
             const numLikesStr = numLikes === 1 ? numLikes.toString() + " like" : numLikes.toString() + " likes";
     
             return (
-                <Button onClick={this.handleLikeTransaction} style={{
+                <Button style={{
                     backgroundColor: purple,
                     borderColor: purple
                     }} disabled>
@@ -80,7 +84,7 @@ export default class CFeedItemPayment extends React.Component {
                 </Button>
             );
         } else {
-            const numLikes = parseInt(this.props.numLikes);
+            const numLikes = parseInt(this.props.likes.length);
 
             const numLikesStr = numLikes === 1 ? numLikes.toString() + " like" : numLikes.toString() + " likes";
     
@@ -103,6 +107,8 @@ export default class CFeedItemPayment extends React.Component {
     }
 
     render() {
+
+
         // sample timestamp: 2020-05-11 00:19:32.622
         const year = parseInt(this.props.timestamp.substring(0, 4));
         const month = parseInt(this.props.timestamp.substring(5,7));
@@ -160,14 +166,18 @@ export default class CFeedItemPayment extends React.Component {
                             justifyContent: "space-between",
                             textAlign: "left"}
                         }>
-                        <span>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
                             <img src={this.state.profilePic} style={{
                             width: profilePicWidth,
                             height: profilePicHeight,
-                            borderRadius:"50%"
+                            borderRadius:"50%",
+                            marginRight: "20px"
                             }} />
-                            {fromUserHandle} paid {toUserHandle}
-                        </span>
+                            <span>{fromUserHandle} paid {toUserHandle}</span>
+                        </div>
                         <span>{amount}</span>
                         <span>{comment}</span>
                     </div>

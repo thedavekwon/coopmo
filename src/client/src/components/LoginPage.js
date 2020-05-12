@@ -65,7 +65,7 @@ export default class LoginPage extends React.Component {
                 (result) => {
                     console.log(result);
                     ReactDOM.render(
-                        <MainPage domainName={this.props.domainName}></MainPage>,
+                        <MainPage domainName={this.props.domainName} username={this.state.request["username"]}></MainPage>,
                         document.getElementById("root")
                     );
                 },

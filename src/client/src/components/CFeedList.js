@@ -89,7 +89,8 @@ export default class CFeedList extends React.Component {
             amount={payment.amount}
             timestamp={payment.timestamp}
             comment={payment.comment}
-            numLikes = {payment.likes.length}
+            likes={payment.likes}
+            username={this.props.username}
           />
         );
       }

@@ -71,6 +71,7 @@ export default class MainPage extends React.Component {
                             {...this.props}
                             nodeId="38:1057"
                             domainName={this.props.domainName}
+                            username={this.props.username}
                         />
                     }
                 </div>

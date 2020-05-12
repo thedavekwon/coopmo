@@ -71,6 +71,7 @@ export default class CFeed extends React.Component {
                         <CFeedList
                             feedTab={this.state.feedTab}
                             domainName={this.props.domainName}
+                            username={this.props.username}
                         />
                     </div>
                 </div>

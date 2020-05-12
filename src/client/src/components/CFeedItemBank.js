@@ -1,18 +1,26 @@
 import React from "react";
 import {formatMoney} from "../functions/formatMoney";
+import {getTimeAgoStr} from "../functions/timeDifference";
 
 export default class CFeedItemBank extends React.Component {
     
     render() {
         const purple = "rgba(102, 0, 153, 1)";
         const black = "rgba(0, 0, 0, 1)";
-        const itemDate = this.props.timestamp.substring(0, 10);
-        const itemHour = parseInt(this.props.timestamp.substring(11, 13));
-        const itemMinute = this.props.timestamp.substring(14, 16);
-        const amOrPm = itemHour > 12 ? "PM" : "AM";
-        const itemHourStr = itemHour % 12 === 0 ? "12" : (itemHour % 12).toString();
-        const timestamp =
-            itemDate + " " + itemHourStr + ":" + itemMinute + " " + amOrPm;
+
+        const year = parseInt(this.props.timestamp.substring(0, 4));
+        const month = parseInt(this.props.timestamp.substring(5,7));
+        const day = parseInt(this.props.timestamp.substring(8,10));
+        const hour = parseInt(this.props.timestamp.substring(11, 13));
+        const minute = this.props.timestamp.substring(14, 16);
+        const second = this.props.timestamp.substring(17, 19);
+        const millisecond = this.props.timestamp.substring(19, 23);
+
+        const timestamp = new Date(year, month-1, day, hour, minute, second, millisecond);
+
+        const timestampStr = getTimeAgoStr(timestamp);
+        
+
         const fontSize = 24;
         const type = "Cash " + this.props.type.substring(0,1).toUpperCase() + this.props.type.substring(1).toLowerCase();
 
@@ -53,7 +61,7 @@ export default class CFeedItemBank extends React.Component {
                             textAlign: "right"
                         }}
                     >
-                        <span>{timestamp}</span>
+                        <span>{timestampStr}</span>
                         <span>Private</span>
                     </div>
                 </div>

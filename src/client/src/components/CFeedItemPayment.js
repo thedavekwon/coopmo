@@ -3,7 +3,9 @@ import {formatMoney} from "../functions/formatMoney";
 import {fetchOthersProfilePic} from "../functions/fetchProfilePics";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import {getTimeAgoStr} from "../functions/timeDifference";
-
+import {likeIcon} from "../likeIcon";
+import {likeTransaction} from "../functions/likeTransaction";
+import Button from "react-bootstrap/Button";
 
 const purple = "rgba(102, 0, 153, 1)";
 const black = "rgba(0, 0, 0, 1)";
@@ -15,14 +17,24 @@ export default class CFeedItemPayment extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            profilePic: ""
+            profilePic: "",
+            liked: false
         };
+    }
+
+    handleLikeTransaction = (event) => {
+        likeTransaction(this.props.domainName, this.props.transactionId, "PAY")
+            .then((res) => {
+                console.log(res);
+                this.setState({
+                    liked: true
+                })
+            });
     }
 
     getFromUserProfilePic(fromUserId) {
         fetchOthersProfilePic(this.props.domainName, fromUserId)
         .then((res) => {
-            console.log("status" + res.status);
             if (res.status === 200) {
               res.blob().then((blob) => {
                 let url = window.URL.createObjectURL(blob);
@@ -31,10 +43,12 @@ export default class CFeedItemPayment extends React.Component {
                 });
               });
             } else {
-              console.log("here");
               let url = defaultImg;
               this.setState({
                 profilePic: url,
+              });
+              res.blob().then((blob) => {
+                  console.log(blob);
               });
             }
           });
@@ -42,6 +56,50 @@ export default class CFeedItemPayment extends React.Component {
 
     componentDidMount() {
         this.getFromUserProfilePic(this.props.fromUserId);
+    }
+
+    getButtonJSX = () => {
+        console.log(this.state.liked)
+        if (this.state.liked) {
+            const numLikes = parseInt(this.props.numLikes) + 1;
+            const numLikesStr = numLikes === 1 ? numLikes.toString() + " like" : numLikes.toString() + " likes";
+    
+            return (
+                <Button onClick={this.handleLikeTransaction} style={{
+                    backgroundColor: purple,
+                    borderColor: purple
+                    }} disabled>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-around",                                
+                    }}>
+                        <div>
+                            {numLikesStr}
+                        </div>
+                    </div>
+                </Button>
+            );
+        } else {
+            const numLikes = parseInt(this.props.numLikes);
+
+            const numLikesStr = numLikes === 1 ? numLikes.toString() + " like" : numLikes.toString() + " likes";
+    
+            return (
+                <Button onClick={this.handleLikeTransaction} style={{
+                    backgroundColor: purple,
+                    borderColor: purple
+                    }}>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-around",                                
+                    }}>
+                        <div>
+                            {numLikesStr}
+                        </div>
+                    </div>
+                </Button>
+            );
+        }
     }
 
     render() {
@@ -56,8 +114,6 @@ export default class CFeedItemPayment extends React.Component {
 
         const timestamp = new Date(year, month-1, day, hour, minute, second, millisecond);
 
-        const currentTimestamp = new Date();
-
         const timestampStr = getTimeAgoStr(timestamp);
 
 
@@ -69,14 +125,15 @@ export default class CFeedItemPayment extends React.Component {
         // const timestampStr =
         //     itemDate + " " + itemHourStr + ":" + minute + " " + amOrPm;
         
-        const type = this.props.type;
+        const type = this.props.type.substring(0,1).toUpperCase() + this.props.type.substring(1).toLowerCase();
         const comment = this.props.comment; 
 
         const fromUserHandle = this.props.fromUserHandle;
         const toUserHandle = this.props.toUserHandle;
 
         const amount =
-            this.props.tab === "Me" ? formatMoney(this.props.amount) : "";  
+            this.props.tab === "Me" ? formatMoney(this.props.amount) : "";
+
         return (
             <div
                 style={{
@@ -93,6 +150,7 @@ export default class CFeedItemPayment extends React.Component {
                     style={{
                         display: "flex",
                         justifyContent: "space-between",
+                        height: "150px"
                     }}
                 >
                     <div style={
@@ -124,6 +182,7 @@ export default class CFeedItemPayment extends React.Component {
                     >
                         <span>{timestampStr}</span>
                         <span>{type}</span>
+                        {this.getButtonJSX()}
                     </div>
                 </div>
                 <hr

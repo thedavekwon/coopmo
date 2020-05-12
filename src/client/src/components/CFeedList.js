@@ -81,6 +81,7 @@ export default class CFeedList extends React.Component {
             listIndex={ii}
             domainName={this.props.domainName}
             key={ii.toString()}
+            transactionId={payment.id}
             fromUserId={payment.fromUser.id}
             fromUserHandle={payment.fromUser.handle}
             toUserHandle={payment.toUser.handle}
@@ -88,6 +89,7 @@ export default class CFeedList extends React.Component {
             amount={payment.amount}
             timestamp={payment.timestamp}
             comment={payment.comment}
+            numLikes = {payment.likes.length}
           />
         );
       }

@@ -14,7 +14,7 @@ export function fetchProfilePic(domainName) {
 }
 
 export function fetchOthersProfilePic(domainName, userId) {
-    const requestEndpoint = ''.concat(domainName + "/user/getOthersProfilePic?userId=", userId.replace(/-/g, "%2D"));
+    const requestEndpoint = ''.concat(domainName + "/user/getOthersProfilePic?userId=", userId);
     console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {
             method: "GET",

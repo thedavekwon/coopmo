@@ -43,7 +43,6 @@ public class Payment extends Transaction {
     private User toUser;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonIgnore
     private Set<User> likes;
 
     public Payment() {
@@ -83,7 +82,6 @@ public class Payment extends Transaction {
         return timestamp;
     }
 
-    @JsonIgnore
     public Set<User> getLikes() {
         return likes;
     }

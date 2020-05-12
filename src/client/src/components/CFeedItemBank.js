@@ -14,7 +14,7 @@ export default class CFeedItemBank extends React.Component {
         const timestamp =
             itemDate + " " + itemHourStr + ":" + itemMinute + " " + amOrPm;
         const fontSize = 24;
-        const type = "CASH " + this.props.type;
+        const type = "Cash " + this.props.type.substring(0,1).toUpperCase() + this.props.type.substring(1).toLowerCase();
 
         const amount = formatMoney(this.props.amount);
         return (
@@ -54,7 +54,7 @@ export default class CFeedItemBank extends React.Component {
                         }}
                     >
                         <span>{timestamp}</span>
-                        <span>PRIVATE</span>
+                        <span>Private</span>
                     </div>
                 </div>
                 <hr

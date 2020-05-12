@@ -1,0 +1,2 @@
+export const ADD_DOMAIN_NAME = "ADD_DOMAIN_NAME";
+export const CHANGE_PAGE = "CHANGE_PAGE";

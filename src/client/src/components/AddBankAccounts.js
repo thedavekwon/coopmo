@@ -10,6 +10,7 @@ export default class AddBankAccounts extends React.Component {
             request: {
                 routingNumber: 0,
                 accountNumber: 0,
+                nicname: "",
                 balance: 1000,
             },
             respMessage: {
@@ -22,9 +23,10 @@ export default class AddBankAccounts extends React.Component {
 
     handleChange = (event) => {
         var newRequest = this.state.request;
-        newRequest[event.target.id] = parseInt(event.target.value);
+        newRequest[event.target.id] = event.target.value;
         this.setState((state) => ({request: newRequest}));
     };
+
 
     setMessage(message, messageType) {
         var newRespMessage = this.state.respMessage;
@@ -39,7 +41,6 @@ export default class AddBankAccounts extends React.Component {
     sendRequest = (event) => {
         event.preventDefault();
         const path = this.props.domainName + "/bank/createBankAccount";
-        console.log(path);
         fetch(path, {
             method: "POST",
             headers: {
@@ -75,6 +76,10 @@ export default class AddBankAccounts extends React.Component {
             {
                 name: "Account Number",
                 valKey: "accountNumber"
+            },
+            {
+                name: "Nickname",
+                valKey: "nickname",
             }
         ];
         let formBlocks = formEntries.map((formEntry, index) => {
@@ -87,7 +92,7 @@ export default class AddBankAccounts extends React.Component {
                         required
                         style={{fontFamily: "Muli"}}
                         size="lg"
-                        type="number"
+                        type={formEntry.name === "Nickname" ? "text" : "number"}
                         step="1"
                         min="0"
                         placeholder={"Enter " + formEntry.name}
@@ -110,6 +115,7 @@ export default class AddBankAccounts extends React.Component {
                 />
                 <Form onSubmit={this.sendRequest}>
                     {formBlocks}
+
                     <Button className="submitButton" type="submit">
                         Submit
                     </Button>

@@ -49,13 +49,13 @@ export default class CashInForm extends React.Component {
   };
 
   handleCashChange = (cash) => {
-    console.log(cash);
     var newRequest = this.state.request;
     newRequest.type = cash.value;
     this.setState((state) => ({
       request: newRequest,
     }));
   };
+
   sendRequest = (event) => {
     event.preventDefault();
     const path = this.props.domainName + "/cash/createCash";
@@ -111,7 +111,7 @@ export default class CashInForm extends React.Component {
                       ...bankList,
                       {
                         value: result.data[i].id,
-                        label: result.data[i].routingNumber + "+" + result.data[i].accountNumber,
+                        label: result.data[i].nickname,
                       },
                     ];
                   }

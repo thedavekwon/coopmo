@@ -4,7 +4,7 @@ import MainPage from "./MainPage";
 import MenuPage from "./MenuPage";
 import CreateUserPage from "./CreateUserPage";
 import {connect} from "react-redux";
-import {addDomainName, addNotification} from "../redux/actions";
+import {addDomainName, addNotification, changeRefreshState} from "../redux/actions";
 import SockJsClient from "react-stomp";
 
 class App extends React.Component {
@@ -17,8 +17,22 @@ class App extends React.Component {
   }
 
   receivedNotification = (message) => {
-    this.props.addNotification(message);
-    console.log(message);
+      this.props.addNotification(message);
+      switch (message.type) {
+          case("FRIENDREQUEST"):
+              this.props.changeRefreshState("refreshFriendRequests", true);
+              break;
+          case("FRIENDACCEPT"):
+              this.props.changeRefreshState("refreshFriendsList", true);
+              break;
+          case("PAYMENT"):
+              this.props.changeRefreshState("refreshFeed", true);
+              this.props.changeRefreshState("refreshBalance", true);
+              break;
+          default:
+              break;
+      }
+      console.log(message);
   };
 
   render() {
@@ -57,4 +71,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {addDomainName, addNotification})(App);
+export default connect(mapStateToProps, {addDomainName, addNotification, changeRefreshState})(App);

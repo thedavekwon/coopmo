@@ -1,9 +1,8 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 import {connect} from "react-redux";
-import {changePage} from "../redux/actions";
+import {changeLogin, changePage} from "../redux/actions";
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -20,9 +19,7 @@ class LoginPage extends React.Component {
         };
     }
     renderCreate = () => {
-        ReactDOM.render(
-            this.props.changePage("CreatePage")
-        );
+        this.props.changePage("CreatePage")
     };
 
     handleChange = (key, value) => {
@@ -56,12 +53,11 @@ class LoginPage extends React.Component {
             credentials: "include",
         })
             .then((res) => {
-                console.log(res);
                 return res.json();
             })
             .then(
                 (result) => {
-                    console.log(result);
+                    this.props.changeLogin(true);
                     this.props.changePage("MainPage")
                 },
                 (error) => {
@@ -236,4 +232,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, {changePage})(LoginPage);
+export default connect(mapStateToProps, {changePage, changeLogin})(LoginPage);

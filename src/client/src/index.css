@@ -221,8 +221,9 @@ a {
 }
 
 .menuTab:hover {
-    color: #C3C3E5;
+    color: rgb(215, 215, 236);
 }
+
 
 ::-webkit-scrollbar {
     width: 9px;

@@ -8,7 +8,7 @@ import CashInForm from "./CashInForm.js";
 import SendPaymentForm from "./SendPaymentForm.js";
 import TitleBar from "./TitleBar.js";
 import {connect} from "react-redux";
-import {changePage} from "../redux/actions";
+import {changeLogin, changePage} from "../redux/actions";
 
 class MenuPage extends PureComponent {
     constructor(props) {
@@ -36,6 +36,7 @@ class MenuPage extends PureComponent {
       credentials: "include",
     }).then((res) => {
       if (res.status === 200) {
+          this.props.changeLogin(false);
           this.props.changePage("Login");
       }
     });
@@ -166,4 +167,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, {changePage})(MenuPage);
+export default connect(mapStateToProps, {changePage, changeLogin})(MenuPage);

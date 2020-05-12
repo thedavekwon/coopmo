@@ -4,7 +4,7 @@ import MainPage from "./MainPage";
 import MenuPage from "./MenuPage";
 import CreateUserPage from "./CreateUserPage";
 import {connect} from "react-redux";
-import {addDomainName} from "../redux/actions";
+import {addDomainName, addNotification} from "../redux/actions";
 import SockJsClient from "react-stomp";
 
 class App extends React.Component {
@@ -17,6 +17,7 @@ class App extends React.Component {
   }
 
   receivedNotification = (message) => {
+    this.props.addNotification(message);
     console.log(message);
   };
 
@@ -26,19 +27,23 @@ class App extends React.Component {
     else if (this.props.activePage === "MainPage") renderedPage = <MainPage/>;
     else if (this.props.activePage === "MenuPage") renderedPage = <MenuPage/>;
     else renderedPage = <CreateUserPage/>;
-    return (
-        <div id="App">
+
+    let socket;
+    if (this.props.loggedIn) {
+      socket = (
           <SockJsClient
               url="http://localhost:8080/ws"
               topics={["/user/queue/notify"]}
-              onMessage={(msg) => {
-                console.log(msg);
-              }}
+              onMessage={this.receivedNotification}
               ref={(client) => {
                 this.clientRef = client;
-                console.log(client);
               }}
           />
+      );
+    }
+    return (
+        <div id="App">
+          {socket}
           {renderedPage}
         </div>
     );
@@ -48,7 +53,8 @@ class App extends React.Component {
 function mapStateToProps(state) {
   return {
     activePage: state.activePage,
+    loggedIn: state.loggedIn,
   };
 }
 
-export default connect(mapStateToProps, {addDomainName})(App);
+export default connect(mapStateToProps, {addDomainName, addNotification})(App);

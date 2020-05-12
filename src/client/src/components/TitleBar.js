@@ -2,10 +2,8 @@ import React from "react";
 import MenuButton from "./MenuButton.js";
 import {formatMoney} from "../functions/formatMoney";
 import Image from "react-bootstrap/Image";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
-import bellImg from "../Essentials Icon Pack/inv_bell.png";
+import NotificationBell from "./NotificationBell.js";
 
 export default class TitleBar extends React.Component {
     constructor(props) {
@@ -89,22 +87,7 @@ export default class TitleBar extends React.Component {
                     </div>
 
                     <div className="innerDiv bellPng vertCenterAndCut">
-                        <OverlayTrigger
-                            trigger="click"
-                            key={"bottom"}
-                            placement={"bottom"}
-                            overlay={
-                                <Popover>
-                                    <Popover.Title as="h3">{"Payments"}</Popover.Title>
-                                    <Popover.Content>
-                                        <strong>Holy guacamole!</strong> Check this info.
-                                    </Popover.Content>
-                                    <Popover.Title as="h3">{"Friends"}</Popover.Title>
-                                </Popover>
-                            }
-                        >
-                            <Image src={bellImg} fluid onClick={this.showNotifications}/>
-                        </OverlayTrigger>{" "}
+                        <NotificationBell/>
                     </div>
                 </div>
             );

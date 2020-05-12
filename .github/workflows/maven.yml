@@ -1,4 +1,4 @@
-name: Coopmo Test (JAVA CI + MYSQL)
+name: Coopmo Test (Docker-Compose)
 
 on: [push]
 

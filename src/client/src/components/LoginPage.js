@@ -1,11 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
-import MainPage from "./MainPage.js";
-import CreateUserPage from "./CreateUserPage.js";
+import {connect} from "react-redux";
+import {changeLogin, changePage} from "../redux/actions";
 
-export default class LoginPage extends React.Component {
+class LoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,12 +18,8 @@ export default class LoginPage extends React.Component {
             },
         };
     }
-
     renderCreate = () => {
-        ReactDOM.render(
-            <CreateUserPage domainName={this.props.domainName}></CreateUserPage>,
-            document.getElementById("root")
-        );
+        this.props.changePage("CreatePage")
     };
 
     handleChange = (key, value) => {
@@ -58,16 +53,12 @@ export default class LoginPage extends React.Component {
             credentials: "include",
         })
             .then((res) => {
-                console.log(res);
                 return res.json();
             })
             .then(
                 (result) => {
-                    console.log(result);
-                    ReactDOM.render(
-                        <MainPage domainName={this.props.domainName}></MainPage>,
-                        document.getElementById("root")
-                    );
+                    this.props.changeLogin(true);
+                    this.props.changePage("MainPage")
                 },
                 (error) => {
                     // alert("failed to login");
@@ -75,30 +66,6 @@ export default class LoginPage extends React.Component {
                 }
             );
     };
-
-    sendRequestBalance = () => {
-        const path = this.props.domainName + "/user/getUserWithId";
-        fetch(path, {
-            method: "GET",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Cache-Control": "no-cache",
-            },
-            credentials: "include",
-        })
-            .then((res) => {
-                return res.json();
-            })
-            .then(
-                (result) => {
-                    console.log(result);
-                },
-                (error) => {
-                    this.setMessage("ERROR sending request", "ERROR");
-                }
-            );
-    };
-
     render() {
         return (
             <form>
@@ -258,3 +225,11 @@ export default class LoginPage extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        domainName: state.domainName
+    }
+}
+
+export default connect(mapStateToProps, {changePage, changeLogin})(LoginPage);

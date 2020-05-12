@@ -12,11 +12,19 @@ services:
     ports:
       - 3306:3306
 
+  rabbitmq-stomp:
+    build: docker/rabbitmq-stomp
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+
   backend:
     depends_on:
       - mysql
     links:
       - "mysql"
+      - "rabbitmq-stomp"
     restart: always
     build: .
     ports:
@@ -29,6 +37,6 @@ services:
       - "backend"
     restart: always
     stdin_open: true
-    build: client
+    build: src/client
     ports:
       - 3000:3000

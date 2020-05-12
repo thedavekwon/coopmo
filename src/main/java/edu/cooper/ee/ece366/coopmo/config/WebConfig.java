@@ -1,4 +1,4 @@
-package edu.cooper.ee.ece366.coopmo.SecurityConfig;
+package edu.cooper.ee.ece366.coopmo.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

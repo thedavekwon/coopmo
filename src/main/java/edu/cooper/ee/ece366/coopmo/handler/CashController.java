@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.model.Cash;
 import edu.cooper.ee.ece366.coopmo.service.CashService;
@@ -34,7 +34,7 @@ public class CashController extends BaseController {
             userId = principal.toString();
         }
         String bankAccountId = createCashRequest.getBankAccountId();
-        Long amount = createCashRequest.getAmount();
+        long amount = createCashRequest.getAmount();
         String type = createCashRequest.getType();
 
         Message respMessage = new Message();
@@ -57,10 +57,10 @@ public class CashController extends BaseController {
 
     public static class CreateCashRequest {
         private String bankAccountId;
-        private Long amount;
+        private long amount;
         private String type;
 
-        public CreateCashRequest(String bankAccountId, Long amount, String type) {
+        public CreateCashRequest(String bankAccountId, long amount, String type) {
             this.bankAccountId = bankAccountId;
             this.amount = amount;
             this.type = type;
@@ -74,11 +74,11 @@ public class CashController extends BaseController {
             this.bankAccountId = bankAccountId;
         }
 
-        public Long getAmount() {
+        public long getAmount() {
             return amount;
         }
 
-        public void setAmount(Long amount) {
+        public void setAmount(long amount) {
             this.amount = amount;
         }
 

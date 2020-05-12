@@ -3,24 +3,60 @@ import MenuButton from "./MenuButton.js";
 import {formatMoney} from "../functions/formatMoney";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
-import bellImg from "../Essentials Icon Pack/inv_bell.png";
+import NotificationBell from "./NotificationBell.js";
+import {changeRefreshState} from "../redux/actions";
+import {connect} from "react-redux";
 
-export default class TitleBar extends React.Component {
+class TitleBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             page: "main",
             profilePic: "",
+            balance: 0,
         };
     }
 
     componentDidMount() {
         this.getProfilePic();
+        this.getBalance();
     }
 
-    showNotifications = () => {
-        console.log("bleh");
+    componentDidUpdate() {
+        if (this.props.refreshBalance) {
+            this.getBalance();
+            this.props.changeRefreshState("refreshBalance", false);
+        }
+    }
+
+    getBalance = () => {
+        const path = this.props.domainName + "/user/getUserBalance";
+        fetch(path, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
+        })
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            balance: result.data,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
     };
+
     getProfilePic = () => {
         const path = this.props.domainName + "/user/getProfilePic";
         fetch(path, {
@@ -70,15 +106,8 @@ export default class TitleBar extends React.Component {
                     }}
                     className="outerDiv centerer"
                 >
-                    <div
-                        className="innerDiv friendListPic vertCenterAndCut"
-                    >
-                        <Image
-                            src={this.state.profilePic}
-                            roundedCircle
-                            fluid
-
-                        />
+                    <div className="innerDiv friendListPic vertCenterAndCut">
+                        <Image src={this.state.profilePic} roundedCircle fluid/>
                     </div>
 
                     <div
@@ -90,11 +119,11 @@ export default class TitleBar extends React.Component {
                         }}
                         className="innerDiv vertCenterAndCut textStyle"
                     >
-                        <span>Balance : {formatMoney(this.props.balance)}</span>
+                        <span>Balance : {formatMoney(this.state.balance)}</span>
                     </div>
 
                     <div className="innerDiv bellPng vertCenterAndCut">
-                        <Image src={bellImg} fluid onClick={this.showNotifications}/>
+                        <NotificationBell/>
                     </div>
                 </div>
             );
@@ -211,3 +240,11 @@ export default class TitleBar extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        refreshBalance: state.refreshBalance,
+    };
+}
+
+export default connect(mapStateToProps, {changeRefreshState})(TitleBar);

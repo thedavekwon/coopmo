@@ -25,6 +25,9 @@ public class BankAccount {
     @Column(nullable = false)
     private long balance;
 
+    @Column(nullable = false)
+    private String nickname;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
@@ -32,8 +35,9 @@ public class BankAccount {
     public BankAccount() {
     }
 
-    public BankAccount(User user, long accountNumber, long routingNumber, long balance) {
+    public BankAccount(User user, String nickname, long accountNumber, long routingNumber, long balance) {
         this.user = user;
+        this.nickname = nickname;
         this.accountNumber = accountNumber;
         this.routingNumber = routingNumber;
         this.balance = balance;
@@ -53,6 +57,10 @@ public class BankAccount {
 
     public long getBalance() {
         return balance;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public void setBalance(long newBalance) {

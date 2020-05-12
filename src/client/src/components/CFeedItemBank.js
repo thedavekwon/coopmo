@@ -2,7 +2,7 @@ import React from "react";
 import {formatMoney} from "../functions/formatMoney";
 
 export default class CFeedItemBank extends React.Component {
-    
+
     render() {
         const purple = "rgba(102, 0, 153, 1)";
         const black = "rgba(0, 0, 0, 1)";
@@ -64,7 +64,7 @@ export default class CFeedItemBank extends React.Component {
                     }}
                 />
             </div>
-        );      
+        );
 
     }
 }

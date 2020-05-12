@@ -76,7 +76,7 @@ export default class CFeedItemPayment extends React.Component {
         const toUserHandle = this.props.toUserHandle;
 
         const amount =
-            this.props.tab === "Me" ? formatMoney(this.props.amount) : "";  
+            this.props.tab === "Me" ? formatMoney(this.props.amount) : "";
         return (
             <div
                 style={{
@@ -134,7 +134,7 @@ export default class CFeedItemPayment extends React.Component {
                 />
             </div>
         );
-    
+
 
     }
 }

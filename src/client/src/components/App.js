@@ -18,7 +18,7 @@ class App extends React.Component {
 
   receivedNotification = (message) => {
     console.log(message);
-  }
+  };
 
   render() {
     let renderedPage;
@@ -29,10 +29,10 @@ class App extends React.Component {
     return (
         <div id="App">
           <SockJsClient
-              url="http://localhost:8080/notification_ws"
+              url="http://localhost:8080/ws"
               topics={["/user/queue/notify"]}
               onMessage={(msg) => {
-                this.receivedNotification(msg);
+                console.log(msg);
               }}
               ref={(client) => {
                 this.clientRef = client;

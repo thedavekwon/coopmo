@@ -1,6 +1,5 @@
 export function fetchProfilePic(domainName) {
     const requestEndpoint = domainName + "/user/getProfilePic";
-    console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {
             method: "GET",
             headers: {
@@ -15,7 +14,6 @@ export function fetchProfilePic(domainName) {
 
 export function fetchOthersProfilePic(domainName, userId) {
     const requestEndpoint = ''.concat(domainName + "/user/getOthersProfilePic?userId=", userId);
-    console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {
             method: "GET",
             headers: {
@@ -24,6 +22,5 @@ export function fetchOthersProfilePic(domainName, userId) {
             credentials: 'include'
         }
     );
-    console.log(request);
     return fetch(request);
 }

@@ -1,6 +1,5 @@
 export function likeTransaction(domainName, transactionId, transactionType) {
     const requestEndpoint = ''.concat(domainName, "/transaction/likeTransaction");
-    console.log(requestEndpoint);
     const request = new Request(requestEndpoint, {
             method: "POST",
             headers: {
@@ -14,6 +13,5 @@ export function likeTransaction(domainName, transactionId, transactionType) {
             })
         }
     );
-    console.log(request);
     return fetch(request);
 }

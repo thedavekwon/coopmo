@@ -51,19 +51,36 @@ class MainPage extends React.Component {
                 className="master"
                 style={{
                     backgroundColor: "rgba(255, 255, 255, 1)",
+                    display: "flex",
+                    flexDirection: "column",
+                    maxHeight: window.innerHeight
                 }}
             >
+                <div style={{
+                    flex: 2,
+                    width: "100%",
+                    height:"120px", 
+                }}>
+                    <TitleBar
+                            page="main"
+                            balance={this.state.balance}
+                            domainName={this.props.domainName}
+                        />
+                </div>
                 <div style = {{
-                    position: "absolute",
+                    flex: 5
+                }}>
+
+                </div>
+                <div style = {{
+                    flex: 14,
                     display: "flex",
                     width: "100%",
-                    minHeight: "100%",
                     justifyContent: "space-around"
                 }}>
                     <div style={{flex: 1}}></div>
                     <div style={{
                         flex: 5,
-                        paddingTop: "140px",
                         minHeight: "100%",
                         backgroundColor: "rgba(0, 0, 0, 0)",
                         }} >
@@ -76,7 +93,6 @@ class MainPage extends React.Component {
                     <div
                         style={{
                             flex: 2,
-                            marginTop: "140px",
                             backgroundColor: "rgba(0, 0, 0, 0)",
                         }}
                     >
@@ -86,14 +102,6 @@ class MainPage extends React.Component {
                         />
                     </div>
                     <div style={{flex: 1}}></div>
-                    <TitleBar
-                        style={{
-                            zIndex: 3
-                        }}
-                        page="main"
-                        balance={this.state.balance}
-                        domainName={this.props.domainName}
-                    />
                 </div>
             </div>
         );

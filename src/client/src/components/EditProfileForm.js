@@ -7,6 +7,7 @@ import FormAlert from "./FormAlert.js";
 import bsCustomFileInput from "bs-custom-file-input";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
+import {persistor} from "../redux/store";
 
 export default class EditProfileForm extends React.Component {
   constructor(props) {
@@ -56,7 +57,12 @@ export default class EditProfileForm extends React.Component {
       credentials: "include",
       body: formData,
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error !== null) {
@@ -91,6 +97,8 @@ export default class EditProfileForm extends React.Component {
             profilePic: url,
           }));
         });
+      } else if (res.status === 302) {
+        persistor.purge();
       } else {
         let url = defaultImg;
         this.setState((state) => ({
@@ -124,7 +132,12 @@ export default class EditProfileForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.request),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error !== null) {
@@ -204,7 +217,6 @@ export default class EditProfileForm extends React.Component {
       );
     });
 
-
     return (
         <>
           <FormAlert
@@ -250,7 +262,6 @@ export default class EditProfileForm extends React.Component {
               Submit
             </Button>
           </Form>
-
         </>
     );
   }

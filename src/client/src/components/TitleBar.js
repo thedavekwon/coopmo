@@ -6,6 +6,7 @@ import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import NotificationBell from "./NotificationBell.js";
 import {changeRefreshState} from "../redux/actions";
 import {connect} from "react-redux";
+import {persistor} from "../redux/store";
 
 class TitleBar extends React.Component {
     constructor(props) {
@@ -24,6 +25,11 @@ class TitleBar extends React.Component {
             this.getBalance();
             this.props.changeRefreshState("refreshBalance", false);
         }
+
+        if (this.props.refreshProfilePic) {
+            this.getProfilePic();
+            this.props.changeRefreshState("refreshProfilePic", false);
+        }
     }
 
     getBalance = () => {
@@ -36,7 +42,12 @@ class TitleBar extends React.Component {
             },
             credentials: "include",
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
@@ -72,6 +83,8 @@ class TitleBar extends React.Component {
                         profilePic: url,
                     }));
                 });
+            } else if (res.status === 302) {
+                persistor.purge();
             } else {
                 let url = defaultImg;
                 this.setState((state) => ({
@@ -114,7 +127,12 @@ class TitleBar extends React.Component {
                     }}
                     className="innerDiv vertCenterAndCut textStyle"
                 >
-                    <span>Balance : {this.state.balance !== null ? formatMoney(this.state.balance) : "Loading..."}</span>
+          <span>
+            Balance :{" "}
+              {this.state.balance !== null
+                  ? formatMoney(this.state.balance)
+                  : "Loading..."}
+          </span>
                 </div>
 
                 <div className="innerDiv bellPng vertCenterAndCut">
@@ -239,6 +257,7 @@ class TitleBar extends React.Component {
 function mapStateToProps(state) {
     return {
         refreshBalance: state.refreshBalance,
+        refreshProfilePic: state.refreshProfilePic,
     };
 }
 

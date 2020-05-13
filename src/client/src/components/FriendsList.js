@@ -1,14 +1,24 @@
 import React from "react";
 import FriendEntry from "./FriendEntry.js";
 import Container from "react-bootstrap/Container";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
+import {persistor} from "../redux/store";
 
-export default class FriendsList extends React.Component {
+class FriendsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             friendsList: [],
         };
         this.getFriendsList();
+    }
+
+    componentDidUpdate() {
+        if (this.props.refreshFriendsList) {
+            this.getFriendsList();
+            this.props.changeRefreshState("refreshFriendsList", false);
+        }
     }
 
     getFriendsList = () => {
@@ -21,7 +31,12 @@ export default class FriendsList extends React.Component {
             },
             credentials: "include",
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
@@ -67,8 +82,7 @@ export default class FriendsList extends React.Component {
                             backgroundColor: "rgba(102, 0, 153, 1)",
                         }}
                         className="innerDiv"
-                    >
-                    </div>
+                    ></div>
                 </div>
                 <div className="outerDiv centerer">
                     <div
@@ -85,8 +99,7 @@ export default class FriendsList extends React.Component {
                 </div>
 
                 <div style={{zIndex: 15}} className="outerDiv centerer">
-                    <div
-                        style={{height: "10%", width: "100%"}}>
+                    <div style={{height: "10%", width: "100%"}}>
                         <div
                             style={{
                                 top: "60%",
@@ -96,9 +109,9 @@ export default class FriendsList extends React.Component {
                             className="innerDiv textStyle vertCenterAndCut"
                         >
                             <div>
-              <span style={{}} key="end">
-                Friends List
-              </span>
+                <span style={{}} key="end">
+                  Friends List
+                </span>
                             </div>
                         </div>
                     </div>
@@ -107,3 +120,11 @@ export default class FriendsList extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        refreshFriendsList: state.refreshFriendsList,
+    };
+}
+
+export default connect(mapStateToProps, {changeRefreshState})(FriendsList);

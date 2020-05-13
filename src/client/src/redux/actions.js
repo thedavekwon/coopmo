@@ -11,7 +11,6 @@ import {
 export const addDomainName = (domainName) => ({
   type: ADD_DOMAIN_NAME,
   payload: {
-    id: 0,
     domainName,
   },
 });

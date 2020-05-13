@@ -3,6 +3,7 @@ import FriendsList from "./FriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
 import {connect} from "react-redux";
+import {persistor} from "../redux/store";
 
 class MainPage extends React.Component {
     constructor(props) {
@@ -23,7 +24,12 @@ class MainPage extends React.Component {
             },
             credentials: "include",
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
@@ -53,9 +59,7 @@ class MainPage extends React.Component {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }}
             >
-
                 <div>
-
                     <div style={{}} className="outerDiv centerer">
                         <div
                             id="38:1057"

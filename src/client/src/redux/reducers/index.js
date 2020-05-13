@@ -7,11 +7,11 @@ import {
   CHANGE_REFRESH_STATE,
   DELETE_NOTIFICATION,
 } from "../action-types";
+import {PURGE} from "redux-persist";
 
 const initialState = {
-  state: {},
   activePage: "Login",
-  domainName: "",
+  domainName: "http://localhost:8080",
   loggedIn: false,
   newNotifications: false,
   friendNotifications: [],
@@ -68,6 +68,14 @@ function rootReducer(state = initialState, action) {
         ...state,
         newNotifications: action.payload.newState,
       }
+      /*
+    case LOGOUT: {
+      persistor.purge();
+      return undefined;
+    } 
+    */
+    case PURGE:
+      return initialState;
     default:
       return state;
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
+import {persistor} from "../redux/store";
 
 export class FriendRequest extends React.Component {
     constructor(props) {
@@ -39,6 +40,8 @@ export class FriendRequest extends React.Component {
                         profilePic: url,
                     }));
                 });
+            } else if (res.status === 302) {
+                persistor.purge();
             } else {
                 let url = defaultImg;
                 this.setState((state) => ({
@@ -60,7 +63,12 @@ export class FriendRequest extends React.Component {
             credentials: "include",
             body: JSON.stringify(this.state.request),
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     if (result.error != null) {
@@ -90,17 +98,22 @@ export class FriendRequest extends React.Component {
             credentials: "include",
             body: JSON.stringify(this.state.request),
         })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-          } else {
-            this.setState((state) => ({
-              declined: true,
-            }));
-          }
-        },
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
+            .then(
+                (result) => {
+                    if (result.error != null) {
+                        console.log(result.error);
+                    } else {
+                        this.setState((state) => ({
+                            declined: true,
+                        }));
+                    }
+                },
         (error) => {
           console.log("error sending request");
         }
@@ -109,7 +122,6 @@ export class FriendRequest extends React.Component {
   };
 
   render() {
-
     let acceptButton;
     let declineButton;
 
@@ -135,19 +147,19 @@ export class FriendRequest extends React.Component {
             >
               <div>
                 <div style={{}} className="outerDiv centerer">
-                  <div
-                      id="I38:417;35:533"
-                      style={{
-                          width: "100%",
-                          marginLeft: "0%",
-                          height: "100%",
-                          top: "0%",
-                          backgroundColor: "rgba(237, 75, 75, 1)",
-                          borderRadius: "8px 8px 8px 8px",
-                      }}
-                      className="innerDiv"
-                      onClick={!this.state.accepted ? this.declineRequest : null}
-                  ></div>
+                    <div
+                        id="I38:417;35:533"
+                        style={{
+                            width: "100%",
+                            marginLeft: "0%",
+                            height: "100%",
+                            top: "0%",
+                            backgroundColor: "rgba(237, 75, 75, 1)",
+                            borderRadius: "8px 8px 8px 8px",
+                        }}
+                        className="innerDiv"
+                        onClick={!this.state.accepted ? this.declineRequest : null}
+                    ></div>
                 </div>
               </div>
             </div>
@@ -159,16 +171,16 @@ export class FriendRequest extends React.Component {
             }}
             className="outerDiv centerer"
           >
-            <div
-                className="innerDiv declineFriendRequestButton"
-                onClick={!this.state.accepted ? this.declineRequest : null}
-            >
-              <div>
+              <div
+                  className="innerDiv declineFriendRequestButton"
+                  onClick={!this.state.accepted ? this.declineRequest : null}
+              >
+                  <div>
                 <span key="end">
                   {this.state.declined ? "Declined" : "Decline"}
                 </span>
+                  </div>
               </div>
-            </div>
           </div>
           <div
             style={{
@@ -226,19 +238,19 @@ export class FriendRequest extends React.Component {
             >
               <div>
                 <div style={{}} className="outerDiv centerer">
-                  <div
-                      id="I38:417;35:526"
-                      style={{
-                          width: "100%",
-                          marginLeft: "0%",
-                          height: "100%",
-                          top: "0%",
-                          backgroundColor: "rgba(12, 200, 99, 1)",
-                          borderRadius: "8px 8px 8px 8px",
-                      }}
-                      className="innerDiv"
-                      onClick={!this.state.accepted ? this.acceptRequest : null}
-                  ></div>
+                    <div
+                        id="I38:417;35:526"
+                        style={{
+                            width: "100%",
+                            marginLeft: "0%",
+                            height: "100%",
+                            top: "0%",
+                            backgroundColor: "rgba(12, 200, 99, 1)",
+                            borderRadius: "8px 8px 8px 8px",
+                        }}
+                        className="innerDiv"
+                        onClick={!this.state.accepted ? this.acceptRequest : null}
+                    ></div>
                 </div>
               </div>
             </div>
@@ -250,16 +262,16 @@ export class FriendRequest extends React.Component {
             }}
             className="outerDiv centerer"
           >
-            <div
-                className="innerDiv acceptFriendRequestButton"
-                onClick={!this.state.accepted ? this.acceptRequest : null}
-            >
-              <div>
+              <div
+                  className="innerDiv acceptFriendRequestButton"
+                  onClick={!this.state.accepted ? this.acceptRequest : null}
+              >
+                  <div>
                 <span style={{}} key="end">
                   {this.state.accepted ? "Accepted" : "Accept"}
                 </span>
+                  </div>
               </div>
-            </div>
           </div>
           <div
             style={{
@@ -298,53 +310,53 @@ export class FriendRequest extends React.Component {
       <div>
         {acceptButton}
         {declineButton}
-        <div
-          style={{
-            zIndex: 8,
-          }}
-          className="outerDiv centerer"
-        >
-            <div
-                style={{
-                    marginLeft: 8,
-                    marginRight: "40%",
-                    flexGrow: 1,
-                }}
-                className="innerDiv"
-            >
-                <div className="outerDiv centerer">
-                    <div className="innerDiv friendRequestPic vertCenterAndCut">
-                        <Image src={this.state.profilePic} roundedCircle fluid/>
-                    </div>
-                    <div
-                        style={{
-                            width: "100%",
-                            lineHeight: "135px",
-                            textAlign: "RIGHT",
-                        }}
-                        className="innerDiv textStyle"
-                    >
-                        {this.props.name}
-                    </div>
-            </div>
+          <div
+              style={{
+                  zIndex: 8,
+              }}
+              className="outerDiv centerer"
+          >
+              <div
+                  style={{
+                      marginLeft: 8,
+                      marginRight: "40%",
+                      flexGrow: 1,
+                  }}
+                  className="innerDiv"
+              >
+                  <div className="outerDiv centerer">
+                      <div className="innerDiv friendRequestPic vertCenterAndCut">
+                          <Image src={this.state.profilePic} roundedCircle fluid/>
+                      </div>
+                      <div
+                          style={{
+                              width: "100%",
+                              lineHeight: "135px",
+                              textAlign: "RIGHT",
+                          }}
+                          className="innerDiv textStyle"
+                      >
+                          {this.props.name}
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
-        <div
-          style={{
-            zIndex: 9,
-          }}
-          className="outerDiv centerer"
-        >
-            <div
-                id="I38:417;38:535"
-                style={{
-                    flexGrow: 1,
-                    height: 1,
-                    backgroundColor: "rgba(102, 0, 153, 1)",
-                }}
-                className="innerDiv"
-            ></div>
-        </div>
+          <div
+              style={{
+                  zIndex: 9,
+              }}
+              className="outerDiv centerer"
+          >
+              <div
+                  id="I38:417;38:535"
+                  style={{
+                      flexGrow: 1,
+                      height: 1,
+                      backgroundColor: "rgba(102, 0, 153, 1)",
+                  }}
+                  className="innerDiv"
+              ></div>
+          </div>
       </div>
     );
   }

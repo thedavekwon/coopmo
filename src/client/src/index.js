@@ -4,13 +4,15 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {Provider} from "react-redux";
-import store from "./redux/store";
+import {persistor, store} from "./redux/store";
 import App from "./components/App";
+import {PersistGate} from 'redux-persist/integration/react'
 
 ReactDOM.render(
     <Provider store={store}>
-        {/*<LoginPage domainName="http://localhost:8080"/>*/}
-        <App/>
+        <PersistGate loading={null} persistor={persistor}>
+            <App/>
+        </PersistGate>
     </Provider>,
     document.getElementById("root")
 );

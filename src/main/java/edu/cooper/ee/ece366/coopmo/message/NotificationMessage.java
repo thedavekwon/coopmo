@@ -13,7 +13,7 @@ public class NotificationMessage {
     private final String type;
 
     public NotificationMessage(User fromUser, Payment payment) {
-
+        //https://stackoverflow.com/questions/2379221/java-currency-number-format
         this.message = fromUser.getHandle() + " sent " + NumberFormat.getCurrencyInstance(new Locale("en", "US"))
                 .format(payment.getAmount() / 100.0);
         this.timestamp = payment.getTimestamp();

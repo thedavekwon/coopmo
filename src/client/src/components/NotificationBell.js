@@ -2,7 +2,6 @@ import React from "react";
 import {connect} from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import Image from "react-bootstrap/Image";
 import Notification from "./Notification";
 import bellPurple from "../Essentials Icon Pack/bell_purple.png";
 import bellNotifPurple from "../Essentials Icon Pack/bell_notif_purple.png";
@@ -114,7 +113,7 @@ class NotificationBell extends React.Component {
               </Popover>
             }
         >
-          <Image src={bellImg} fluid onClick={this.updateNotificationList}/>
+          <img src={bellImg} className="notificationPic" onClick={this.updateNotificationList}/>
         </OverlayTrigger>
     );
   }

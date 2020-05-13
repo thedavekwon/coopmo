@@ -102,46 +102,13 @@ class TitleBar extends React.Component {
             this.props.page === "main"
                 ? "rgba(255, 255, 255, 1)"
                 : "rgba(102, 0, 153, 1)";
-        let includeBalance = (
+
+        return (
             <div
                 style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
+                    height: "100%",
                 }}
             >
-                <div>
-                    <img src={this.state.profilePic} style={{
-                        borderRadius: "50%",
-                    }} className="friendListPic"/>
-                </div>
-                <div
-                    style={{
-                        backgroundColor: backgroundColor,
-                        color: textColor,
-                        textAlign: "center",
-                        lineHeight: 1
-                    }}
-                    className="textStyle"
-                >
-          <span>
-            Balance :{" "}
-              {this.state.balance !== null
-                  ? formatMoney(this.state.balance)
-                  : "Loading..."}
-          </span>
-                </div>
-                <div className="bellPng">
-                    <NotificationBell
-                        color={this.props.page === "main" ? "white" : "purple"}
-                    />
-                </div>
-            </div>
-        );
-        return (
-            <div style={{
-                height: "100%",
-            }}>
                 <div
                     style={{
                         width: "100%",
@@ -151,35 +118,81 @@ class TitleBar extends React.Component {
                         alignItems: "center",
                     }}
                 >
-                    <div style={{
-                        flex: 1
-                    }}>
+                    <div
+                        style={{
+                            flex: 2,
+                        }}
+                    >
                         <MenuButton
                             textColor={textColor}
                             page={this.props.page}
                             domainName={this.props.domainName}
                         />
                     </div>
-                    <div style={{
-                        flex: 1,
-                        textAlign: "center",
-                    }}>
-                        <span style={{
-                            fontSize: 73,
-                            fontStyle: "normal",
-                            color: textColor
-                        }}>Coop</span>
-                        <span style={{
-                            fontSize: 73,
-                            fontStyle: "normal",
-                        }}>mo</span>
-                    </div>
-                    <div style={{
-                        flex: 1
-                    }}>
-                        {includeBalance}
-                    </div>
+                    <div style={{flex: 1}}>
 
+                    </div>
+                    <div
+                        style={{
+                            flex: 7,
+                            textAlign: "center",
+                        }}
+                    >
+            <span
+                style={{
+                    fontSize: 73,
+                    fontStyle: "normal",
+                    color: textColor,
+                }}
+            >
+              Coop
+            </span>
+                        <span
+                            style={{
+                                fontSize: 73,
+                                fontStyle: "normal",
+                            }}
+                        >
+              mo
+            </span>
+                    </div>
+                    <div
+                        style={{
+                            flex: 1,
+
+                            textAlign: "center",
+                        }}
+                    >
+                        <img
+                            src={this.state.profilePic}
+                            style={{
+                                borderRadius: "50%",
+                            }}
+                            className="friendListPic"
+                        />
+                    </div>
+                    <div
+                        style={{
+                            backgroundColor: backgroundColor,
+                            color: textColor,
+                            textAlign: "center",
+                            lineHeight: 1,
+                            flex: 1,
+                        }}
+                        className="textStyle"
+                    >
+          <span>
+            Balance: {" "}
+              {this.state.balance !== null
+                  ? formatMoney(this.state.balance)
+                  : "Loading..."}
+          </span>
+                    </div>
+                    <div style={{flex: 1, textAlign: "center"}}>
+                        <NotificationBell
+                            color={this.props.page === "main" ? "white" : "purple"}
+                        />
+                    </div>
                 </div>
             </div>
         );

@@ -1,7 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.repository;
 
 import edu.cooper.ee.ece366.coopmo.model.Cash;
-import edu.cooper.ee.ece366.coopmo.model.Payment;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

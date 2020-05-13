@@ -22,7 +22,7 @@ class MenuButton extends React.Component {
       backgroundColor: this.props.backgroundColor,
     };
     return (
-      <div style={bColorStyle}>
+        <div style={bColorStyle}>
           <div
               className={
                 this.props.page === "main"
@@ -41,7 +41,7 @@ class MenuButton extends React.Component {
               </span>
             </div>
           </div>
-      </div>
+        </div>
     );
   }
 }

@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import FormAlert from "./FormAlert.js";
+import {persistor} from "../redux/store";
 
 export default class AddFriendForm extends React.Component {
   constructor(props) {
@@ -44,7 +45,12 @@ export default class AddFriendForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.findUserRequest),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               console.log(result);
@@ -86,7 +92,7 @@ export default class AddFriendForm extends React.Component {
     this.setState((state) => ({
       request: newRequest,
     }));
-  }
+  };
 
   setMessage(message, messageType) {
     var newRespMessage = this.state.respMessage;
@@ -94,7 +100,7 @@ export default class AddFriendForm extends React.Component {
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
-      showMessage: true
+      showMessage: true,
     }));
   }
 
@@ -111,7 +117,12 @@ export default class AddFriendForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.request),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error != null) {
@@ -133,8 +144,8 @@ export default class AddFriendForm extends React.Component {
           <FormAlert
               onClose={() => {
                 this.setState((state) => ({
-                  showMessage: false
-                }))
+                  showMessage: false,
+                }));
               }}
               showMessage={this.state.showMessage}
               messageType={this.state.respMessage.messageType}

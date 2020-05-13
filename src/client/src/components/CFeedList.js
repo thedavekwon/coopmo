@@ -3,7 +3,6 @@ import CFeedItemPayment from "./CFeedItemPayment.js";
 import CFeedItemBank from "./CFeedItemBank.js";
 import CFeedItemEmpty from "./CFeedItemEmpty.js";
 import {fetchFeed, fetchFeedFrom} from "../functions/fetchFeed";
-import debounce from "lodash.debounce";
 
 export default class CFeedList extends React.Component {
   constructor(props) {

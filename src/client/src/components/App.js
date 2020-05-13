@@ -4,8 +4,9 @@ import MainPage from "./MainPage";
 import MenuPage from "./MenuPage";
 import CreateUserPage from "./CreateUserPage";
 import {connect} from "react-redux";
-import {addDomainName, addNotification, changeNewNotifications, changeRefreshState} from "../redux/actions";
+import {addDomainName, addNotification, changeNewNotifications, changeRefreshState,} from "../redux/actions";
 import SockJsClient from "react-stomp";
+import {persistor} from "../redux/store";
 
 class App extends React.Component {
   constructor(props) {
@@ -16,24 +17,41 @@ class App extends React.Component {
     this.props.addDomainName("http://localhost:8080");
   }
 
-  receivedNotification = (message) => {
-      this.props.addNotification(message);
-      switch (message.type) {
-          case("FRIENDREQUEST"):
-              this.props.changeRefreshState("refreshFriendRequests", true);
-              break;
-          case("FRIENDACCEPT"):
-              this.props.changeRefreshState("refreshFriendsList", true);
-              break;
-          case("PAYMENT"):
-              this.props.changeRefreshState("refreshFeed", true);
-              this.props.changeRefreshState("refreshBalance", true);
-              break;
-          default:
-              break;
+  getBalance = () => {
+    const path = "http://localhost:8080/user/getUserBalance";
+    fetch(path, {
+      method: "GET",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache",
+      },
+      credentials: "include",
+    }).then((res) => {
+      if (res.status === 302) {
+        persistor.purge();
       }
-      this.props.changeNewNotifications(true);
-      console.log(message);
+      return res.json();
+    });
+  };
+
+  receivedNotification = (message) => {
+    this.props.addNotification(message);
+    switch (message.type) {
+      case "FRIENDREQUEST":
+        this.props.changeRefreshState("refreshFriendRequests", true);
+        break;
+      case "FRIENDACCEPT":
+        this.props.changeRefreshState("refreshFriendsList", true);
+        break;
+      case "PAYMENT":
+        this.props.changeRefreshState("refreshFeed", true);
+        this.props.changeRefreshState("refreshBalance", true);
+        break;
+      default:
+        break;
+    }
+    this.props.changeNewNotifications(true);
+    console.log(message);
   };
 
   render() {
@@ -73,8 +91,8 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, {
-    addDomainName,
-    addNotification,
-    changeRefreshState,
-    changeNewNotifications
+  addDomainName,
+  addNotification,
+  changeRefreshState,
+  changeNewNotifications,
 })(App);

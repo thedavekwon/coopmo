@@ -6,6 +6,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormAlert from "./FormAlert.js";
 import {connect} from "react-redux";
 import {changeRefreshState} from "../redux/actions";
+import {persistor} from "../redux/store";
 
 class CashInForm extends React.Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class CashInForm extends React.Component {
     newRespMessage.messageType = messageType;
     this.setState((state) => ({
       respMessage: newRespMessage,
-      showMessage: true
+      showMessage: true,
     }));
   }
 
@@ -72,14 +73,22 @@ class CashInForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.request),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error != null) {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
-                this.setMessage("Successfully Cashed " + this.state.request.type + "!", "SUCCESS");
+                this.setMessage(
+                    "Successfully Cashed " + this.state.request.type + "!",
+                    "SUCCESS"
+                );
                 this.props.changeRefreshState("refreshBalance", true);
               }
             },
@@ -99,7 +108,12 @@ class CashInForm extends React.Component {
       },
       credentials: "include",
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error != null) {
@@ -140,21 +154,20 @@ class CashInForm extends React.Component {
     const cashType = [
       {
         value: "IN",
-        label: "Cash In"
+        label: "Cash In",
       },
       {
         value: "OUT",
-        label: "Cash Out"
-      }
-
-    ]
+        label: "Cash Out",
+      },
+    ];
     return (
         <>
           <FormAlert
               onClose={() => {
                 this.setState((state) => ({
-                  showMessage: false
-                }))
+                  showMessage: false,
+                }));
               }}
               showMessage={this.state.showMessage}
               messageType={this.state.respMessage.messageType}
@@ -211,6 +224,5 @@ class CashInForm extends React.Component {
     );
   }
 }
-
 
 export default connect(null, {changeRefreshState})(CashInForm);

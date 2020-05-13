@@ -3,7 +3,7 @@ import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import Col from "react-bootstrap/Col";
-
+import {persistor} from "../redux/store";
 
 export default class FriendEntry extends React.Component {
   constructor(props) {
@@ -37,6 +37,8 @@ export default class FriendEntry extends React.Component {
             profilePic: url,
           }));
         });
+      } else if (res.status === 302) {
+        persistor.purge();
       } else {
         let url = defaultImg;
         this.setState((state) => ({
@@ -48,7 +50,23 @@ export default class FriendEntry extends React.Component {
 
   render() {
     return (
-          <div >
+        <Row>
+          <div className="outerDiv" style={{width: "25%"}}>
+            <div className="innerDiv friendListPic">
+              <Image style={{width: "100%", height: "100%"}} src={this.state.profilePic} roundedCircle fluid/>
+            </div>
+          </div>
+
+          <Col xl={9} fluid>
+            <div style={{width: "100%", height: "100%"}}>
+              <div key="end" className="innerDiv vertCenterAndCut textStyle">
+                {this.props.friend.name}
+              </div>
+            </div>
+          </Col>
+        </Row>
+        /*
+            <div >
             <img src={this.state.profilePic} style={{
                 marginLeft: "-10px",
                 borderRadius:"50%",
@@ -57,6 +75,7 @@ export default class FriendEntry extends React.Component {
             {this.props.friend.name}
             </span>
           </div>
+         */
     );
   }
 }

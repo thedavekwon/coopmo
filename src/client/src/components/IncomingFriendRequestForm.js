@@ -2,8 +2,11 @@ import React from "react";
 import {FriendRequest} from "./FriendRequest";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
+import {persistor} from "../redux/store";
 
-export default class IncomingFriendRequests extends React.Component {
+class IncomingFriendRequests extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -11,6 +14,13 @@ export default class IncomingFriendRequests extends React.Component {
             incomingRequests: [],
         };
         this.getIncomingRequests();
+    }
+
+    componentDidUpdate() {
+        if (this.props.refreshFriendRequests) {
+            this.getIncomingRequests();
+            this.props.changeRefreshState("refreshFriendRequests", false);
+        }
     }
 
     getIncomingRequests = () => {
@@ -23,7 +33,12 @@ export default class IncomingFriendRequests extends React.Component {
             },
             credentials: "include",
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
@@ -69,24 +84,33 @@ export default class IncomingFriendRequests extends React.Component {
                                     ></FriendRequest>
                                 </div>
                             </Row>
-
                         );
                     })}
                 </Container>
-      );
+            );
+        }
+        return (
+            <div
+                className="innerDiv centerer"
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    overflowY: "scroll",
+                    scrollbarColor: "rgba(102, 0, 153, 1)",
+                }}
+            >
+                {friendRequests}
+            </div>
+        );
     }
-    return (
-        <div
-            className="innerDiv centerer"
-            style={{
-                height: "100%",
-                width: "100%",
-                overflowY: "scroll",
-                scrollbarColor: "rgba(102, 0, 153, 1)",
-            }}
-        >
-            {friendRequests}
-        </div>
-    );
-  }
 }
+
+function mapStateToProps(state) {
+    return {
+        refreshFriendRequests: state.refreshFriendRequests,
+    };
+}
+
+export default connect(mapStateToProps, {changeRefreshState})(
+    IncomingFriendRequests
+);

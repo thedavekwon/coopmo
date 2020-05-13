@@ -6,6 +6,7 @@ import Select from "react-select";
 import FormAlert from "./FormAlert.js";
 import {connect} from "react-redux";
 import {changeRefreshState} from "../redux/actions";
+import {persistor} from "../redux/store";
 
 class SendPaymentForm extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class SendPaymentForm extends React.Component {
         toUserId: "",
         amount: 0,
         type: "PRIVATE",
-        comment: "YEEE",
+        comment: "",
       },
       findUserRequest: {
         match: "",
@@ -61,7 +62,12 @@ class SendPaymentForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.findUserRequest),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               console.log(result);
@@ -122,7 +128,7 @@ class SendPaymentForm extends React.Component {
     this.setState((state) => ({
       request: newRequest,
     }));
-  }
+  };
 
   sendRequest = (event) => {
     event.preventDefault();
@@ -137,7 +143,12 @@ class SendPaymentForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.request),
     })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 302) {
+            persistor.purge();
+          }
+          return res.json();
+        })
         .then(
             (result) => {
               if (result.error != null) {
@@ -175,8 +186,8 @@ class SendPaymentForm extends React.Component {
           <FormAlert
               onClose={() => {
                 this.setState((state) => ({
-                  showMessage: false
-                }))
+                  showMessage: false,
+                }));
               }}
               showMessage={this.state.showMessage}
               messageType={this.state.respMessage.messageType}

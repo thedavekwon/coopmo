@@ -8,26 +8,25 @@ import CashInForm from "./CashInForm.js";
 import SendPaymentForm from "./SendPaymentForm.js";
 import TitleBar from "./TitleBar.js";
 import {connect} from "react-redux";
-import {changeLogin, changePage} from "../redux/actions";
+import {changeLogin, changeMenuPage, changePage} from "../redux/actions";
+import {persistor} from "../redux/store";
 
 class MenuPage extends PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activePage: "Edit Profile",
-        };
-        this.changePage = this.changePage.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      activePage: "Edit Profile",
+    };
+    this.changePage = this.changePage.bind(this);
+  }
 
-    changePage(newPage) {
-        this.setState((state) => ({
-            activePage: newPage,
-        }));
-    }
+  changePage(newPage) {
+    this.props.changeMenuPage(newPage);
+  }
 
-    signOut = () => {
-        var path = this.props.domainName + "/logout";
-        fetch(path, {
+  signOut = () => {
+    var path = this.props.domainName + "/logout";
+    fetch(path, {
       method: "GET",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -36,29 +35,57 @@ class MenuPage extends PureComponent {
       credentials: "include",
     }).then((res) => {
       if (res.status === 200) {
-          this.props.changeLogin(false);
-          this.props.changePage("Login");
+        persistor.purge();
+      } else if (res.status === 302) {
+        persistor.purge();
       }
     });
   };
 
   render() {
     let formPage;
-    if (this.state.activePage === "Edit Profile")
-      formPage = <EditProfileForm domainName={this.props.domainName}/>;
-    else if (this.state.activePage === "Add Friend")
-      formPage = <AddFriendForm domainName={this.props.domainName}/>;
-    else if (this.state.activePage === "Incoming Friend Requests")
+    switch (this.props.activeMenuPage) {
+      case "Edit Profile":
+        formPage = <EditProfileForm domainName={this.props.domainName}/>;
+        break;
+      case "Add Friend":
+        formPage = <AddFriendForm domainName={this.props.domainName}/>;
+        break;
+      case "Incoming Friend Requests":
+        formPage = (
+            <IncomingFriendRequestForm domainName={this.props.domainName}/>
+        );
+        break;
+      case "Add a Bank Account":
+        formPage = <AddBankAccounts domainName={this.props.domainName}/>;
+        break;
+      case "Cash In":
+        formPage = <CashInForm domainName={this.props.domainName}/>;
+        break;
+      case "Send Payment":
+        formPage = <SendPaymentForm domainName={this.props.domainName}/>;
+        break;
+      default:
+        this.signOut();
+        break;
+    }
+    /*
+    if (this.props.activeMenuPage === "Edit Profile")
+        formPage = <EditProfileForm domainName={this.props.domainName}/>;
+    else if (this.props.activeMenuPage === "Add Friend")
+        formPage = <AddFriendForm domainName={this.props.domainName}/>;
+    else if (this.props.activeMenuPage === "Incoming Friend Requests")
       formPage = (
           <IncomingFriendRequestForm domainName={this.props.domainName}/>
       );
-    else if (this.state.activePage === "Add a Bank Account")
-      formPage = <AddBankAccounts domainName={this.props.domainName}/>;
+    else if (this.props.activeMenuPage === "Add a Bank Account")
+        formPage = <AddBankAccounts domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Cash In")
-      formPage = <CashInForm domainName={this.props.domainName}/>;
+        formPage = <CashInForm domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Send Payment")
-      formPage = <SendPaymentForm domainName={this.props.domainName}/>;
+        formPage = <SendPaymentForm domainName={this.props.domainName}/>;
     else this.signOut();
+    */
 
     let pages = [
       "Edit Profile",
@@ -94,7 +121,7 @@ class MenuPage extends PureComponent {
               <MenuTab
                   {...this.props}
                   name={value}
-                  active={this.state.activePage}
+                  active={this.props.activeMenuPage}
               />
             </div>
           </div>
@@ -140,8 +167,7 @@ class MenuPage extends PureComponent {
                     backgroundColor: "rgba(102, 0, 153, 1)",
                   }}
                   className="innerDiv"
-              >
-              </div>
+              ></div>
             </div>
             <div className="outerDiv centerer">
               <div
@@ -155,7 +181,7 @@ class MenuPage extends PureComponent {
               </div>
             </div>
 
-              <TitleBar page="editProfile" domainName={this.props.domainName}/>
+            <TitleBar page="editProfile" domainName={this.props.domainName}/>
           </div>
         </div>
     );
@@ -163,9 +189,10 @@ class MenuPage extends PureComponent {
 }
 
 function mapStateToProps(state) {
-    return {
-        domainName: state.domainName
-    }
+  return {
+    domainName: state.domainName,
+    activeMenuPage: state.activeMenuPage,
+  };
 }
 
-export default connect(mapStateToProps, {changePage, changeLogin})(MenuPage);
+export default connect(mapStateToProps, {changePage, changeLogin, changeMenuPage})(MenuPage);

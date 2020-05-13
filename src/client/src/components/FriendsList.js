@@ -1,14 +1,24 @@
 import React from "react";
 import FriendEntry from "./FriendEntry.js";
 import Container from "react-bootstrap/Container";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
+import {persistor} from "../redux/store";
 
-export default class FriendsList extends React.Component {
+class FriendsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             friendsList: [],
         };
         this.getFriendsList();
+    }
+
+    componentDidUpdate() {
+        if (this.props.refreshFriendsList) {
+            this.getFriendsList();
+            this.props.changeRefreshState("refreshFriendsList", false);
+        }
     }
 
     getFriendsList = () => {
@@ -21,7 +31,12 @@ export default class FriendsList extends React.Component {
             },
             credentials: "include",
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     console.log(result);
@@ -44,15 +59,21 @@ export default class FriendsList extends React.Component {
 
     render() {
         let friends;
-        if (this.state.friendsList !== null) {
+        if (this.state.friendsList != null && this.state.friendsList.length !== 0) {
             friends = (
                 <>
                     {this.state.friendsList.map((friend, key) => {
                         return (
-                            <FriendEntry friend={friend} domainName={this.props.domainName} key={key}/>
+                            <FriendEntry friend={friend} domainName={this.props.domainName}/>
                         );
                     })}
                 </>
+            );
+        } else {
+            friends = (
+                <div className="innerDiv textStyle" style={{height: "100%", width: "100%"}}>
+                    You have no friends :(
+                </div>
             );
         }
 
@@ -83,7 +104,7 @@ export default class FriendsList extends React.Component {
                 <div>
                     <div
                         style={{
-                            overflowY: "scroll",
+                            overflowY: "auto",
                             height: "100%"
                         }}
                     >
@@ -94,3 +115,11 @@ export default class FriendsList extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        refreshFriendsList: state.refreshFriendsList,
+    };
+}
+
+export default connect(mapStateToProps, {changeRefreshState})(FriendsList);

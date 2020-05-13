@@ -2,17 +2,18 @@ import {
   ADD_DOMAIN_NAME,
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
+  CHANGE_MENU_PAGE,
   CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
   DELETE_NOTIFICATION,
   CHANGE_USERNAME,
 } from "../action-types";
+import {PURGE} from "redux-persist";
 
 const initialState = {
-  state: {},
   activePage: "Login",
-  domainName: "",
+  domainName: "http://localhost:8080",
   loggedIn: false,
   newNotifications: false,
   friendNotifications: [],
@@ -23,6 +24,7 @@ const initialState = {
   refreshFriendRequests: false,
   refreshProfilePic: false,
   username: "",
+  activeMenuPage: "Edit Profile"
 };
 
 function rootReducer(state = initialState, action) {
@@ -74,6 +76,15 @@ function rootReducer(state = initialState, action) {
       return {
         ...state,
         username: action.payload.username,
+      }
+
+    case PURGE:
+      return initialState;
+    case CHANGE_MENU_PAGE:
+      return {
+        ...state,
+        activeMenuPage: action.payload.newPage,
+        activePage: "MenuPage",
       }
     default:
       return state;

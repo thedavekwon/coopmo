@@ -2,48 +2,54 @@ import React from "react";
 import FriendsList from "./FriendsList.js";
 import CFeed from "./CFeed.js";
 import TitleBar from "./TitleBar.js";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
+import { persistor } from "../redux/store";
 
 class MainPage extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            feedTab: "Me",
-            balance: 0,
-        };
-    }
-
-    getBalance = () => {
-        const path = this.props.domainName + "/user/getUserBalance";
-        fetch(path, {
-            method: "GET",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Cache-Control": "no-cache",
-            },
-            credentials: "include",
-        })
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    console.log(result);
-                    if (result.error != null) {
-                        console.log(result.error);
-                    } else {
-                        this.setState((state) => ({
-                            balance: result.data,
-                        }));
-                    }
-                },
-                (error) => {
-                    console.log(error);
-                }
-            );
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedTab: "Me",
+      balance: 0,
     };
+  }
 
-    componentDidMount() {
-        this.getBalance();
-    }
+  getBalance = () => {
+    const path = this.props.domainName + "/user/getUserBalance";
+    fetch(path, {
+      method: "GET",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache",
+      },
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.status === 302) {
+          persistor.purge();
+        }
+        return res.json();
+      })
+      .then(
+        (result) => {
+          console.log(result);
+          if (result.error != null) {
+            console.log(result.error);
+          } else {
+            this.setState((state) => ({
+              balance: result.data,
+            }));
+          }
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  };
+
+  componentDidMount() {
+    this.getBalance();
+  }
 
     render() {
         return (
@@ -114,9 +120,9 @@ class MainPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    return {
-        domainName: state.domainName,
-    };
+  return {
+    domainName: state.domainName,
+  };
 }
 
 export default connect(mapStateToProps)(MainPage);

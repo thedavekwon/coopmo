@@ -2,6 +2,7 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import FormAlert from "./FormAlert.js";
+import {persistor} from "../redux/store";
 
 export default class AddBankAccounts extends React.Component {
     constructor(props) {
@@ -27,14 +28,13 @@ export default class AddBankAccounts extends React.Component {
         this.setState((state) => ({request: newRequest}));
     };
 
-
     setMessage(message, messageType) {
         var newRespMessage = this.state.respMessage;
         newRespMessage.message = message;
         newRespMessage.messageType = messageType;
         this.setState((state) => ({
             respMessage: newRespMessage,
-            showMessage: true
+            showMessage: true,
         }));
     }
 
@@ -51,7 +51,12 @@ export default class AddBankAccounts extends React.Component {
             credentials: "include",
             body: JSON.stringify(this.state.request),
         })
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
             .then(
                 (result) => {
                     if (result.error != null) {
@@ -75,12 +80,12 @@ export default class AddBankAccounts extends React.Component {
             },
             {
                 name: "Account Number",
-                valKey: "accountNumber"
+                valKey: "accountNumber",
             },
             {
                 name: "Nickname",
                 valKey: "nickname",
-            }
+            },
         ];
         let formBlocks = formEntries.map((formEntry, index) => {
             return (
@@ -106,8 +111,8 @@ export default class AddBankAccounts extends React.Component {
                 <FormAlert
                     onClose={() => {
                         this.setState((state) => ({
-                            showMessage: false
-                        }))
+                            showMessage: false,
+                        }));
                     }}
                     showMessage={this.state.showMessage}
                     messageType={this.state.respMessage.messageType}

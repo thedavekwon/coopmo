@@ -49,7 +49,7 @@ export default class CFeed extends React.Component {
                         flex: "0 0 45px",
                         display: "flex"
                     }}
-                    >
+                >
                     {feedTabs}
                 </div>
                 <div style={{
@@ -57,7 +57,7 @@ export default class CFeed extends React.Component {
                     }}>
                 </div>
                 <div style={{
-                    height: "100%"
+                    height: "90%"
                 }}>
                     <CFeedList
                         feedTab={this.state.feedTab}

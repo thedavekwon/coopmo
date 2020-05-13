@@ -22,24 +22,26 @@ class MenuButton extends React.Component {
       backgroundColor: this.props.backgroundColor,
     };
     return (
-      <div className="master" style={bColorStyle}>
-          <div className="outerDiv centerer">
-            <div
-                className={
-                  this.props.page === "main"
-                      ? "innerDiv vertCenterAndCut menuButton"
-                      : "innerDiv vertCenterAndCut menuButtonAlt"
-                }
-            >
-              <div onClick={this.handleClick}>
-                {/* <span style={textStyle} key="end"> */}
-                <span key="end">
-                  Menu
-                </span>
-              </div>
+        <div style={bColorStyle}>
+          <div
+              className={
+                this.props.page === "main"
+                    ? " menuButton"
+                    : " menuButtonAlt"
+              }
+
+              style={{
+                lineHeight: "100%"
+              }}
+          >
+            <div onClick={this.handleClick}>
+              {/* <span style={textStyle} key="end"> */}
+              <span>
+                Menu
+              </span>
             </div>
           </div>
-      </div>
+        </div>
     );
   }
 }

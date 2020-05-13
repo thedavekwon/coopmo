@@ -1,7 +1,6 @@
 import React from "react";
 import MenuButton from "./MenuButton.js";
 import {formatMoney} from "../functions/formatMoney";
-import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import NotificationBell from "./NotificationBell.js";
 import {changeRefreshState} from "../redux/actions";
@@ -106,29 +105,24 @@ class TitleBar extends React.Component {
         let includeBalance = (
             <div
                 style={{
-                    zIndex: 3,
-                    width: "17.5%",
-                    top: "25%",
-                    height: "50%",
-                    marginLeft: "80%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
                 }}
-                className="outerDiv centerer"
             >
-                <div className="innerDiv friendListPic vertCenterAndCut">
-                    <div className="innerDiv" style={{height: "100%", width: "100%"}}>
-                        <Image style={{height: "100%", width: "100%"}} src={this.state.profilePic} roundedCircle fluid/>
-                    </div>
-
+                <div>
+                    <img src={this.state.profilePic} style={{
+                        borderRadius: "50%",
+                    }} className="friendListPic"/>
                 </div>
-
                 <div
                     style={{
-                        flexGrow: 1,
                         backgroundColor: backgroundColor,
                         color: textColor,
-                        textAlign: "CENTER",
+                        textAlign: "center",
+                        lineHeight: 1
                     }}
-                    className="innerDiv vertCenterAndCut textStyle"
+                    className="textStyle"
                 >
           <span>
             Balance :{" "}
@@ -137,8 +131,7 @@ class TitleBar extends React.Component {
                   : "Loading..."}
           </span>
                 </div>
-
-                <div className="innerDiv bellPng vertCenterAndCut">
+                <div className="bellPng">
                     <NotificationBell
                         color={this.props.page === "main" ? "white" : "purple"}
                     />
@@ -146,111 +139,47 @@ class TitleBar extends React.Component {
             </div>
         );
         return (
-            <div
-                style={{
-                    zIndex: 0,
-                }}
-                className="outerDiv centerer"
-            >
+            <div style={{
+                height: "100%",
+            }}>
                 <div
-                    id="76:47"
                     style={{
                         width: "100%",
-                        marginLeft: "0%",
-                        height: "10.3515625%",
-                        top: "0%",
-                        backgroundColor: "rgba(0, 0, 0, 0)",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        backgroundColor: backgroundColor,
+                        alignItems: "center",
                     }}
-                    className="innerDiv"
                 >
-                    <div style={{}} className="outerDiv centerer">
-                        <div
-                            id="I76:47;76:20"
-                            style={{
-                                flexGrow: 1,
-                                backgroundColor: backgroundColor,
-                            }}
-                            className="innerDiv"
-                        >
-                            <div style={{}} className="outerDiv centerer">
-                                <div
-                                    style={{
-                                        flexGrow: 1,
-                                        backgroundColor: backgroundColor,
-                                    }}
-                                    className="innerDiv"
-                                ></div>
-                            </div>
-                            <div
-                                style={{
-                                    flexGrow: 1,
-                                    width: "10%",
-                                    top: "25%",
-                                    height: "50%",
-                                    marginLeft: "2%",
-                                }}
-                                className="outerDiv centerer "
-                            >
-                                <div
-                                    style={{
-                                        flexGrow: 1,
-                                        backgroundColor: "rgba(0, 0, 0, 1)",
-                                    }}
-                                    className="innerDiv vertCutAndCenter"
-                                >
-                                    <MenuButton
-                                        backgroundColor={backgroundColor}
-                                        textColor={textColor}
-                                        page={this.props.page}
-                                        domainName={this.props.domainName}
-                                    />
-                                </div>
-                            </div>
-                            <div
-                                style={{
-                                    zIndex: 2,
-                                    top: "25%",
-                                    height: "50%",
-                                }}
-                                className="outerDiv vertCenterAndCut"
-                            >
-                                <div
-                                    style={{
-                                        marginLeft: "40%",
-                                        marginRight: "40%",
-                                        flexGrow: 1,
-                                        fontSize: 73,
-                                        fontWeight: 700,
-                                        textAlign: "CENTER",
-                                    }}
-                                    className="innerDiv vertCenterAndCut textStyle"
-                                >
-                                    <div>
-                    <span
-                        style={{
+                    <div style={{
+                        flex: 1
+                    }}>
+                        <MenuButton
+                            textColor={textColor}
+                            page={this.props.page}
+                            domainName={this.props.domainName}
+                        />
+                    </div>
+                    <div style={{
+                        flex: 1,
+                        textAlign: "center",
+                    }}>
+                        <span style={{
                             fontSize: 73,
                             fontStyle: "normal",
-                            color: textColor,
-                        }}
-                        key="4"
-                    >
-                      Coop
-                    </span>
-                                        <span
-                                            style={{
-                                                fontSize: 73,
-                                                fontStyle: "normal",
-                                            }}
-                                            key="end"
-                                        >
-                      mo
-                    </span>
-                                    </div>
-                                </div>
-                            </div>
-                            {includeBalance}
-                        </div>
+                            color: textColor
+                        }}>Coop</span>
+                        <span style={{
+                            fontSize: 73,
+                            fontStyle: "normal",
+                        }}>mo</span>
                     </div>
+                    <div style={{
+                        flex: 1
+                    }}>
+                        {includeBalance}
+                    </div>
+
                 </div>
             </div>
         );

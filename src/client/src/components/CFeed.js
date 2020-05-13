@@ -39,19 +39,18 @@ export default class CFeed extends React.Component {
 
 
         return (
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0)",
-                height: "100%"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0)", height:"100%"}}>
                 <div
                     style={{
                         height: "45px",
                         display: "flex"
                     }}
-                    >
+                >
                     {feedTabs}
                 </div>
                 <div
                     style={{
-                        marginTop: 20
+                        height:"90%"
                     }}
                 >
                     <CFeedList

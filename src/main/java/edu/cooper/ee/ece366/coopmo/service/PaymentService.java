@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 
 @Service
 public class PaymentService {
@@ -27,7 +25,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment createPayment(String fromUserId, String toUserId, Long amount, Payment.PaymentType type, String comment)
+    public Payment createPayment(String fromUserId, String toUserId, long amount, Payment.PaymentType type, String comment)
             throws BaseExceptionHandler.InValidFieldValueException, BaseExceptionHandler.InvalidBalanceException {
         User fromUser = userService.checkValidUserId(fromUserId);
         User toUser = userService.checkValidUserId(toUserId);
@@ -57,8 +55,14 @@ public class PaymentService {
             paymentList.addAll(paymentRepository.getLatestFriendPayment(friend.getId()));
         }
 
-        if (paymentList.size() < Transaction.AMOUNT) return new ArrayList<>(paymentList);
-        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
+        ArrayList<Payment> returnArray;
+        if (paymentList.size() < Transaction.AMOUNT) {
+            returnArray = new ArrayList<>(paymentList);
+        } else {
+            returnArray = new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
+        }
+
+        return returnArray;
     }
 
     public ArrayList<Payment> getLatestFriendPaymentFrom(String userId, Timestamp timestamp) throws BaseExceptionHandler.InValidFieldValueException {
@@ -69,8 +73,15 @@ public class PaymentService {
             paymentList.addAll(paymentRepository.getLatestFriendPaymentFrom(friend.getId(), timestamp));
         }
 
-        if (paymentList.size() < Transaction.AMOUNT) return new ArrayList<>(paymentList);
-        return new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
+        ArrayList<Payment> returnArray;
+        if (paymentList.size() < Transaction.AMOUNT) {
+            returnArray = new ArrayList<>(paymentList);
+        } else {
+            returnArray = new ArrayList<>(new ArrayList<>(paymentList).subList(paymentList.size() - Transaction.AMOUNT, paymentList.size()));
+        }
+
+        return returnArray;
+
     }
 
     public Payment checkValidPaymentId(String paymentId) throws BaseExceptionHandler.InValidFieldValueException {

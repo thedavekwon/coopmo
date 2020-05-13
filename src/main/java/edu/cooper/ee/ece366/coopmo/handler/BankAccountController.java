@@ -1,6 +1,6 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
@@ -34,11 +34,7 @@ public class BankAccountController extends BaseController {
         }
         if (!checkValidRoutingNumberByDigit(bankAccountRequest.getRoutingNumber()))
             throw new InValidFieldValueException("Invalid Routing Number");
-        /*
-        if (bankAccountRequest.getUserId().isEmpty())
-            throw new EmptyFieldException("Empty Field");
 
-         */
         bankAccountRequest.setUserId(userId);
         if (bankAccountRequest.getBalance() == null)
             throw new EmptyFieldException("Empty Field");
@@ -58,36 +54,42 @@ public class BankAccountController extends BaseController {
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
-    private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") Long routingNumber) {
+    private boolean checkValidRoutingNumberByDigit(@RequestParam(value = "routingNumber", defaultValue = "") long routingNumber) {
         return (routingNumber / 1000000000) < 1;
     }
 
     public static class CreateBankAccountRequest {
         private String userId;
-        private final Long routingNumber;
-        private final Long balance;
+        private final String nickname;
+        private final long routingNumber;
+        private final long balance;
+        private final long accountNumber;
 
-        public CreateBankAccountRequest(Long routingNumber, Long balance) {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof MyUserDetails) {
-                userId = ((MyUserDetails) principal).getId();
-            } else {
-                userId = principal.toString();
-            }
+        public CreateBankAccountRequest(String nickname, long accountNumber, long routingNumber, long balance) {
+            this.nickname = nickname;
             this.routingNumber = routingNumber;
             this.balance = balance;
+            this.accountNumber = accountNumber;
+        }
+
+        public String getNickname() {
+            return nickname;
         }
 
         public String getUserId() {
             return userId;
         }
 
-        public void setUserId(String newUserId) {
-            userId = newUserId;
+        public void setUserId(String userId) {
+            this.userId = userId;
         }
 
-        public Long getRoutingNumber() {
+        public long getRoutingNumber() {
             return routingNumber;
+        }
+
+        public long getAccountNumber() {
+            return accountNumber;
         }
 
         public Long getBalance() {

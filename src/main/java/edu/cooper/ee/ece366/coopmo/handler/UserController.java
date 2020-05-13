@@ -1,54 +1,69 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-import edu.cooper.ee.ece366.coopmo.SecurityConfig.MyUserDetails;
+import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
 import edu.cooper.ee.ece366.coopmo.message.Message;
+import edu.cooper.ee.ece366.coopmo.message.NotificationMessage;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
 import edu.cooper.ee.ece366.coopmo.model.User;
 import edu.cooper.ee.ece366.coopmo.repository.UserRepository;
+import edu.cooper.ee.ece366.coopmo.service.NotificationService;
+import edu.cooper.ee.ece366.coopmo.service.StorageService;
 import edu.cooper.ee.ece366.coopmo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-
-// TODO (set all handler produce json and consumes json after converting)
-@CrossOrigin
 @RestController
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final StorageService storageService;
+    private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     @Autowired
-    public UserController(UserService userService, UserRepository userRepository) {
-        this.userRepository = userRepository;
-        this.userService = userService;
+    public UserController(UserService userService, UserRepository userRepository,
+                          StorageService storageService, NotificationService notificationService,
+                          PasswordEncoder passwordEncoder) {
+            this.userRepository = userRepository;
+            this.userService = userService;
+            this.storageService = storageService;
+            this.notificationService = notificationService;
+            this.passwordEncoder = passwordEncoder;
     }
 
-    private boolean validateEmail(String email) {
+    private boolean validateEmail (String email){
         // https://howtodoinjava.com/regex/java-regex-validate-email-address/
         String EMAIL_REGEX = "^(.+)@(.+)$";
         return Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE).matcher(email).matches();
     }
 
 
-    @PostMapping(path = "/createUser", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/createUser", consumes = "application/json")
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {
         Message respMessage = new Message();
+        user.setProfilePic(false);
 
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");
         }
+        user.setProfilePic(false);
 
         if (!validateEmail(user.getEmail())) {
             throw new InValidFieldValueException("Invalid Email Address");
@@ -135,13 +150,13 @@ public class UserController {
 
     // Debug Purpose
     @GetMapping(path = "/getUserSize")
-    public Long getUserSize() {
+    public long getUserSize() {
         return userRepository.count();
     }
 
     // Debug Purpose
-    @GetMapping(path = "/getUserWithId")
-    public User getUserWithId() {
+    @GetMapping(path = "/getUserWithId", produces = "application/json")
+    public ResponseEntity<?> getUserWithId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -151,7 +166,9 @@ public class UserController {
             userId = principal.toString();
         }
         Optional<User> curUser = userRepository.findById(userId);
-        return curUser.orElse(null);
+        Message respMessage = new Message();
+        respMessage.setData(curUser.orElse(null));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserBalance")
@@ -168,15 +185,14 @@ public class UserController {
 
         Message respMessage = new Message();
 
-        Long balance = userService.getUserBalance(userId);
+        long balance = userService.getUserBalance(userId);
         respMessage.setData(balance);
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @PostMapping(path = "/editProfile", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> editProfile(
-            @RequestBody EditProfileRequest editProfileRequest
-    ) throws EmptyFieldException {
+    public ResponseEntity<?> editProfile(@RequestBody EditProfileRequest editProfileRequest)
+            throws EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -190,7 +206,7 @@ public class UserController {
 
         String newName = editProfileRequest.getNewName();
         String newUsername = editProfileRequest.getNewUsername();
-        String newPassword = editProfileRequest.getNewPassword();
+        String newPassword = passwordEncoder.encode(editProfileRequest.getNewPassword());
         String newEmail = editProfileRequest.getNewEmail();
         String newHandle = editProfileRequest.getNewHandle();
 
@@ -232,13 +248,15 @@ public class UserController {
         }
 
         String friendId = acceptIncomingRequestRequest.getFriendId();
-        System.out.println(userId);
         Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {
             throw new EmptyFieldException("userId or friendId is empty");
         } else {
             if (userService.acceptIncomingRequest(userId, friendId) == 0) {
+                User fromUser = userService.checkValidUserId(userId);
+                User toUser = userService.checkValidUserId(friendId);
+                notificationService.notify(new NotificationMessage(fromUser, "FRIENDACCEPT"), toUser.getUsername());
                 return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else {
                 throw new InValidFieldValueException("No User with provided ID and/or Friend ID found in Incoming Requests");
@@ -259,8 +277,6 @@ public class UserController {
         }
 
         String friendId = sendOutRequestRequest.getFriendId();
-        System.out.println(userId);
-        System.out.println(friendId);
         Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {
@@ -268,6 +284,9 @@ public class UserController {
         } else {
             int ret_val = userService.sendOutRequest(userId, friendId);
             if (ret_val == 0) {
+                User fromUser = userService.checkValidUserId(userId);
+                User toUser = userService.checkValidUserId(friendId);
+                notificationService.notify(new NotificationMessage(fromUser, "FRIENDREQUEST"), toUser.getUsername());
                 return new ResponseEntity<>(respMessage, HttpStatus.OK);
             } else if (ret_val == -1) {
                 throw new BaseExceptionHandler.NoUserFoundException("No User with provided ID and/or Friend ID found");
@@ -367,15 +386,69 @@ public class UserController {
         }
     }
 
-    @PostMapping(path = "/findUsers", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/findUsers", consumes = "application/json")
     public ResponseEntity<?> findUsers(@RequestBody FindUsersRequest request) throws EmptyFieldException {
         if (request.getMatch().equals(""))
             throw new EmptyFieldException("Empty Field");
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
         Message respMessage = new Message();
         Set<User> users = userService.findUsers(request);
+        users.removeIf(user -> user.getId().equals(userId));
         respMessage.setData(users);
-
         return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/uploadProfilePic")
+    public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile file) throws InValidFieldValueException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
+        storageService.store(file, userId);
+        userService.addProfilePic(userId);
+        Message respMessage = new Message();
+        respMessage.setData("ok");
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/getProfilePic", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> getProfilePic() throws InValidFieldValueException, BaseExceptionHandler.ProfilePicDoesNotExistException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId;
+
+        if (principal instanceof MyUserDetails) {
+            userId = ((MyUserDetails) principal).getId();
+        } else {
+            userId = principal.toString();
+        }
+        if (!userService.getProfilePic(userId)) {
+            throw new BaseExceptionHandler.ProfilePicDoesNotExistException("No Profile Pic uploaded");
+        }
+        Resource file = storageService.loadAsResource(userId);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping(path = "/getOthersProfilePic", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> getOthersProfilePic(@RequestParam("userId") String userId) throws InValidFieldValueException, EmptyFieldException, BaseExceptionHandler.ProfilePicDoesNotExistException {
+        if (userId == null)
+            throw new EmptyFieldException("No UserId provided");
+        if (!userService.getProfilePic(userId)) {
+            throw new BaseExceptionHandler.ProfilePicDoesNotExistException("No Profile Pic uploaded");
+        }
+        Resource file = storageService.loadAsResource(userId);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
     public static class CreateUserRequest {
@@ -437,11 +510,11 @@ public class UserController {
     }
 
     public static class EditProfileRequest {
-        private String newName;
-        private String newUsername;
-        private String newPassword;
-        private String newEmail;
-        private String newHandle;
+        private final String newName;
+        private final String newUsername;
+        private final String newPassword;
+        private final String newEmail;
+        private final String newHandle;
 
         public EditProfileRequest(String newName, String newUsername, String newPassword, String newEmail, String newHandle) {
             this.newName = newName;
@@ -451,74 +524,27 @@ public class UserController {
             this.newHandle = newHandle;
         }
 
-
         public String getNewName() {
             return newName;
-        }
-
-        public void setNewName(String newName) {
-            this.newName = newName;
         }
 
         public String getNewUsername() {
             return newUsername;
         }
 
-        public void setNewUsername(String newUsername) {
-            this.newUsername = newUsername;
-        }
-
         public String getNewPassword() {
             return newPassword;
-        }
-
-        public void setNewPassword(String newPassword) {
-            this.newPassword = newPassword;
         }
 
         public String getNewEmail() {
             return newEmail;
         }
 
-        public void setNewEmail(String newEmail) {
-            this.newEmail = newEmail;
-        }
-
         public String getNewHandle() {
             return newHandle;
         }
-
-        public void setNewHandle(String newHandle) {
-            this.newHandle = newHandle;
-        }
     }
 
-    public static class RequestCashOutRequest {
-        private String bankId;
-        private long amount;
-
-        public RequestCashOutRequest(String bankId, long amount) {
-            this.bankId = bankId;
-            this.amount = amount;
-        }
-
-
-        public String getBankId() {
-            return bankId;
-        }
-
-        public void setBankId(String bankId) {
-            this.bankId = bankId;
-        }
-
-        public long getAmount() {
-            return amount;
-        }
-
-        public void setAmount(long amount) {
-            this.amount = amount;
-        }
-    }
 
     public static class UserAndFriendRequest {
         private String friendId;

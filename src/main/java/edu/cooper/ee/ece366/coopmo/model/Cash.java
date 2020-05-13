@@ -43,8 +43,7 @@ public class Cash extends Transaction {
     @JoinColumn
     private BankAccount bankAccount;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<User> likes;
 
     public Cash() {

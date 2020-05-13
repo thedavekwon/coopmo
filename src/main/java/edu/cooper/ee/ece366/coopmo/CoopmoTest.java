@@ -187,7 +187,6 @@ public class CoopmoTest {
 
         for (int i = 2; i < 12; i++) {
             String user = createUser("m" + i, "m" + i, "m" + i, "m" + i + "@gmail.com", "m" + i);
-            //sendOutRequest(user, masterUser);
         }
     }
 
@@ -263,11 +262,11 @@ public class CoopmoTest {
 
         // Test: creating two BankAccounts
         System.out.println("Test for creating two BankAccounts:\n----------------------------");
-        BankAccount user1BankAccount = createBankAccount(user1, 999999999, 9000);
+        BankAccount user1BankAccount = createBankAccount(user1, 999999999, 999999999, 9000);
         if (user1BankAccount == null) return;
         System.out.println("User1 BankAccount ID: " + user1BankAccount);
 
-        BankAccount user2BankAccount = createBankAccount(user2, 999999998, 9000);
+        BankAccount user2BankAccount = createBankAccount(user2, 999999999, 999999998, 9000);
         if (user2BankAccount == null) return;
         System.out.println("User2 BankAccount ID: " + user2BankAccount);
 
@@ -590,14 +589,14 @@ public class CoopmoTest {
         }
     }
 
-    public static BankAccount createBankAccount(String userId, long routingNumber, long balance) throws IOException, InterruptedException {
+    public static BankAccount createBankAccount(String userId, long accountNumber, long routingNumber, long balance) throws IOException, InterruptedException {
         URI uri = UrlBuilder.empty()
                 .withScheme("http")
                 .withHost("localhost")
                 .withPort(8080)
                 .withPath("bank/createBankAccount")
                 .toUri();
-        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest(routingNumber, balance);
+        BankAccountController.CreateBankAccountRequest createBankAccountRequest = new BankAccountController.CreateBankAccountRequest("", accountNumber, routingNumber, balance);
         HttpRequest request = HttpRequest.newBuilder(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(createBankAccountRequest)))
                 .header("Content-Type", "application/json")

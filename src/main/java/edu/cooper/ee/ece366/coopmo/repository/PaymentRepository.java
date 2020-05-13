@@ -19,7 +19,7 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, S
     List<Payment> getLatestFriendPayment(String userId);
 
     @Query(value = "SELECT * FROM payment p WHERE (p.type < 2 AND (p.from_user_id = :userId OR p.to_user_id = :userId)) AND (p.timestamp < :timestamp) " +
-            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+            "ORDER BY p.timestamp DESC", nativeQuery = true)
     List<Payment> getLatestFriendPaymentFrom(String userId, Timestamp timestamp);
 
     @Query(value = "SELECT * FROM payment p WHERE (p.from_user_id = :userId OR p.to_user_id = :userId) " +
@@ -27,6 +27,6 @@ public interface PaymentRepository extends PagingAndSortingRepository<Payment, S
     List<Payment> getLatestPrivatePayment(String userId);
 
     @Query(value = "SELECT * FROM payment p WHERE (p.from_user_id = :userId OR p.to_user_id = :userId) AND (p.timestamp < :timestamp) " +
-            "ORDER BY p.timestamp DESC LIMIT 20", nativeQuery = true)
+            "ORDER BY p.timestamp DESC", nativeQuery = true)
     List<Payment> getLatestPrivatePaymentFrom(String userId, Timestamp timestamp);
 }

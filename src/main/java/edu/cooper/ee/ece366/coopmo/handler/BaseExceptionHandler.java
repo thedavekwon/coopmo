@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class BaseExceptionHandler {
     @ExceptionHandler(value = {EmptyFieldException.class, InValidFieldValueException.class, InValidFieldTypeException.class, IllegalArgumentException.class,
             InvalidBalanceException.class, AlreadyFriendsException.class, NoUserFoundException.class,
-            DuplicateFriendRequestException.class, UsersAreNotFriendsException.class, FriendRequestDoesNotExistException.class})
+            DuplicateFriendRequestException.class, UsersAreNotFriendsException.class, FriendRequestDoesNotExistException.class,
+            FriendRequestAlreadyExistException.class, ProfilePicDoesNotExistException.class})
     public final ResponseEntity<?> handleException(Exception ex) {
         return handleAllInValidException(ex);
     }
@@ -81,6 +82,12 @@ public class BaseExceptionHandler {
     public static class FriendRequestAlreadyExistException extends Exception {
         public FriendRequestAlreadyExistException(String message) {
             super("Friend request already exists: " + message);
+        }
+    }
+
+    public static class ProfilePicDoesNotExistException extends Exception {
+        public ProfilePicDoesNotExistException(String message) {
+            super("Profile Picture does not exist: " + message);
         }
     }
 }

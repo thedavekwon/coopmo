@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  mysql:
+    image: "mysql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: coopmopass
+      MYSQL_DATABASE: coopmo_db
+      MYSQL_USER: coopmo
+      MYSQL_PASSWORD: coopmopass
+    ports:
+      - 3306:3306
+
+  rabbitmq-stomp:
+    build: docker/rabbitmq-stomp
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+
+  backend:
+    depends_on:
+      - mysql
+    links:
+      - "mysql"
+      - "rabbitmq-stomp"
+    restart: always
+    build: .
+    ports:
+      - 8080:8080
+
+  frontend:
+    depends_on:
+      - backend
+    links:
+      - "backend"
+    restart: always
+    stdin_open: true
+    build: src/client
+    ports:
+      - 3000:3000

@@ -19,8 +19,14 @@ public class BankAccount {
     @Column(updatable = false, nullable = false)
     private long routingNumber;
 
+    @Column(updatable = false, nullable = false)
+    private long accountNumber;
+
     @Column(nullable = false)
     private long balance;
+
+    @Column(nullable = false)
+    private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -29,26 +35,32 @@ public class BankAccount {
     public BankAccount() {
     }
 
-    public BankAccount(User user, long routingNumber, long balance) {
+    public BankAccount(User user, String nickname, long accountNumber, long routingNumber, long balance) {
         this.user = user;
+        this.nickname = nickname;
+        this.accountNumber = accountNumber;
         this.routingNumber = routingNumber;
         this.balance = balance;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public long getRoutingNumber() {
         return routingNumber;
     }
 
-    public void setRoutingNumber(long routingNumber) {
-        this.routingNumber = routingNumber;
+    public long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public long getBalance() {
         return balance;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public void setBalance(long newBalance) {

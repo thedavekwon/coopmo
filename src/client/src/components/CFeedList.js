@@ -22,7 +22,6 @@ export default class CFeedList extends React.Component {
     switch (feedTab) {
       case "Me":
         fetch_type = "Private";
-        shouldReverse = true;
         break;
       case "Friend":
         fetch_type = "Friend";
@@ -62,6 +61,7 @@ export default class CFeedList extends React.Component {
     switch (feedTab) {
       case "Me":
         fetch_type = "Private";
+
         break;
       case "Friend":
         fetch_type = "Friend";
@@ -105,11 +105,11 @@ export default class CFeedList extends React.Component {
     // }, 100);
   }
 
-  /*
+
   componentDidMount() {
     this.updateList(this.props.feedTab);
   }
-  */
+
   componentDidUpdate(prevProps) {
     if (this.props.feedTab !== prevProps.feedTab) {
       this.setState({

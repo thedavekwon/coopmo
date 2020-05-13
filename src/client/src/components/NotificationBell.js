@@ -77,6 +77,10 @@ class NotificationBell extends React.Component {
             trigger="click"
             key={"bottom"}
             placement={"bottom"}
+            popoverConfig={{
+              height: "250px",
+              overflow: "scroll",
+            }}
             overlay={
               <Popover onExited={this.onClose}>
                 <Popover.Title as="h3">{"Payments"}</Popover.Title>
@@ -88,7 +92,7 @@ class NotificationBell extends React.Component {
                         width: "100%",
                       }}
                   >
-                    <div className="innerDiv">{paymentNotifications}</div>
+                    <div className="innerDiv notificationContainer">{paymentNotifications}</div>
                   </div>
                 </Popover.Content>
                 <Popover.Title as="h1">{"Friends"}</Popover.Title>
@@ -100,7 +104,7 @@ class NotificationBell extends React.Component {
                         width: "100%",
                       }}
                   >
-                    <div className="innerDiv">{friendNotifications}</div>
+                    <div className="innerDiv notificationContainer">{friendNotifications}</div>
                   </div>
                 </Popover.Content>
               </Popover>

@@ -115,7 +115,10 @@ class TitleBar extends React.Component {
                 className="outerDiv centerer"
             >
                 <div className="innerDiv friendListPic vertCenterAndCut">
-                    <Image src={this.state.profilePic} roundedCircle fluid/>
+                    <div className="innerDiv" style={{height: "100%", width: "100%"}}>
+                        <Image style={{height: "100%", width: "100%"}} src={this.state.profilePic} roundedCircle fluid/>
+                    </div>
+
                 </div>
 
                 <div

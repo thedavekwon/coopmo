@@ -8,25 +8,28 @@ import bsCustomFileInput from "bs-custom-file-input";
 import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import {persistor} from "../redux/store";
+import {changeRefreshState,} from "../redux/actions";
+import {connect} from "react-redux";
 
-export default class EditProfileForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      request: {
-        newName: "",
-        newUsername: "",
-        newPassword: "",
-        newEmail: "",
-        newHandle: "",
-      },
-      respMessage: {
-        messageType: "NONE",
-        message: "",
-      },
-      showMessage: false,
-      profilePic: "",
-    };
+class EditProfileForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            request: {
+                newName: "",
+                newUsername: "",
+                newPassword: "",
+                newEmail: "",
+                newHandle: "",
+            },
+            respMessage: {
+                messageType: "NONE",
+                message: "",
+            },
+            showMessage: false,
+            profilePic: "",
+        };
+        this.getUserDetails();
   }
 
   componentDidMount() {
@@ -69,25 +72,61 @@ export default class EditProfileForm extends React.Component {
                 console.log(result.error);
                 this.setMessage(result.error.message, "ERROR");
               } else {
-                this.setMessage("Successfully Changed Profile Picture!", "SUCCESS");
-                this.getProfilePic();
+                  this.setMessage("Successfully Changed Profile Picture!", "SUCCESS");
+                  this.props.changeRefreshState("refreshProfilePic", true);
+                  this.getProfilePic();
+
               }
             },
             (error) => {
-              this.setMessage("ERROR sending request", "ERROR");
+                this.setMessage("ERROR sending request", "ERROR");
             }
         );
   };
 
-  getProfilePic = () => {
-    const path = this.props.domainName + "/user/getProfilePic";
-    fetch(path, {
-      method: "GET",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "no-cache",
-      },
-      credentials: "include",
+    getUserDetails = () => {
+        const path = this.props.domainName + "/user/getUserWithId";
+        fetch(path, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
+        })
+            .then((res) => {
+                if (res.status === 302) {
+                    persistor.purge();
+                }
+                return res.json();
+            })
+            .then(
+                (result) => {
+                    let newRequest = ({
+                        newName: result.data.name,
+                        newUsername: result.data.username,
+                        newEmail: result.data.email,
+                        newHandle: result.data.handle,
+                    });
+                    this.setState((state) => ({
+                        request: newRequest,
+                    }))
+                },
+                (error) => {
+                    this.setMessage("ERROR sending request", "ERROR");
+                }
+            );
+    };
+
+    getProfilePic = () => {
+        const path = this.props.domainName + "/user/getProfilePic";
+        fetch(path, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "no-cache",
+            },
+            credentials: "include",
     }).then((res) => {
       console.log("status" + res.status);
       if (res.status === 200) {
@@ -190,6 +229,7 @@ export default class EditProfileForm extends React.Component {
                   style={{fontFamily: "Muli"}}
                   size="lg"
                   type={value.name !== "Password" ? "text" : "password"}
+                  defaultValue={this.state.request[value.valKey]}
                   placeholder={"Enter " + value.name}
                   onChange={this.handleChange}
               />
@@ -203,6 +243,7 @@ export default class EditProfileForm extends React.Component {
                 size="lg"
                 type={value.name !== "Password" ? "text" : "password"}
                 placeholder={"Enter " + value.name}
+                defaultValue={this.state.request[value.valKey]}
                 onChange={this.handleChange}
             />
         );
@@ -266,3 +307,7 @@ export default class EditProfileForm extends React.Component {
     );
   }
 }
+
+export default connect(null, {
+    changeRefreshState,
+})(EditProfileForm);

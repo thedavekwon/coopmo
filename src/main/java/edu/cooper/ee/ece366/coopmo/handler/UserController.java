@@ -3,7 +3,6 @@ package edu.cooper.ee.ece366.coopmo.handler;
 import edu.cooper.ee.ece366.coopmo.config.MyUserDetails;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.EmptyFieldException;
 import edu.cooper.ee.ece366.coopmo.handler.BaseExceptionHandler.InValidFieldValueException;
-import edu.cooper.ee.ece366.coopmo.handler.UserController.*;
 import edu.cooper.ee.ece366.coopmo.message.Message;
 import edu.cooper.ee.ece366.coopmo.message.NotificationMessage;
 import edu.cooper.ee.ece366.coopmo.model.BankAccount;
@@ -155,8 +154,8 @@ public class UserController {
     }
 
     // Debug Purpose
-    @GetMapping(path = "/getUserWithId")
-    public User getUserWithId() {
+    @GetMapping(path = "/getUserWithId", produces = "application/json")
+    public ResponseEntity<?> getUserWithId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
 
@@ -166,7 +165,9 @@ public class UserController {
             userId = principal.toString();
         }
         Optional<User> curUser = userRepository.findById(userId);
-        return curUser.orElse(null);
+        Message respMessage = new Message();
+        respMessage.setData(curUser.orElse(null));
+        return new ResponseEntity<>(respMessage, HttpStatus.OK);
     }
 
     @GetMapping(path = "/getUserBalance")

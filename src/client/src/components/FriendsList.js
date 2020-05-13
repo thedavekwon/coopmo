@@ -59,7 +59,7 @@ class FriendsList extends React.Component {
 
     render() {
         let friends;
-        if (this.state.friendsList != null) {
+        if (this.state.friendsList != null && this.state.friendsList.length !== 0) {
             friends = (
                 <>
                     {this.state.friendsList.map((friend, key) => {
@@ -68,6 +68,12 @@ class FriendsList extends React.Component {
                         );
                     })}
                 </>
+            );
+        } else {
+            friends = (
+                <div className="innerDiv textStyle" style={{height: "100%", width: "100%"}}>
+                    You have no friends :(
+                </div>
             );
         }
 
@@ -90,7 +96,7 @@ class FriendsList extends React.Component {
                             height: "90%",
                             top: "10%",
                             width: "100%",
-                            overflowY: "scroll",
+                            overflowY: "auto",
                         }}
                         className="innerDiv"
                     >

@@ -95,7 +95,7 @@ export default class CSimpleInput extends React.Component {
             className="innerDiv"
           >
               <input
-                  type="text"
+                  type={this.props.valKey !== "password" ? "text" : "password"}
                   id={this.props.valKey}
                   name={this.props.name}
                   onChange={this.handleChange}

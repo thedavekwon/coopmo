@@ -2,6 +2,7 @@ import {
   ADD_DOMAIN_NAME,
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
+  CHANGE_MENU_PAGE,
   CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
@@ -76,6 +77,15 @@ export const changeNewNotifications = (newState) => {
     type: CHANGE_NEW_NOTIFICATIONS,
     payload: {
       newState,
+    }
+  })
+}
+
+export const cahngeMenuPage = (newPage) => {
+  return ({
+    type: CHANGE_MENU_PAGE,
+    payload: {
+      newPage,
     }
   })
 }

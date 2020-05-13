@@ -124,7 +124,7 @@ export default class CFeedList extends React.Component {
     const feedItems = [];
     if (payments.length===0) {
       feedItems.push(
-        <CFeedItemEmpty />
+        <CFeedItemEmpty key={"0"}/>
       )
     } else {
         for (let ii = 1; ii <=  payments.length; ii++) {

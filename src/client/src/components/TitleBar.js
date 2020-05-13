@@ -169,6 +169,7 @@ class TitleBar extends React.Component {
                                 borderRadius: "50%",
                             }}
                             className="friendListPic"
+                            alt="profile"
                         />
                     </div>
                     <div

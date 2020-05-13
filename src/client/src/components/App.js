@@ -9,9 +9,6 @@ import SockJsClient from "react-stomp";
 import {persistor} from "../redux/store";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     this.props.addDomainName("http://localhost:8080");

@@ -168,7 +168,7 @@ export default class CFeedItemPayment extends React.Component {
                             height: profilePicHeight,
                             borderRadius:"50%",
                             marginRight: "20px"
-                            }} />
+                            }} alt="profilepic"/>
                             <span>{fromUserHandle} paid {toUserHandle}</span>
                         </div>
                         <span>{amount}</span>
@@ -185,9 +185,7 @@ export default class CFeedItemPayment extends React.Component {
                     >
                         <span>{timestampStr}</span>
                         <span>{type}</span>
-                        <div style={{
-                            width: "200px"
-                        }}>{this.getButtonJSX()}</div>
+                        {this.getButtonJSX()}
                     </div>
                 </div>
                 <hr

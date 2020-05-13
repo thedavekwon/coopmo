@@ -64,7 +64,7 @@ class FriendsList extends React.Component {
                 <>
                     {this.state.friendsList.map((friend, key) => {
                         return (
-                            <FriendEntry friend={friend} domainName={this.props.domainName}/>
+                            <FriendEntry friend={friend} domainName={this.props.domainName} key={key}/>
                         );
                     })}
                 </>

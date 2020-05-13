@@ -248,7 +248,6 @@ public class UserController {
         }
 
         String friendId = acceptIncomingRequestRequest.getFriendId();
-        System.out.println(userId);
         Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {
@@ -278,8 +277,6 @@ public class UserController {
         }
 
         String friendId = sendOutRequestRequest.getFriendId();
-        System.out.println(userId);
-        System.out.println(friendId);
         Message respMessage = new Message();
 
         if (userId.equals("") || friendId.equals("")) {

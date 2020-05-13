@@ -57,7 +57,7 @@ class NotificationBell extends React.Component {
       } else {
           friendNotifications = this.state.friendNotifications.map(
               (notification, index) => {
-                  return <Notification notification={notification} index={index}/>;
+                  return <Notification notification={notification} index={index} key={index}/>;
               }
       );
     }
@@ -69,7 +69,7 @@ class NotificationBell extends React.Component {
     } else {
       paymentNotifications = this.state.paymentNotifications.map(
           (notification, index) => {
-            return <Notification notification={notification} index={index}/>;
+            return <Notification notification={notification} index={index} key={index}/>;
           }
       );
     }
@@ -113,7 +113,7 @@ class NotificationBell extends React.Component {
               </Popover>
             }
         >
-          <img src={bellImg} className="notificationPic" onClick={this.updateNotificationList}/>
+          <img src={bellImg} alt="notification bell" className="notificationPic" onClick={this.updateNotificationList}/>
         </OverlayTrigger>
     );
   }

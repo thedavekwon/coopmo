@@ -1,5 +1,5 @@
 import React from "react";
-import store from "../redux/store";
+import {store} from "../redux/store";
 import {formatMoney} from "../functions/formatMoney";
 import {fetchOthersProfilePic} from "../functions/fetchProfilePics";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";

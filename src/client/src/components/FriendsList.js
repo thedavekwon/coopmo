@@ -104,24 +104,13 @@ class FriendsList extends React.Component {
                 <div>
                     <div
                         style={{
-                            overflowY: "scroll",
+                            overflowY: "auto",
                             height: "100%"
                         }}
                     >
                         <Container fluid>{friends}</Container>
                     </div>
                 </div>
-                <div>
-                    <div
-                        style={{
-                            overflowY: "scroll",
-                            height: "100%"
-                        }}
-                    >
-                        <Container fluid>{friends}</Container>
-                    </div>
-                </div>
-
             </div>
         );
     }

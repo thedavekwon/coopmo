@@ -38,32 +38,35 @@ class NotificationBell extends React.Component {
     let bellImg;
     if (this.props.newNotifications) {
       if (this.props.color === "purple") {
-        bellImg = bellNotifPurple;
+          bellImg = bellNotifPurple;
       } else bellImg = bellNotifWhite;
     } else {
-      if (this.props.color === "purple") {
-        bellImg = bellPurple;
-      } else bellImg = bellWhite;
+        if (this.props.color === "purple") {
+            bellImg = bellPurple;
+        } else bellImg = bellWhite;
     }
 
-    let friendNotifications;
-    let paymentNotifications;
-
-    if (this.props.friendNotifications.length === 0) {
-      friendNotifications = (
-          <div className="textStyle">No New Friend Notifications</div>
-      );
-    } else {
-      friendNotifications = this.state.friendNotifications.map(
-          (notification, index) => {
-            return <Notification notification={notification} index={index}/>;
-          }
+      let friendNotifications;
+      let paymentNotifications;
+      let friendContainerHeight = 300;
+      let paymentContainerHeight = 300;
+      if (this.props.friendNotifications.length === 0) {
+          friendNotifications = (
+              <div className="textStyle">No New Friend Notifications</div>
+          );
+          friendContainerHeight = "100%";
+      } else {
+          friendNotifications = this.state.friendNotifications.map(
+              (notification, index) => {
+                  return <Notification notification={notification} index={index}/>;
+              }
       );
     }
     if (this.props.paymentNotifications.length === 0) {
-      paymentNotifications = (
-          <div className="textStyle">No New Payment Notifications</div>
-      );
+        paymentNotifications = (
+            <div className="textStyle">No New Payment Notifications</div>
+        );
+        paymentContainerHeight = "100%";
     } else {
       paymentNotifications = this.state.paymentNotifications.map(
           (notification, index) => {
@@ -88,11 +91,12 @@ class NotificationBell extends React.Component {
                   <div
                       className="outerDiv"
                       style={{
-                        height: "100%",
-                        width: "100%",
+                          height: paymentContainerHeight,
+                          width: "100%",
+
                       }}
                   >
-                    <div className="innerDiv notificationContainer">{paymentNotifications}</div>
+                      <div className="innerDiv notificationContainer">{paymentNotifications}</div>
                   </div>
                 </Popover.Content>
                 <Popover.Title as="h1">{"Friends"}</Popover.Title>
@@ -100,8 +104,8 @@ class NotificationBell extends React.Component {
                   <div
                       className="outerDiv"
                       style={{
-                        height: "100%",
-                        width: "100%",
+                          height: friendContainerHeight,
+                          width: "100%",
                       }}
                   >
                     <div className="innerDiv notificationContainer">{friendNotifications}</div>

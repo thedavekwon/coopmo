@@ -81,7 +81,7 @@ export const changeNewNotifications = (newState) => {
   })
 }
 
-export const cahngeMenuPage = (newPage) => {
+export const changeMenuPage = (newPage) => {
   return ({
     type: CHANGE_MENU_PAGE,
     payload: {

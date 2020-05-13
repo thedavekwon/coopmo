@@ -2,6 +2,7 @@ import {
   ADD_DOMAIN_NAME,
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
+  CHANGE_MENU_PAGE,
   CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
@@ -21,6 +22,7 @@ const initialState = {
   refreshFriendsList: false,
   refreshFriendRequests: false,
   refreshProfilePic: false,
+  activeMenuPage: "Edit Profile"
 };
 
 function rootReducer(state = initialState, action) {
@@ -68,14 +70,15 @@ function rootReducer(state = initialState, action) {
         ...state,
         newNotifications: action.payload.newState,
       }
-      /*
-    case LOGOUT: {
-      persistor.purge();
-      return undefined;
-    } 
-    */
+
     case PURGE:
       return initialState;
+    case CHANGE_MENU_PAGE:
+      return {
+        ...state,
+        activeMenuPage: action.payload.newPage,
+        activePage: "MenuPage",
+      }
     default:
       return state;
   }

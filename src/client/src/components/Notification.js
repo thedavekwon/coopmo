@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {deleteNotification} from "../redux/actions";
+import {changeMenuPage, changeNewNotifications, changePage, deleteNotification} from "../redux/actions";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import Toast from "react-bootstrap/Toast";
 import Image from "react-bootstrap/Image";
@@ -21,6 +21,16 @@ class Notification extends React.Component {
         this.setState((state) => ({
             open: false
         }));
+    }
+
+    goToNotification = () => {
+        this.onClose();
+        this.props.changeNewNotifications(false);
+        if (this.props.notification.type === "FRIENDREQUEST") {
+            this.props.changeMenuPage("Incoming Friend Requests");
+        } else {
+            this.props.changePage("MainPage");
+        }
     }
 
     getProfilePic = () => {
@@ -70,7 +80,8 @@ class Notification extends React.Component {
                         2 hours ago
                     </Toast.Header>
                     <Toast.Body>
-                        <div className="textStyle">{this.props.notification.message}</div>
+                        <div className="textStyle"
+                             onClick={this.goToNotification}>{this.props.notification.message}</div>
                     </Toast.Body>
                 </Toast>
 
@@ -86,4 +97,9 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, {deleteNotification})(Notification);
+export default connect(mapStateToProps, {
+    deleteNotification,
+    changeMenuPage,
+    changeNewNotifications,
+    changePage
+})(Notification);

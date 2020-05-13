@@ -308,6 +308,7 @@ class EditProfileForm extends React.Component {
   }
 }
 
+
 export default connect(null, {
     changeRefreshState,
 })(EditProfileForm);

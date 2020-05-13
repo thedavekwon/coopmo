@@ -99,17 +99,18 @@ export default class CFeedList extends React.Component {
     const clientHeight = this.myRef.current.clientHeight;
     // debounce(() => {
       if (
-        scrollHeight - scrollTop === clientHeight && this.state.feedItemDatas.length !== 0
+        scrollHeight - scrollTop === clientHeight && this.state.feedItemDatas.length > 1
       ) {
         this.addNewItemsToList(this.props.feedTab);
       }
     // }, 100);
   }
 
+  /*
   componentDidMount() {
     this.updateList(this.props.feedTab);
   }
-
+  */
   componentDidUpdate(prevProps) {
     if (this.props.feedTab !== prevProps.feedTab) {
       this.setState({

@@ -4,8 +4,10 @@ import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormAlert from "./FormAlert.js";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
 
-export default class CashInForm extends React.Component {
+class CashInForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,6 +80,7 @@ export default class CashInForm extends React.Component {
                 this.setMessage(result.error.message, "ERROR");
               } else {
                 this.setMessage("Successfully Cashed " + this.state.request.type + "!", "SUCCESS");
+                this.props.changeRefreshState("refreshBalance", true);
               }
             },
             (error) => {
@@ -208,3 +211,6 @@ export default class CashInForm extends React.Component {
     );
   }
 }
+
+
+export default connect(null, {changeRefreshState})(CashInForm);

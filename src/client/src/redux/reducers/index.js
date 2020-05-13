@@ -2,6 +2,7 @@ import {
   ADD_DOMAIN_NAME,
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
+  CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
   DELETE_NOTIFICATION,
@@ -62,40 +63,15 @@ function rootReducer(state = initialState, action) {
         ...state,
         [action.payload.type]: action.payload.newState,
       }
+    case CHANGE_NEW_NOTIFICATIONS:
+      return {
+        ...state,
+        newNotifications: action.payload.newState,
+      }
     default:
       return state;
   }
-  /*
-    if (action.type === ADD_DOMAIN_NAME) {
-        return {
-            ...state,
-            domainName: action.payload.domainName
-        }
-    } else if (action.type === CHANGE_PAGE) {
-        return {
-            ...state,
-            activePage: action.payload.activePage
-        }
-    } else if (action.type === CHANGE_LOGIN) {
-        return {
-            ...state,
-            loggedIn: action.payload.loggedIn
-        }
-    } else if (action.type === ADD_NOTIFICATION) {
-        return {
-            ...state,
-            newNotifications: true,
-            [action.payload.key]: [action.payload.notification, ...state[action.payload.key]],
-        }
-    } else if (action.type === DELETE_NOTIFICATION) {
-        return {
-            ...state,
-            [action.payload.key]: state[action.payload.key].filter((item, index) => {
-                return index !== action.payload.index;
-            })
-        }
-    }
-    */
+
 }
 
 export default rootReducer;

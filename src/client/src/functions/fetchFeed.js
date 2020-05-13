@@ -1,3 +1,5 @@
+import {getTimeObjFromTimestamp} from "./timeDifference";
+
 export function fetchFeed(domainName, fetch_type) {
     const requestEndpoint = ''.concat(domainName + "/pay/getLatest",
         fetch_type,
@@ -14,11 +16,15 @@ export function fetchFeed(domainName, fetch_type) {
     return fetch(request);
 }
 
-export function fetchFeedFrom(domainName, fetch_type, timestamp) {
-    const requestEndpoint = ''.concat(domainName + "/pay/getLatest",
+export function fetchFeedFrom(domainName, fetch_type, timestampStr) {
+    // const timestamp = getTimeObjFromTimestamp(timestampStr);
+    // const timestampNanos = timestamp.getTime()*1000;
+    const requestEndpoint = encodeURI(''.concat(domainName + "/pay/getLatest",
         fetch_type,
-        "Payment",
-    );
+        "PaymentFrom",
+        "?timestamp=",
+        timestampStr
+    ));
 
     const request = new Request(requestEndpoint, {
             method: "GET",
@@ -26,6 +32,8 @@ export function fetchFeedFrom(domainName, fetch_type, timestamp) {
             credentials: 'include'
         }
     );
+
+    console.log(request);
 
     return fetch(request);
 }

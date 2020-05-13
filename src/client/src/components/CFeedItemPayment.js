@@ -55,7 +55,6 @@ export default class CFeedItemPayment extends React.Component {
 
     componentDidMount() {
         const username = store.getState().username;
-        console.log(store.getState());
         this.getFromUserProfilePic(this.props.fromUserId);
         for (let ii = 0; ii < this.props.likes.length; ii++) {
             if (this.props.likes[ii].username === username) {

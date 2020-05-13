@@ -1,4 +1,4 @@
-function getTimeObjFromTimestamp(timestampStr) {
+export function getTimeObjFromTimestamp(timestampStr) {
     const year = parseInt(timestampStr.substring(0, 4));
     const month = parseInt(timestampStr.substring(5,7));
     const day = parseInt(timestampStr.substring(8,10));

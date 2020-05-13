@@ -53,11 +53,6 @@ class MainPage extends React.Component {
                     backgroundColor: "rgba(255, 255, 255, 1)",
                 }}
             >
-                <TitleBar
-                        page="main"
-                        balance={this.state.balance}
-                        domainName={this.props.domainName}
-                    />
                 <div style = {{
                     position: "absolute",
                     display: "flex",
@@ -91,6 +86,14 @@ class MainPage extends React.Component {
                         />
                     </div>
                     <div style={{flex: 1}}></div>
+                    <TitleBar
+                        style={{
+                            zIndex: 3
+                        }}
+                        page="main"
+                        balance={this.state.balance}
+                        domainName={this.props.domainName}
+                    />
                 </div>
             </div>
         );

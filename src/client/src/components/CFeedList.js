@@ -1,7 +1,9 @@
 import React from "react";
 import CFeedItemPayment from "./CFeedItemPayment.js";
 import CFeedItemBank from "./CFeedItemBank.js";
+import CFeedItemEmpty from "./CFeedItemEmpty.js";
 import {fetchFeed, fetchFeedFrom} from "../functions/fetchFeed";
+import debounce from "lodash.debounce";
 
 export default class CFeedList extends React.Component {
   constructor(props) {
@@ -9,6 +11,7 @@ export default class CFeedList extends React.Component {
     this.state = {
       feedItemDatas: [],
     };
+    this.myRef = React.createRef()
   }
 
   // each payment item has following:
@@ -37,14 +40,15 @@ export default class CFeedList extends React.Component {
           // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
           const feedItemDatas = response.data;
           this.setState({
-            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
+            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
           });
         }
       });
   }
 
   addNewItemsToList(feedTab) {
-    const oldestTimestampStr = this.state.feedItemData[-1].timestamp;
+    const oldestTimestampStr = this.state.feedItemDatas[this.state.feedItemDatas.length -1].timestamp;
+    console.log(oldestTimestampStr);
     var fetch_type = "";
     switch (feedTab) {
       case "Me":
@@ -66,10 +70,23 @@ export default class CFeedList extends React.Component {
         if (response.data) {
           const feedItemDatas = response.data;
           this.setState({
-            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
+            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
           });
         }
       });
+  }
+
+  handleScroll = () => {
+    const scrollTop = this.myRef.current.scrollTop;
+    const scrollHeight = this.myRef.current.scrollHeight;
+    const clientHeight = this.myRef.current.clientHeight;
+    // debounce(() => {
+      if (
+        scrollHeight - scrollTop === clientHeight && this.state.feedItemDatas.length !== 0
+      ) {
+        this.addNewItemsToList(this.props.feedTab);
+      }
+    // }, 100);
   }
 
   componentDidMount() {
@@ -88,47 +105,55 @@ export default class CFeedList extends React.Component {
   render() {
     const payments = this.state.feedItemDatas;
     const feedItems = [];
-    for (let ii = 1; ii <= payments.length; ii++) {
-      var payment = payments[ii - 1];
-      if (payment.type === "IN" || payment.type === "OUT") {
-        feedItems.push(
-            <CFeedItemBank
+    if (payments.length===0) {
+      feedItems.push(
+        <CFeedItemEmpty />
+      )
+    } else {
+        for (let ii = 1; ii <=  payments.length; ii++) {
+          var payment = payments[ii - 1];
+          if (payment.type === "IN" || payment.type === "OUT") {
+            feedItems.push(
+                <CFeedItemBank
+                    tab={this.props.feedTab}
+                    listIndex={ii}
+                    key={ii.toString()}
+                    type={payment.type}
+                    amount={payment.amount}
+                    timestamp={payment.timestamp}
+                />
+            );
+          } else {
+            feedItems.push(
+              <CFeedItemPayment
                 tab={this.props.feedTab}
                 listIndex={ii}
+                domainName={this.props.domainName}
                 key={ii.toString()}
+                transactionId={payment.id}
+                fromUserId={payment.fromUser.id}
+                fromUserHandle={payment.fromUser.handle}
+                toUserHandle={payment.toUser.handle}
                 type={payment.type}
                 amount={payment.amount}
                 timestamp={payment.timestamp}
-            />
-        );
-      } else {
-        feedItems.push(
-          <CFeedItemPayment
-            tab={this.props.feedTab}
-            listIndex={ii}
-            domainName={this.props.domainName}
-            key={ii.toString()}
-            transactionId={payment.id}
-            fromUserId={payment.fromUser.id}
-            fromUserHandle={payment.fromUser.handle}
-            toUserHandle={payment.toUser.handle}
-            type={payment.type}
-            amount={payment.amount}
-            timestamp={payment.timestamp}
-            comment={payment.comment}
-            likes={payment.likes}
-            username={this.props.username}
-          />
-        );
-      }
+                comment={payment.comment}
+                likes={payment.likes}
+                username={this.props.username}
+              />
+            );
+          }
+        }
     }
+    
 
     return (
       <div
+        ref={this.myRef}
         style={{
           overflowY: "scroll",
           maxHeight: "600px",
-        }}
+        }} onScroll={this.handleScroll}
       >
         {feedItems}
       </div>

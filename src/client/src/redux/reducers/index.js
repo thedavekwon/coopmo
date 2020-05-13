@@ -6,6 +6,7 @@ import {
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
   DELETE_NOTIFICATION,
+  CHANGE_USERNAME,
 } from "../action-types";
 
 const initialState = {
@@ -21,6 +22,7 @@ const initialState = {
   refreshFriendsList: false,
   refreshFriendRequests: false,
   refreshProfilePic: false,
+  username: "",
 };
 
 function rootReducer(state = initialState, action) {
@@ -67,6 +69,11 @@ function rootReducer(state = initialState, action) {
       return {
         ...state,
         newNotifications: action.payload.newState,
+      }
+    case CHANGE_USERNAME:
+      return {
+        ...state,
+        username: action.payload.username,
       }
     default:
       return state;

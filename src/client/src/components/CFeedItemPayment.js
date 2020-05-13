@@ -1,4 +1,5 @@
 import React from "react";
+import store from "../redux/store";
 import {formatMoney} from "../functions/formatMoney";
 import {fetchOthersProfilePic} from "../functions/fetchProfilePics";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
@@ -18,7 +19,8 @@ export default class CFeedItemPayment extends React.Component {
         this.state = {
             profilePic: "",
             liked: false,
-            newlyLiked: false
+            newlyLiked: false,
+            loggedInUsername: ""
         };
     }
 
@@ -52,10 +54,11 @@ export default class CFeedItemPayment extends React.Component {
     }
 
     componentDidMount() {
+        const username = store.getState().username;
+        console.log(store.getState());
         this.getFromUserProfilePic(this.props.fromUserId);
         for (let ii = 0; ii < this.props.likes.length; ii++) {
-            console.log(this.props.likes[ii].username);
-            if (this.props.likes[ii].username === this.props.username) {
+            if (this.props.likes[ii].username === username) {
                 this.setState({
                     liked: true,
                 });

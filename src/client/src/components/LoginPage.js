@@ -2,7 +2,7 @@ import React from "react";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 import {connect} from "react-redux";
-import {changeLogin, changePage} from "../redux/actions";
+import {changeLogin, changePage, changeUsername} from "../redux/actions";
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -58,7 +58,8 @@ class LoginPage extends React.Component {
             .then(
                 (result) => {
                     this.props.changeLogin(true);
-                    this.props.changePage("MainPage")
+                    this.props.changeUsername(this.state.request["username"]);
+                    this.props.changePage("MainPage");
                 },
                 (error) => {
                     // alert("failed to login");
@@ -203,4 +204,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, {changePage, changeLogin})(LoginPage);
+export default connect(mapStateToProps, {changePage, changeLogin, changeUsername})(LoginPage);

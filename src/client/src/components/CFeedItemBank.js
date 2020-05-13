@@ -8,17 +8,7 @@ export default class CFeedItemBank extends React.Component {
         const purple = "rgba(102, 0, 153, 1)";
         const black = "rgba(0, 0, 0, 1)";
 
-        const year = parseInt(this.props.timestamp.substring(0, 4));
-        const month = parseInt(this.props.timestamp.substring(5,7));
-        const day = parseInt(this.props.timestamp.substring(8,10));
-        const hour = parseInt(this.props.timestamp.substring(11, 13));
-        const minute = this.props.timestamp.substring(14, 16);
-        const second = this.props.timestamp.substring(17, 19);
-        const millisecond = this.props.timestamp.substring(19, 23);
-
-        const timestamp = new Date(year, month-1, day, hour, minute, second, millisecond);
-
-        const timestampStr = getTimeAgoStr(timestamp);
+        const timestampStr = getTimeAgoStr(this.props.timestamp);
         
 
         const fontSize = 24;

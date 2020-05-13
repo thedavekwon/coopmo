@@ -110,17 +110,9 @@ export default class CFeedItemPayment extends React.Component {
 
 
         // sample timestamp: 2020-05-11 00:19:32.622
-        const year = parseInt(this.props.timestamp.substring(0, 4));
-        const month = parseInt(this.props.timestamp.substring(5,7));
-        const day = parseInt(this.props.timestamp.substring(8,10));
-        const hour = parseInt(this.props.timestamp.substring(11, 13));
-        const minute = this.props.timestamp.substring(14, 16);
-        const second = this.props.timestamp.substring(17, 19);
-        const millisecond = this.props.timestamp.substring(19, 23);
 
-        const timestamp = new Date(year, month-1, day, hour, minute, second, millisecond);
 
-        const timestampStr = getTimeAgoStr(timestamp);
+        const timestampStr = getTimeAgoStr(this.props.timestamp);
 
 
         // const itemDate = this.props.timestamp.substring(0, 10);

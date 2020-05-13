@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import {deleteNotification} from "../redux/actions";
+import {getTimeAgoStr} from "../functions/timeDifference";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import Toast from "react-bootstrap/Toast";
 import Image from "react-bootstrap/Image";
@@ -22,13 +23,14 @@ class Notification extends React.Component {
 
     render() {
         if (this.state.open) {
+            console.log(this.props.notification);
             return (
                 <Toast onClose={this.onClose}>
                     <Toast.Header>
                         <div className="friendListPic innerDiv ">
                             <Image src={defaultImg} roundedCircle fluid/>
                         </div>
-                        <small>2 seconds ago</small>
+                        <small>{getTimeAgoStr(this.props.notification.timestamp)}</small>
                     </Toast.Header>
                     <Toast.Body>{this.props.notification.message}</Toast.Body>
                 </Toast>

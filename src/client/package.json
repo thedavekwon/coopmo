@@ -17,6 +17,7 @@
     "react-addons-test-utils": "^15.6.2",
     "react-auto-scale": "^1.0.4",
     "react-bootstrap": "^1.0.0",
+    "react-bootstrap-icons": "^1.0.1-alpha3",
     "react-dom": "^16.13.1",
     "react-dropdown-input": "^0.1.11",
     "react-number-format": "^4.4.1",
@@ -26,6 +27,7 @@
     "react-stomp": "^5.0.0",
     "reactstrap": "^8.4.1",
     "redux-persist": "^6.0.0",
+    "superagent": "^5.2.2",
     "url-search-params-polyfill": "^8.0.0"
   },
   "scripts": {

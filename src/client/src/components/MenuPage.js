@@ -104,6 +104,7 @@ class MenuPage extends PureComponent {
                 zIndex: index + 1,
               }}
               className="outerDiv centerer"
+              key={value}
           >
             <div
                 style={{

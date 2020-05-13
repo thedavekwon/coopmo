@@ -2,7 +2,7 @@ import React from "react";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
 import {connect} from "react-redux";
-import {changeLogin, changePage} from "../redux/actions";
+import {changeLogin, changePage, changeUsername} from "../redux/actions";
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -58,7 +58,8 @@ class LoginPage extends React.Component {
             .then(
                 (result) => {
                     this.props.changeLogin(true);
-                    this.props.changePage("MainPage")
+                    this.props.changeUsername(this.state.request["username"]);
+                    this.props.changePage("MainPage");
                 },
                 (error) => {
                     // alert("failed to login");
@@ -72,69 +73,49 @@ class LoginPage extends React.Component {
                 <div>
                     <div style={{zIndex: 1}} className="outerDiv centerer">
                         <div
-                            id="35:300"
                             style={{
                                 marginLeft: "26.3889%",
                                 width: "47.22222222222222%",
-                                height: "11.71875%",
+                                height: "115px",
                                 top: 44.1406 - 11.71875 + "%",
                                 backgroundColor: "rgba(0, 0, 0, 0)",
                             }}
                             className="innerDiv"
                         >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Username"
-                                valKey="username"
-                                onInput={this.handleChange}
-                                nodeId="35:300"
-                            />
-                        </div>
-                    </div>
-                    <div style={{zIndex: 2}} className="outerDiv centerer">
-                        <div
-                            id="35:280"
-                            style={{
-                                marginLeft: "26.3889%",
-                                width: "47.22222222222222%",
-                                height: "11.71875%",
-                                top: "44.1406%",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            <CSimpleInput
-                                {...this.props}
-                                name="Password"
-                                valKey="password"
-                                onInput={this.handleChange}
-                                nodeId="35:300"
-                            />
+                            <div>
+                                <CSimpleInput
+                                    {...this.props}
+                                    name="Username"
+                                    valKey="username"
+                                    onInput={this.handleChange}
+                                />
+                            </div>
+                            <div style={{
+                                marginTop: "100px"
+                            }}>
+                                <CSimpleInput
+                                    {...this.props}
+                                    name="Password"
+                                    valKey="password"
+                                    onInput={this.handleChange}
+                                />
+                            </div>
+                            <div style={{
+                                marginTop: "200px"
+                            }}>
+                                <CSingleButton
+                                text="Login"
+                                onSub={this.sendRequest}
+                                messageType={this.state.respMessage.messageType}
+                                message={this.state.respMessage.message}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div style={{zIndex: 1}} className="outerDiv centerer">
-                    <div
-                        id="35:300"
-                        style={{
-                            marginLeft: "26.3889%",
-                            width: "47.22222222222222%",
-                            height: "11.71875%",
-                            top: 44.1406 + 11.71875 + "%",
-                            backgroundColor: "rgba(0, 0, 0, 0)",
-                        }}
-                        className="innerDiv"
-                    >
-                        <CSingleButton
-                            text="Login"
-                            onSub={this.sendRequest}
-                            messageType={this.state.respMessage.messageType}
-                            message={this.state.respMessage.message}
-                        />
-                    </div>
                     <div style={{zIndex: 1}} className="outerDiv centerer">
                         <div
-                            id="35:300"
                             style={{
                                 marginLeft: "26.3889%",
                                 width: "47.22222222222222%",
@@ -175,12 +156,9 @@ class LoginPage extends React.Component {
                         className="outerDiv centerer"
                     >
                         <div
-                            id="I76:29;97:225"
                             style={{
-                                marginLeft: "40%",
-                                marginRight: "40%",
                                 flexGrow: 1,
-                                top: "25%",
+                                top: "20%",
                                 height: 73,
                                 color: "rgba(0, 0, 0, 1)",
                                 fontSize: 73,
@@ -193,30 +171,24 @@ class LoginPage extends React.Component {
                             }}
                             className="innerDiv"
                         >
-                            <div>
-                <span
-                    style={{
-                        fontSize: 73,
-                        fontStyle: "normal",
-                        lineHeight: "NaN%",
-                        letterSpacing: "undefinedpx",
-                        color: "rgba(102, 0, 153, 1)",
-                    }}
-                    key="4"
-                >
-                  Coop
-                </span>
+                            <div style={{
+                                whiteSpace: "nowrap"
+                            }}>
                                 <span
                                     style={{
                                         fontSize: 73,
                                         fontStyle: "normal",
-                                        lineHeight: "NaN%",
-                                        letterSpacing: "undefinedpx",
+                                        color: "rgba(102, 0, 153, 1)",
+                                    }}
+                                    key="4"
+                                >Coop</span>                
+                                <span
+                                    style={{
+                                        fontSize: 73,
+                                        fontStyle: "normal",
                                     }}
                                     key="end"
-                                >
-                  mo
-                </span>
+                                >mo</span>
                             </div>
                         </div>
                     </div>
@@ -232,4 +204,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, {changePage, changeLogin})(LoginPage);
+export default connect(mapStateToProps, {changePage, changeLogin, changeUsername})(LoginPage);

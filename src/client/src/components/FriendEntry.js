@@ -65,6 +65,17 @@ export default class FriendEntry extends React.Component {
             </div>
           </Col>
         </Row>
+        /*
+            <div >
+            <img src={this.state.profilePic} style={{
+                marginLeft: "-10px",
+                borderRadius:"50%",
+                }} className="friendListPic" />
+            <span className="textStyle">
+            {this.props.friend.name}
+            </span>
+          </div>
+         */
     );
   }
 }

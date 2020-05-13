@@ -249,7 +249,7 @@ class EditProfileForm extends React.Component {
         );
       }
       return (
-          <Form.Group controlId={value.valKey}>
+          <Form.Group controlId={value.valKey} key = {value.valKey}>
             <Form.Label style={{fontFamily: "Muli"}} column="lg">
               {value.name}
             </Form.Label>
@@ -258,8 +258,9 @@ class EditProfileForm extends React.Component {
       );
     });
 
+
     return (
-        <>
+        <div>
           <FormAlert
               onClose={() => {
                 this.setState((state) => ({
@@ -270,7 +271,7 @@ class EditProfileForm extends React.Component {
               messageType={this.state.respMessage.messageType}
               message={this.state.respMessage.message}
           />
-          <Form onSubmit={this.sendRequest} fluid>
+          <Form onSubmit={this.sendRequest}>
             {formBlocks}
 
             <Form.Group>
@@ -292,8 +293,7 @@ class EditProfileForm extends React.Component {
                   style={{fontFamily: "Muli"}}
                   size="lg"
                   data-browse="Upload Profile Picture"
-                  class="custom-file-input"
-                  accept="image/*"
+                  className="custom-file-input"
                   custom
                   onChange={this.handleProfilePic}
               />
@@ -303,7 +303,8 @@ class EditProfileForm extends React.Component {
               Submit
             </Button>
           </Form>
-        </>
+
+        </div>
     );
   }
 }

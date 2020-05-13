@@ -33,7 +33,7 @@ public class TransactionController extends BaseController {
         this.userService = userService;
     }
 
-    @PostMapping("/likeTransaction")
+    @PostMapping(path = "/likeTransaction", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> likePayment(@RequestBody LikePaymentRequest likePaymentRequest) throws InValidFieldValueException, IllegalArgumentException, BaseExceptionHandler.EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
@@ -43,8 +43,14 @@ public class TransactionController extends BaseController {
             userId = principal.toString();
         }
 
+
+
         String transactionId = likePaymentRequest.getTransactionId();
         String transactionType = likePaymentRequest.getTransactionType();
+
+        System.out.println(userId);
+        System.out.println(transactionId);
+        System.out.println(transactionType);
 
         Message respMessage = new Message();
 

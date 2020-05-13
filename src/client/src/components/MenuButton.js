@@ -23,7 +23,6 @@ class MenuButton extends React.Component {
     };
     return (
       <div className="master" style={bColorStyle}>
-        <div>
           <div className="outerDiv centerer">
             <div
                 className={
@@ -33,13 +32,13 @@ class MenuButton extends React.Component {
                 }
             >
               <div onClick={this.handleClick}>
-                <span style={{}} key="end">
+                {/* <span style={textStyle} key="end"> */}
+                <span key="end">
                   Menu
                 </span>
               </div>
             </div>
           </div>
-        </div>
       </div>
     );
   }

@@ -3,6 +3,7 @@ import {
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
   CHANGE_MENU_PAGE,
+  CHANGE_USERNAME,
   CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
@@ -27,6 +28,13 @@ export const changeLogin = (loggedIn) => ({
   type: CHANGE_LOGIN,
   payload: {
     loggedIn,
+  },
+});
+
+export const changeUsername = (username) => ({
+  type: CHANGE_USERNAME,
+  payload: {
+    username
   },
 });
 

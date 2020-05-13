@@ -74,10 +74,7 @@ class Notification extends React.Component {
                                        fluid/>
                             </div>
                         </div>
-
-
-                        {/*<small>{this.props.notification.timestamp}</small>*/}
-                        2 hours ago
+                        <small>{getTimeAgoStr(this.props.notification.timestamp)}</small>
                     </Toast.Header>
                     <Toast.Body>
                         <div className="textStyle"

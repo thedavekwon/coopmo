@@ -17,5 +17,5 @@ public interface CashRepository extends CrudRepository<Cash, String> {
 
     @Query(value = "SELECT * FROM cash c WHERE c.user_id = :userId AND c.timestamp < :timestamp " +
             "ORDER BY c.timestamp DESC LIMIT 20", nativeQuery = true)
-    List<Payment> getLatestCashFrom(String userId, Timestamp timestamp);
+    List<Cash> getLatestCashFrom(String userId, Timestamp timestamp);
 }

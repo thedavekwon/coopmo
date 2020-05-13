@@ -58,6 +58,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> createUser(@RequestBody User user) throws EmptyFieldException, InValidFieldValueException {
         Message respMessage = new Message();
+        user.setProfilePic(false);
 
         if (user.getName().equals("") || user.getUsername().equals("") || user.getPassword().equals("") || user.getEmail().equals("") || user.getHandle().equals("")) {
             throw new EmptyFieldException("Empty Field");

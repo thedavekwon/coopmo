@@ -22,8 +22,8 @@ export default class CFeedTab extends React.Component {
                 <div>
                     <div
                         style={{
-                            height: "2px",
-                            marginTop: "9px",
+                            height: "1px",
+                            marginTop: "10px",
                             backgroundColor: "rgba(102, 0, 153, 1)",
                         }}
                     >
@@ -37,15 +37,11 @@ export default class CFeedTab extends React.Component {
           <div
             style={{
               color: active ? white : purple,
-              fontSize: 24,
-              fontWeight: 400,
               paddingTop: "10px",
               fontFamily: "Muli",
               textAlign: "CENTER",
-              fontStyle: "normal",
               lineHeight: "100%",
-              letterSpacing: "0px",
-            }}
+            }} className="textStyle"
           >
             {this.props.name}
           </div>

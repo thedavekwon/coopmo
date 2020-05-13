@@ -4,6 +4,7 @@ import Image from "react-bootstrap/Image";
 import defaultImg from "../shyam/shyam_close_cropped.jpg";
 import Col from "react-bootstrap/Col";
 
+
 export default class FriendEntry extends React.Component {
   constructor(props) {
     super(props);
@@ -47,18 +48,15 @@ export default class FriendEntry extends React.Component {
 
   render() {
     return (
-        <Row>
-          <div className="friendListPic">
-            <Image src={this.state.profilePic} roundedCircle fluid/>
+          <div >
+            <img src={this.state.profilePic} style={{
+                marginLeft: "-10px",
+                borderRadius:"50%",
+                }} className="friendListPic" />
+            <span className="textStyle">
+            {this.props.friend.name}
+            </span>
           </div>
-          <Col xl={9} fluid>
-            <div style={{width: "100%", height: "100%"}}>
-              <div key="end" className="vertCenterAndCut textStyle">
-                {this.props.friend.name}
-              </div>
-            </div>
-          </Col>
-        </Row>
     );
   }
 }

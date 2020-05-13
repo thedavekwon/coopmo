@@ -37,7 +37,6 @@ export default class CFeed extends React.Component {
             );
         })
 
-        const TAB_HEIGHT = 30;
 
         return (
             <div style={{backgroundColor: "rgba(0, 0, 0, 0)",
@@ -51,6 +50,9 @@ export default class CFeed extends React.Component {
                     {feedTabs}
                 </div>
                 <div
+                    style={{
+                        marginTop: 20
+                    }}
                 >
                     <CFeedList
                         feedTab={this.state.feedTab}

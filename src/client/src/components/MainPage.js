@@ -63,7 +63,7 @@ class MainPage extends React.Component {
                     width: "100%",
                     justifyContent: "space-around"
                 }}>
-                    <div style={{flex: 2}}></div>
+                    <div style={{flex: 1}}></div>
                     <div style={{
                         flex: 5,
                         marginTop: "140px",

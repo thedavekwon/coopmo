@@ -39,7 +39,6 @@ export default class CFeedList extends React.Component {
       .then((response) => {
         console.log(response);
         if (response.data) {
-          // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
           const feedItemDatas = response.data;
           if (shouldReverse) {
             this.setState({
@@ -99,7 +98,7 @@ export default class CFeedList extends React.Component {
     const clientHeight = this.myRef.current.clientHeight;
     // debounce(() => {
       if (
-        scrollHeight - scrollTop === clientHeight && this.state.feedItemDatas.length !== 0
+        scrollHeight - scrollTop === clientHeight && this.state.feedItemDatas.length > 1
       ) {
         this.addNewItemsToList(this.props.feedTab);
       }

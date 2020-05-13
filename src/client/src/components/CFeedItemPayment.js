@@ -116,15 +116,6 @@ export default class CFeedItemPayment extends React.Component {
 
         const timestampStr = getTimeAgoStr(this.props.timestamp);
 
-
-        // const itemDate = this.props.timestamp.substring(0, 10);
-
-        
-        // const amOrPm = hour > 12 ? "PM" : "AM";
-        // const itemHourStr = hour % 12 === 0 ? "12" : (hour % 12).toString();
-        // const timestampStr =
-        //     itemDate + " " + itemHourStr + ":" + minute + " " + amOrPm;
-        
         const type = this.props.type.substring(0,1).toUpperCase() + this.props.type.substring(1).toLowerCase();
         const comment = this.props.comment; 
 

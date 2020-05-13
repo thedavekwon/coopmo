@@ -3,7 +3,6 @@ import CFeedItemPayment from "./CFeedItemPayment.js";
 import CFeedItemBank from "./CFeedItemBank.js";
 import CFeedItemEmpty from "./CFeedItemEmpty.js";
 import {fetchFeed, fetchFeedFrom} from "../functions/fetchFeed";
-import debounce from "lodash.debounce";
 
 export default class CFeedList extends React.Component {
   constructor(props) {
@@ -152,7 +151,7 @@ export default class CFeedList extends React.Component {
         ref={this.myRef}
         style={{
           overflowY: "scroll",
-          maxHeight: "600px",
+          height: "100%",
         }} onScroll={this.handleScroll}
       >
         {feedItems}

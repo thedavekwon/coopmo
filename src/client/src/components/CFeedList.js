@@ -39,7 +39,6 @@ export default class CFeedList extends React.Component {
       .then((response) => {
         console.log(response);
         if (response.data) {
-          // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
           const feedItemDatas = response.data;
           if (shouldReverse) {
             this.setState({
@@ -125,7 +124,7 @@ export default class CFeedList extends React.Component {
     const feedItems = [];
     if (payments.length===0) {
       feedItems.push(
-        <CFeedItemEmpty />
+        <CFeedItemEmpty key={"0"}/>
       )
     } else {
         for (let ii = 1; ii <=  payments.length; ii++) {

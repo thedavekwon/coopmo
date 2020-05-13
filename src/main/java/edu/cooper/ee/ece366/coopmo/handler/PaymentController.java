@@ -133,7 +133,6 @@ public class PaymentController extends BaseController {
     ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
-        System.out.println(timestamp);
 
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();

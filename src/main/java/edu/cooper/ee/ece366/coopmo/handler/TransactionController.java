@@ -48,10 +48,6 @@ public class TransactionController extends BaseController {
         String transactionId = likePaymentRequest.getTransactionId();
         String transactionType = likePaymentRequest.getTransactionType();
 
-        System.out.println(userId);
-        System.out.println(transactionId);
-        System.out.println(transactionType);
-
         Message respMessage = new Message();
 
         checkEmpty(transactionId, "transactionId");

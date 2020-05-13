@@ -236,7 +236,8 @@ export default class EditProfileForm extends React.Component {
               <Form.File
                   id="profilePic"
                   label="Browse..."
-                  style={{fontFamily: "Muli"}}
+                  style={{fontFamily: "Muli",
+                          opacity: 1}}
                   size="lg"
                   data-browse="Upload Profile Picture"
                   className="custom-file-input"

@@ -70,7 +70,9 @@ public class TransactionService {
         TreeSet<Transaction> transactions = new TreeSet<>();
         User curUser = userService.checkValidUserId(userId);
         transactions.addAll(paymentRepository.getLatestPrivatePaymentFrom(curUser.getId(), timestamp));
+        System.out.println(transactions);
         transactions.addAll(cashRepository.getLatestCashFrom(curUser.getId(), timestamp));
+        System.out.println(transactions);
         if (transactions.size() < Transaction.AMOUNT) return transactions.descendingSet();
         Set<Transaction> ret = new TreeSet<>();
         Iterator<Transaction> it = transactions.descendingIterator();

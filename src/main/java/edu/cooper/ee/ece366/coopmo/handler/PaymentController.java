@@ -127,11 +127,13 @@ public class PaymentController extends BaseController {
 
     @GetMapping(path = "/getLatestFriendPaymentFrom")
     @ResponseBody
-    public ResponseEntity<?> getLatestFriendPayment(
+    public ResponseEntity<?> getLatestFriendPaymentFrom(
             @RequestParam(value = "timestamp", defaultValue = "") Timestamp timestamp
     ) throws InValidFieldValueException, BaseExceptionHandler.EmptyFieldException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId;
+        System.out.println(timestamp);
+
         if (principal instanceof MyUserDetails) {
             userId = ((MyUserDetails) principal).getId();
         } else {

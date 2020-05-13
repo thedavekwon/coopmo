@@ -1,4 +1,4 @@
-import {getTimeObjFromTimestamp} from "./timeDifference";
+import {removeHoursFromTimestampStr} from "./timeDifference";
 
 export function fetchFeed(domainName, fetch_type) {
     const requestEndpoint = ''.concat(domainName + "/pay/getLatest",
@@ -17,13 +17,14 @@ export function fetchFeed(domainName, fetch_type) {
 }
 
 export function fetchFeedFrom(domainName, fetch_type, timestampStr) {
-    // const timestamp = getTimeObjFromTimestamp(timestampStr);
-    // const timestampNanos = timestamp.getTime()*1000;
+
+    const adjustedTimestampStr = removeHoursFromTimestampStr(timestampStr, 4);
+    console.log(adjustedTimestampStr);
     const requestEndpoint = encodeURI(''.concat(domainName + "/pay/getLatest",
         fetch_type,
         "PaymentFrom",
         "?timestamp=",
-        timestampStr
+        adjustedTimestampStr
     ));
 
     const request = new Request(requestEndpoint, {

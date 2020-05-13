@@ -39,20 +39,26 @@ export default class CFeed extends React.Component {
 
 
         return (
-            <div style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+            <div style={{
+                backgroundColor: "rgba(0, 0, 0, 0)",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column" }}>
                 <div
                     style={{
-                        height: "45px",
+                        flex: "0 0 45px",
                         display: "flex"
                     }}
                     >
                     {feedTabs}
                 </div>
-                <div
-                    style={{
-                        marginTop: 20
-                    }}
-                >
+                <div style={{
+                        flex: "0 0 20px",
+                    }}>
+                </div>
+                <div style={{
+                    height: "100%"
+                }}>
                     <CFeedList
                         feedTab={this.state.feedTab}
                         domainName={this.props.domainName}

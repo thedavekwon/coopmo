@@ -52,14 +52,17 @@ class MainPage extends React.Component {
                 style={{
                     backgroundColor: "rgba(255, 255, 255, 1)",
                     display: "flex",
+                    height: "100%",
                     flexDirection: "column",
+                    justifyContent: "start",
+                    justifyItems: "stretch",
                     maxHeight: window.innerHeight
                 }}
             >
                 <div style={{
                     flex: 2,
                     width: "100%",
-                    height:"120px", 
+                    height: "100%",
                 }}>
                     <TitleBar
                             page="main"
@@ -68,20 +71,16 @@ class MainPage extends React.Component {
                         />
                 </div>
                 <div style = {{
-                    flex: 5
-                }}>
-
-                </div>
-                <div style = {{
                     flex: 14,
                     display: "flex",
                     width: "100%",
-                    justifyContent: "space-around"
+                    justifyContent: "space-around",
+                    maxHeight: (100*12/17).toString() + "vh"
                 }}>
                     <div style={{flex: 1}}></div>
+
                     <div style={{
                         flex: 5,
-                        minHeight: "100%",
                         backgroundColor: "rgba(0, 0, 0, 0)",
                         }} >
                             <CFeed
@@ -89,7 +88,9 @@ class MainPage extends React.Component {
                                 domainName={this.props.domainName}
                             />
                     </div>
+
                     <div style={{flex: 1}}></div>
+
                     <div
                         style={{
                             flex: 2,
@@ -101,8 +102,12 @@ class MainPage extends React.Component {
                             domainName={this.props.domainName}
                         />
                     </div>
+
                     <div style={{flex: 1}}></div>
                 </div>
+                <div style={{
+                    flex: 1
+                }} />
             </div>
         );
     }

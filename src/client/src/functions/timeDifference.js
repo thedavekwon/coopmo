@@ -1,4 +1,4 @@
-export function getTimeObjFromTimestamp(timestampStr) {
+function getTimeObjFromTimestamp(timestampStr) {
     const year = parseInt(timestampStr.substring(0, 4));
     const month = parseInt(timestampStr.substring(5,7));
     const day = parseInt(timestampStr.substring(8,10));
@@ -47,4 +47,10 @@ export function getTimeAgoStr(timestampStr) {
     } else {
         return "just now";
     }
+}
+
+export function removeHoursFromTimestampStr(timestampStr, numHours) {
+    const timestamp = getTimeObjFromTimestamp(timestampStr);
+    const adjustedTimestamp = new Date(timestamp - numHours*60*60*1000);
+    return adjustedTimestamp.toISOString().replace("T", " ").replace("Z", "");
 }

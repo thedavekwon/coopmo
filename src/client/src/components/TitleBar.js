@@ -122,9 +122,7 @@ class TitleBar extends React.Component {
             </div>
         );
         return (
-            <div style={{
-                height: "100%",
-            }}>
+            <div>
                 <div
                     style={{
                         width: "100%",

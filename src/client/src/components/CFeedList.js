@@ -70,7 +70,7 @@ export default class CFeedList extends React.Component {
         if (response.data) {
           const feedItemDatas = response.data;
           this.setState({
-            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
+            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
           });
         }
       });
@@ -151,8 +151,8 @@ export default class CFeedList extends React.Component {
       <div
         ref={this.myRef}
         style={{
-          overflowY: "scroll",
-          maxHeight: "600px",
+          overflowY: "auto",
+          height: "100%"
         }} onScroll={this.handleScroll}
       >
         {feedItems}

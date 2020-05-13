@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public class NotificationMessage {
     private final String message;
+    private final String referenceId;
     private final Timestamp timestamp;
     private final String type;
 
@@ -18,16 +19,20 @@ public class NotificationMessage {
                 .format(payment.getAmount() / 100.0);
         this.timestamp = payment.getTimestamp();
         this.type = "PAYMENT";
+        this.referenceId = fromUser.getId();
     }
 
     public NotificationMessage(User fromUser, String type) {
         this.type = type;
-        if (this.type == "FRIENDREQUEST") {
+        if (this.type.equals("FRIENDREQUEST")) {
             this.message = "Friend Request from " + fromUser.getHandle();
-        } else {
+        } else if (this.type.equals("FRIENDACCEPT")){
             this.message = "Friend Request Accepted by " + fromUser.getHandle();
+        } else {
+            this.message = "Payment Liked by " + fromUser.getHandle();
         }
         this.timestamp = new Timestamp(System.currentTimeMillis());
+        this.referenceId = fromUser.getId();
     }
 
     public String getMessage() {
@@ -41,4 +46,6 @@ public class NotificationMessage {
     public String getType() {
         return type;
     }
+
+    public String getReferenceId() { return referenceId; }
 }

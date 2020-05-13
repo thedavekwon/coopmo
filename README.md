@@ -1,5 +1,17 @@
 # coopmo
-![Coopmo Test (JAVA CI + MYSQL)](https://github.com/thedavekwon/coopmo/workflows/Coopmo%20Test%20(JAVA%20CI%20+%20MYSQL)/badge.svg)
+![Coopmo Github Action](https://github.com/thedavekwon/coopmo/workflows/Coopmo%20Test%20(Docker-Compose)/badge.svg)
+
+Venmo Clone for Final Project for ECE-366 (Software Engineering Cooper Union)
+
+## Overview
+![System Overview](img/coopmo.jpeg)
+*Backend System Overview of Coopmo*
+## REQUIREMENT
+* Spring
+* MySQL
+* React
+* RabbitMQ
+
 ## USAGE
 ```
 git clone https://github.com/thedavekwon/coopmo.git

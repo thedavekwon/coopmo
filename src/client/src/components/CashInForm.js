@@ -4,8 +4,10 @@ import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormAlert from "./FormAlert.js";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
 
-export default class CashInForm extends React.Component {
+class CashInForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,13 +51,13 @@ export default class CashInForm extends React.Component {
   };
 
   handleCashChange = (cash) => {
-    console.log(cash);
     var newRequest = this.state.request;
     newRequest.type = cash.value;
     this.setState((state) => ({
       request: newRequest,
     }));
   };
+
   sendRequest = (event) => {
     event.preventDefault();
     const path = this.props.domainName + "/cash/createCash";
@@ -70,20 +72,21 @@ export default class CashInForm extends React.Component {
       credentials: "include",
       body: JSON.stringify(this.state.request),
     })
-      .then((res) => res.json())
-      .then(
-          (result) => {
-            if (result.error != null) {
-              console.log(result.error);
-              this.setMessage(result.error.message, "ERROR");
-            } else {
-              this.setMessage("Successfully Cashed " + this.state.request.type + "!", "SUCCESS");
+        .then((res) => res.json())
+        .then(
+            (result) => {
+              if (result.error != null) {
+                console.log(result.error);
+                this.setMessage(result.error.message, "ERROR");
+              } else {
+                this.setMessage("Successfully Cashed " + this.state.request.type + "!", "SUCCESS");
+                this.props.changeRefreshState("refreshBalance", true);
+              }
+            },
+            (error) => {
+              this.setMessage("ERROR sending request", "ERROR");
             }
-          },
-          (error) => {
-            this.setMessage("ERROR sending request", "ERROR");
-          }
-      );
+        );
   };
 
   getBankAccounts = () => {
@@ -96,41 +99,41 @@ export default class CashInForm extends React.Component {
       },
       credentials: "include",
     })
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          if (result.error != null) {
-            console.log(result.error);
-            this.setMessage(result.error.message, "ERROR");
-          } else {
-            if (result.data != null && result.data.length !== 0) {
-              var bankList = [];
-              console.log(result.data);
-              for (var i = 0; i < result.data.length; i++) {
-                bankList = [
-                  ...bankList,
-                  {
-                    value: result.data[i].id,
-                    label: result.data[i].routingNumber + "+" + result.data[i].accountNumber,
-                  },
-                ];
+        .then((res) => res.json())
+        .then(
+            (result) => {
+              if (result.error != null) {
+                console.log(result.error);
+                this.setMessage(result.error.message, "ERROR");
+              } else {
+                if (result.data != null && result.data.length !== 0) {
+                  var bankList = [];
+                  console.log(result.data);
+                  for (var i = 0; i < result.data.length; i++) {
+                    bankList = [
+                      ...bankList,
+                      {
+                        value: result.data[i].id,
+                        label: result.data[i].nickname,
+                      },
+                    ];
+                  }
+                  this.setState((state) => ({
+                    bankAcctList: bankList,
+                  }));
+                  //console.log(this.state.bankAcctList)
+                  var newRequest = this.state.request;
+                  newRequest.bankAccountId = result.data[0].id;
+                  this.setState((state) => ({
+                    request: newRequest,
+                  }));
+                }
               }
-              this.setState((state) => ({
-                bankAcctList: bankList,
-              }));
-              //console.log(this.state.bankAcctList)
-              var newRequest = this.state.request;
-              newRequest.bankAccountId = result.data[0].id;
-              this.setState((state) => ({
-                request: newRequest,
-              }));
+            },
+            (error) => {
+              this.setMessage("ERROR sending request", "ERROR");
             }
-          }
-        },
-        (error) => {
-          this.setMessage("ERROR sending request", "ERROR");
-        }
-      );
+        );
   };
 
   render() {
@@ -208,3 +211,6 @@ export default class CashInForm extends React.Component {
     );
   }
 }
+
+
+export default connect(null, {changeRefreshState})(CashInForm);

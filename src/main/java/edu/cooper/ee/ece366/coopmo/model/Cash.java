@@ -44,7 +44,6 @@ public class Cash extends Transaction {
     private BankAccount bankAccount;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonIgnore
     private Set<User> likes;
 
     public Cash() {

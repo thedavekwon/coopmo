@@ -3,7 +3,7 @@ import {formatMoney} from "../functions/formatMoney";
 import {getTimeAgoStr} from "../functions/timeDifference";
 
 export default class CFeedItemBank extends React.Component {
-    
+
     render() {
         const purple = "rgba(102, 0, 153, 1)";
         const black = "rgba(0, 0, 0, 1)";
@@ -72,7 +72,7 @@ export default class CFeedItemBank extends React.Component {
                     }}
                 />
             </div>
-        );      
+        );
 
     }
 }

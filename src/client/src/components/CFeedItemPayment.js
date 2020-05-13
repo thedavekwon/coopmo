@@ -139,7 +139,6 @@ export default class CFeedItemPayment extends React.Component {
 
         const amount =
             this.props.tab === "Me" ? formatMoney(this.props.amount) : "";
-
         return (
             <div
                 style={{
@@ -203,7 +202,7 @@ export default class CFeedItemPayment extends React.Component {
                 />
             </div>
         );
-    
+
 
     }
 }

@@ -24,6 +24,7 @@
     "react-scripts": "3.4.1",
     "react-scroll-box": "^0.3.5",
     "react-select": "^3.1.0",
+    "react-stomp": "^5.0.0",
     "reactstrap": "^8.4.1",
     "url-search-params-polyfill": "^8.0.0"
   },
@@ -61,6 +62,8 @@
     }
   },
   "devDependencies": {
-    "prettier": "2.0.4"
+    "prettier": "2.0.4",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
   }
 }

@@ -2,32 +2,32 @@ import React, {PureComponent} from "react";
 import MenuTab from "./MenuTab.js";
 import EditProfileForm from "./EditProfileForm.js";
 import AddFriendForm from "./AddFriendForm.js";
-import CIncomingFriendRequestForm from "./IncomingFriendRequestForm.js";
+import IncomingFriendRequestForm from "./IncomingFriendRequestForm.js";
 import AddBankAccounts from "./AddBankAccounts.js";
 import CashInForm from "./CashInForm.js";
 import SendPaymentForm from "./SendPaymentForm.js";
 import TitleBar from "./TitleBar.js";
-import ReactDOM from "react-dom";
-import LoginPage from "./LoginPage.js";
+import {connect} from "react-redux";
+import {changeLogin, changePage} from "../redux/actions";
 
-export default class MenuPage extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activePage: "Edit Profile",
-    };
-    this.changePage = this.changePage.bind(this);
-  }
+class MenuPage extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activePage: "Edit Profile",
+        };
+        this.changePage = this.changePage.bind(this);
+    }
 
-  changePage(newPage) {
-    this.setState((state) => ({
-      activePage: newPage,
-    }));
-  }
+    changePage(newPage) {
+        this.setState((state) => ({
+            activePage: newPage,
+        }));
+    }
 
-  signOut = () => {
-    var path = this.props.domainName + "/logout";
-    fetch(path, {
+    signOut = () => {
+        var path = this.props.domainName + "/logout";
+        fetch(path, {
       method: "GET",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -36,10 +36,8 @@ export default class MenuPage extends PureComponent {
       credentials: "include",
     }).then((res) => {
       if (res.status === 200) {
-        ReactDOM.render(
-            <LoginPage domainName={this.props.domainName}></LoginPage>,
-            document.getElementById("root")
-        );
+          this.props.changeLogin(false);
+          this.props.changePage("Login");
       }
     });
   };
@@ -52,7 +50,7 @@ export default class MenuPage extends PureComponent {
       formPage = <AddFriendForm domainName={this.props.domainName}/>;
     else if (this.state.activePage === "Incoming Friend Requests")
       formPage = (
-          <CIncomingFriendRequestForm domainName={this.props.domainName}/>
+          <IncomingFriendRequestForm domainName={this.props.domainName}/>
       );
     else if (this.state.activePage === "Add a Bank Account")
       formPage = <AddBankAccounts domainName={this.props.domainName}/>;
@@ -82,7 +80,6 @@ export default class MenuPage extends PureComponent {
               key={value}
           >
             <div
-                id="I254:861;30:393"
                 style={{
                   flexGrow: 1,
                   top: (100 / 7) * index + "%",
@@ -97,7 +94,6 @@ export default class MenuPage extends PureComponent {
               <MenuTab
                   {...this.props}
                   name={value}
-                  nodeId="I254:861;30:393"
                   active={this.state.activePage}
               />
             </div>
@@ -159,9 +155,17 @@ export default class MenuPage extends PureComponent {
               </div>
             </div>
 
-            <TitleBar page="editProfile" domainName={this.props.domainName}/>
+              <TitleBar page="editProfile" domainName={this.props.domainName}/>
           </div>
         </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+    return {
+        domainName: state.domainName
+    }
+}
+
+export default connect(mapStateToProps, {changePage, changeLogin})(MenuPage);

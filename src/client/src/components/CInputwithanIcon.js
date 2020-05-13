@@ -42,10 +42,10 @@ export default class CInputwithanIcon extends React.Component {
                                         className="innerDiv"
                                     >
                                         <div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
           </div>
           <div style={{ zIndex: 1 }} className="outerDiv centerer">
             <div

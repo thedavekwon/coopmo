@@ -4,8 +4,10 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Select from "react-select";
 import FormAlert from "./FormAlert.js";
+import {connect} from "react-redux";
+import {changeRefreshState} from "../redux/actions";
 
-export default class SendPaymentForm extends React.Component {
+class SendPaymentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -143,6 +145,7 @@ export default class SendPaymentForm extends React.Component {
                 this.setMessage(result.error.message, "ERROR");
               } else {
                 this.setMessage("Successfully sent payment!", "SUCCESS");
+                this.props.changeRefreshState("refreshBalance", true);
               }
             },
             (error) => {
@@ -240,3 +243,5 @@ export default class SendPaymentForm extends React.Component {
     );
   }
 }
+
+export default connect(null, {changeRefreshState})(SendPaymentForm);

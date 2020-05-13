@@ -1,11 +1,11 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import CSimpleInput from "./CSimpleInput.js";
 import CSingleButton from "./CSingleButton.js";
-import LoginPage from "./LoginPage.js";
+import {connect} from "react-redux";
+import {changePage} from "../redux/actions";
 
 
-export default class CreateUserPage extends React.Component {
+class CreateUserPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,7 +24,7 @@ export default class CreateUserPage extends React.Component {
     }
 
     renderCreate = () => {
-        ReactDOM.render(<LoginPage domainName={this.props.domainName}></LoginPage>, document.getElementById("root"));
+        this.props.changePage("Login");
     }
 
     handleChange = (key, value) => {
@@ -239,3 +239,11 @@ export default class CreateUserPage extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        domainName: state.domainName
+    }
+}
+
+export default connect(mapStateToProps, {changePage})(CreateUserPage);

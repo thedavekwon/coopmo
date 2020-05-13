@@ -1,6 +1,5 @@
 package edu.cooper.ee.ece366.coopmo.handler;
 
-// TODO (migrate to BaseExceptionHandler)
 public class BaseController {
     protected void checkEmpty(String input, String field) throws BaseExceptionHandler.EmptyFieldException {
         if (input.equals("")) {
@@ -8,7 +7,7 @@ public class BaseController {
         }
     }
 
-    protected void checkPositive(Long input, String field) throws BaseExceptionHandler.InValidFieldValueException {
+    protected void checkPositive(long input, String field) throws BaseExceptionHandler.InValidFieldValueException {
         if (input <= 0) {
             throw new BaseExceptionHandler.InValidFieldValueException("Non-positive " + field + " entered");
         }

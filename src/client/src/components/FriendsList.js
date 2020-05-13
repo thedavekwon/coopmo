@@ -44,12 +44,12 @@ export default class FriendsList extends React.Component {
 
     render() {
         let friends;
-        if (this.state.friendsList != null) {
+        if (this.state.friendsList !== null) {
             friends = (
                 <>
                     {this.state.friendsList.map((friend, key) => {
                         return (
-                            <FriendEntry friend={friend} domainName={this.props.domainName}/>
+                            <FriendEntry friend={friend} domainName={this.props.domainName} key={key}/>
                         );
                     })}
                 </>
@@ -57,50 +57,37 @@ export default class FriendsList extends React.Component {
         }
 
         return (
-            <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
-                <div style={{}} className="outerDiv centerer">
-                    <div
-                        style={{
-                            flexGrow: 1,
-                            height: "10%",
-                            borderRadius: "10px 10px 0px 0px",
-                            backgroundColor: "rgba(102, 0, 153, 1)",
-                        }}
-                        className="innerDiv"
-                    >
-                    </div>
-                </div>
-                <div className="outerDiv centerer">
-                    <div
-                        style={{
-                            height: "90%",
-                            top: "10%",
-                            width: "100%",
-                            overflowY: "scroll",
-                        }}
-                        className="innerDiv"
-                    >
-                        <Container fluid>{friends}</Container>
-                    </div>
-                </div>
-
-                <div style={{zIndex: 15}} className="outerDiv centerer">
-                    <div
-                        style={{height: "10%", width: "100%"}}>
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
+                    <div style={{
+                        height: "45px",
+                        backgroundColor: "rgba(102, 0, 153, 1)",
+                        borderRadius: "8px 8px 0px 0px",
+                    }}>
                         <div
                             style={{
-                                top: "60%",
+                                fontSize: 24,
+                                fontWeight: 400,
+                                fontFamily: "Muli",
                                 textAlign: "CENTER",
+                                fontStyle: "normal",
+                                lineHeight: "100%",
+                                letterSpacing: "0px",
                                 color: "rgba(255, 255, 255, 1)",
+                                paddingTop: "10px"
                             }}
-                            className="innerDiv textStyle vertCenterAndCut"
                         >
-                            <div>
-              <span style={{}} key="end">
-                Friends List
-              </span>
-                            </div>
+                                Friends List
                         </div>
+                    </div>
+
+                <div>
+                    <div
+                        style={{
+                            overflowY: "scroll",
+                            height: "100%"
+                        }}
+                    >
+                        <Container fluid>{friends}</Container>
                     </div>
                 </div>
             </div>

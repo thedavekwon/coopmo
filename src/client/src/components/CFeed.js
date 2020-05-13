@@ -25,55 +25,38 @@ export default class CFeed extends React.Component {
 
         let feedTabs = tabNames.map((feedTab, index) => {
             return (
-                <div className="outerDiv centerer" key={feedTab}>
-                    <div
-                        style={{
-                            marginLeft: 100 / 3 * index + "%",
-                            marginRight: 100 / 3 * (2 - index) + "%",
-                            flexGrow: 1,
-                            backgroundColor:
-                                this.state.feedTab === feedTab ? purple : white,
-                            borderRadius: "8px 8px 0px 0px",
-                        }}
-                        className="innerDiv"
-                        onClick={() => this.handleClick(feedTab)}
-                    >
+                <div key={feedTab} style={{
+                    flex: 1,
+                    backgroundColor:
+                        this.state.feedTab === feedTab ? purple : white,
+                    borderRadius: "8px 8px 0px 0px",
+                }}
+                onClick={() => this.handleClick(feedTab)}>
                         <CFeedTab name={feedTab} feedTab={this.state.feedTab}/>
-                    </div>
                 </div>
             );
         })
 
+        const TAB_HEIGHT = 30;
 
         return (
-            <div className="master" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}>
-                <div>
-                    <div className="outerDiv centerer">
-                        <div
-                            style={{
-                                marginLeft: 0,
-                                marginRight: 0,
-                                flexGrow: 1,
-                                height: "48px",
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                            }}
-                            className="innerDiv"
-                        >
-                            {feedTabs}
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            position: "relative",
-                            marginTop: 75,
-                        }}
+            <div style={{backgroundColor: "rgba(0, 0, 0, 0)",
+                height: "100%"}}>
+                <div
+                    style={{
+                        height: "45px",
+                        display: "flex"
+                    }}
                     >
-                        <CFeedList
-                            feedTab={this.state.feedTab}
-                            domainName={this.props.domainName}
-                            username={this.props.username}
-                        />
-                    </div>
+                    {feedTabs}
+                </div>
+                <div
+                >
+                    <CFeedList
+                        feedTab={this.state.feedTab}
+                        domainName={this.props.domainName}
+                        username={this.props.username}
+                    />
                 </div>
             </div>
         );

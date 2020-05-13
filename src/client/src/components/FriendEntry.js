@@ -48,12 +48,12 @@ export default class FriendEntry extends React.Component {
   render() {
     return (
         <Row>
-          <div className="innerDiv friendListPic">
+          <div className="friendListPic">
             <Image src={this.state.profilePic} roundedCircle fluid/>
           </div>
           <Col xl={9} fluid>
             <div style={{width: "100%", height: "100%"}}>
-              <div key="end" className="innerDiv vertCenterAndCut textStyle">
+              <div key="end" className="vertCenterAndCut textStyle">
                 {this.props.friend.name}
               </div>
             </div>

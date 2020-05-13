@@ -59,14 +59,17 @@ class MainPage extends React.Component {
                         domainName={this.props.domainName}
                     />
                 <div style = {{
+                    position: "absolute",
                     display: "flex",
                     width: "100%",
+                    minHeight: "100%",
                     justifyContent: "space-around"
                 }}>
                     <div style={{flex: 1}}></div>
                     <div style={{
                         flex: 5,
-                        marginTop: "140px",
+                        paddingTop: "140px",
+                        minHeight: "100%",
                         backgroundColor: "rgba(0, 0, 0, 0)",
                         }} >
                             <CFeed

@@ -1,13 +1,12 @@
 import React from "react";
 import CFeedItemPayment from "./CFeedItemPayment.js";
 import CFeedItemBank from "./CFeedItemBank.js";
-import {fetchFeed} from "../functions/fetchFeed";
+import {fetchFeed, fetchFeedFrom} from "../functions/fetchFeed";
 
 export default class CFeedList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      num_items: 30,
       feedItemDatas: [],
     };
   }
@@ -16,7 +15,6 @@ export default class CFeedList extends React.Component {
   // id, amount, type, timestamp, fromUser, toUser, likes
 
   updateList(feedTab) {
-    const num_items = this.state.num_items;
     var fetch_type = "";
     switch (feedTab) {
       case "Me":
@@ -31,12 +29,41 @@ export default class CFeedList extends React.Component {
       default:
         fetch_type = "(ERROR, SHOULD NOT SEE THIS)";
     }
-    fetchFeed(this.props.domainName, num_items, fetch_type)
+    fetchFeed(this.props.domainName, fetch_type)
       .then((response) => response.json())
       .then((response) => {
         console.log(response);
         if (response.data) {
           // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
+          const feedItemDatas = response.data;
+          this.setState({
+            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
+          });
+        }
+      });
+  }
+
+  addNewItemsToList(feedTab) {
+    const oldestTimestampStr = this.state.feedItemData[-1].timestamp;
+    var fetch_type = "";
+    switch (feedTab) {
+      case "Me":
+        fetch_type = "Private";
+        break;
+      case "Friend":
+        fetch_type = "Friend";
+        break;
+      case "Public":
+        fetch_type = "Public";
+        break;
+      default:
+        fetch_type = "(ERROR, SHOULD NOT SEE THIS)";
+    }
+    fetchFeedFrom(this.props.domainName, fetch_type, oldestTimestampStr)
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        if (response.data) {
           const feedItemDatas = response.data;
           this.setState({
             feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),

@@ -185,7 +185,9 @@ export default class CFeedItemPayment extends React.Component {
                     >
                         <span>{timestampStr}</span>
                         <span>{type}</span>
-                        {this.getButtonJSX()}
+                        <div style={{
+                            width: "200px"
+                        }}>{this.getButtonJSX()}</div>
                     </div>
                 </div>
                 <hr

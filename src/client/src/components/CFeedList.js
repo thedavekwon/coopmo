@@ -19,12 +19,15 @@ export default class CFeedList extends React.Component {
 
   updateList(feedTab) {
     var fetch_type = "";
+    var shouldReverse = false;
     switch (feedTab) {
       case "Me":
         fetch_type = "Private";
+        shouldReverse = true;
         break;
       case "Friend":
         fetch_type = "Friend";
+        shouldReverse = true;
         break;
       case "Public":
         fetch_type = "Public";
@@ -39,9 +42,16 @@ export default class CFeedList extends React.Component {
         if (response.data) {
           // const feedItemDatas = response.data.filter(d => d.type === fetch_type.toUpperCase());
           const feedItemDatas = response.data;
-          this.setState({
-            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
-          });
+          if (shouldReverse) {
+            this.setState({
+              feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
+            });
+          } else {
+            this.setState({
+              feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
+            });
+          }
+
         }
       });
   }
@@ -50,12 +60,14 @@ export default class CFeedList extends React.Component {
     const oldestTimestampStr = this.state.feedItemDatas[this.state.feedItemDatas.length -1].timestamp;
     console.log(oldestTimestampStr);
     var fetch_type = "";
+    var shouldReverse = false;
     switch (feedTab) {
       case "Me":
         fetch_type = "Private";
         break;
       case "Friend":
         fetch_type = "Friend";
+        shouldReverse = true;
         break;
       case "Public":
         fetch_type = "Public";
@@ -69,9 +81,15 @@ export default class CFeedList extends React.Component {
         console.log(response);
         if (response.data) {
           const feedItemDatas = response.data;
-          this.setState({
-            feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
-          });
+          if (shouldReverse) {
+            this.setState({
+              feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas.reverse()),
+            });
+          } else {
+            this.setState({
+              feedItemDatas: this.state.feedItemDatas.concat(feedItemDatas),
+            });
+          }
         }
       });
   }

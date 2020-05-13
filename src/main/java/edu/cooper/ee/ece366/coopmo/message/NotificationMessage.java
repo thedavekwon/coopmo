@@ -4,6 +4,8 @@ import edu.cooper.ee.ece366.coopmo.model.Payment;
 import edu.cooper.ee.ece366.coopmo.model.User;
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class NotificationMessage {
     private final String message;
@@ -11,7 +13,9 @@ public class NotificationMessage {
     private final String type;
 
     public NotificationMessage(User fromUser, Payment payment) {
-        this.message = fromUser.getHandle() + " sent $" + payment.getAmount() / 100.0;
+
+        this.message = fromUser.getHandle() + " sent " + NumberFormat.getCurrencyInstance(new Locale("en", "US"))
+                .format(payment.getAmount() / 100.0);
         this.timestamp = payment.getTimestamp();
         this.type = "PAYMENT";
     }

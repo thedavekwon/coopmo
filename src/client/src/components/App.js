@@ -4,7 +4,7 @@ import MainPage from "./MainPage";
 import MenuPage from "./MenuPage";
 import CreateUserPage from "./CreateUserPage";
 import {connect} from "react-redux";
-import {addDomainName, addNotification, changeRefreshState} from "../redux/actions";
+import {addDomainName, addNotification, changeNewNotifications, changeRefreshState} from "../redux/actions";
 import SockJsClient from "react-stomp";
 
 class App extends React.Component {
@@ -32,6 +32,7 @@ class App extends React.Component {
           default:
               break;
       }
+      this.props.changeNewNotifications(true);
       console.log(message);
   };
 
@@ -71,4 +72,9 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {addDomainName, addNotification, changeRefreshState})(App);
+export default connect(mapStateToProps, {
+    addDomainName,
+    addNotification,
+    changeRefreshState,
+    changeNewNotifications
+})(App);

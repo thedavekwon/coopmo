@@ -2,9 +2,10 @@ import {
   ADD_DOMAIN_NAME,
   ADD_NOTIFICATION,
   CHANGE_LOGIN,
+  CHANGE_NEW_NOTIFICATIONS,
   CHANGE_PAGE,
   CHANGE_REFRESH_STATE,
-  DELETE_NOTIFICATION
+  DELETE_NOTIFICATION,
 } from "./action-types";
 
 export const addDomainName = (domainName) => ({
@@ -67,6 +68,15 @@ export const changeRefreshState = (type, newState) => {
     payload: {
       type,
       newState
+    }
+  })
+}
+
+export const changeNewNotifications = (newState) => {
+  return ({
+    type: CHANGE_NEW_NOTIFICATIONS,
+    payload: {
+      newState,
     }
   })
 }

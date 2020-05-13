@@ -13,11 +13,8 @@ class TitleBar extends React.Component {
         this.state = {
             page: "main",
             profilePic: "",
-            balance: 0,
+            balance: null,
         };
-    }
-
-    componentDidMount() {
         this.getProfilePic();
         this.getBalance();
     }
@@ -93,41 +90,40 @@ class TitleBar extends React.Component {
             this.props.page === "main"
                 ? "rgba(255, 255, 255, 1)"
                 : "rgba(102, 0, 153, 1)";
-        let includeBalance;
-        if (this.props.page === "main") {
-            includeBalance = (
+        let includeBalance = (
+            <div
+                style={{
+                    zIndex: 3,
+                    width: "17.5%",
+                    top: "25%",
+                    height: "50%",
+                    marginLeft: "80%",
+                }}
+                className="outerDiv centerer"
+            >
+                <div className="innerDiv friendListPic vertCenterAndCut">
+                    <Image src={this.state.profilePic} roundedCircle fluid/>
+                </div>
+
                 <div
                     style={{
-                        zIndex: 3,
-                        width: "17.5%",
-                        top: "25%",
-                        height: "50%",
-                        marginLeft: "80%",
+                        flexGrow: 1,
+                        backgroundColor: backgroundColor,
+                        color: textColor,
+                        textAlign: "CENTER",
                     }}
-                    className="outerDiv centerer"
+                    className="innerDiv vertCenterAndCut textStyle"
                 >
-                    <div className="innerDiv friendListPic vertCenterAndCut">
-                        <Image src={this.state.profilePic} roundedCircle fluid/>
-                    </div>
-
-                    <div
-                        style={{
-                            flexGrow: 1,
-                            backgroundColor: "rgba(102, 0, 153, 1)",
-                            color: "rgba(255, 255, 255, 1)",
-                            textAlign: "CENTER",
-                        }}
-                        className="innerDiv vertCenterAndCut textStyle"
-                    >
-                        <span>Balance : {formatMoney(this.state.balance)}</span>
-                    </div>
-
-                    <div className="innerDiv bellPng vertCenterAndCut">
-                        <NotificationBell/>
-                    </div>
+                    <span>Balance : {this.state.balance !== null ? formatMoney(this.state.balance) : "Loading..."}</span>
                 </div>
-            );
-        }
+
+                <div className="innerDiv bellPng vertCenterAndCut">
+                    <NotificationBell
+                        color={this.props.page === "main" ? "white" : "purple"}
+                    />
+                </div>
+            </div>
+        );
         return (
             <div
                 style={{
@@ -182,7 +178,6 @@ class TitleBar extends React.Component {
                                     className="innerDiv vertCutAndCenter"
                                 >
                                     <MenuButton
-                                        {...this.props}
                                         backgroundColor={backgroundColor}
                                         textColor={textColor}
                                         page={this.props.page}
